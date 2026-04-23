@@ -18,7 +18,11 @@ import type {
   StudentStats,
   ActivityItem,
   InstructorSummary,
-} from "@/types"
+  Testimonial,
+  RecentEnrollment,
+  Lesson,
+  Quiz,
+} from "@/type"
 
 // ============================================================
 // CATEGORIES
@@ -603,6 +607,169 @@ export const MOCK_COURSE_PERFORMANCE: CoursePerformance[] = [
   { courseId: "course-6", title: "TypeScript Mastery — From Zero to Production", thumbnailUrl: MOCK_COURSES[5].thumbnailUrl, studentCount: 2340, rating: 4.9, revenue: 4460000, status: "PUBLISHED" },
   { courseId: "course-draft-1", title: "Next.js + Supabase Auth Deep Dive", thumbnailUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80", studentCount: 0, rating: 0, revenue: 0, status: "DRAFT" },
 ]
+
+// ============================================================
+// TESTIMONIALS (landing page)
+// ============================================================
+
+export const MOCK_TESTIMONIALS: Testimonial[] = [
+  {
+    id: "testi-1",
+    quote: "Setelah mengikuti kursus Next.js dari Learnify, saya berhasil mendapat pekerjaan pertama sebagai fullstack developer dalam 3 bulan. Materinya sangat terstruktur dan langsung bisa dipraktekan.",
+    authorName: "Dimas Ariyanto",
+    authorRole: "Junior Fullstack Developer",
+    authorCompany: "Tokopedia",
+    avatarUrl: "https://api.dicebear.com/9.x/avataaars/svg?seed=dimas",
+  },
+  {
+    id: "testi-2",
+    quote: "Platform belajar terbaik untuk developer Indonesia. Kursus design system-nya mengubah cara saya bekerja — sekarang tim saya punya component library yang konsisten dan scalable.",
+    authorName: "Putri Wulandari",
+    authorRole: "UI Engineer",
+    authorCompany: "Gojek",
+    avatarUrl: "https://api.dicebear.com/9.x/avataaars/svg?seed=putri",
+  },
+  {
+    id: "testi-3",
+    quote: "Kursus data engineering di Learnify paling praktis yang pernah saya ikuti. Langsung build pipeline dari nol sampai deploy. Sekarang saya handle data pipeline di perusahaan dengan percaya diri.",
+    authorName: "Hendra Wijaya",
+    authorRole: "Data Engineer",
+    authorCompany: "Bukalapak",
+    avatarUrl: "https://api.dicebear.com/9.x/avataaars/svg?seed=hendra",
+  },
+]
+
+// ============================================================
+// RECENT ENROLLMENTS (instructor dashboard)
+// ============================================================
+
+export const MOCK_RECENT_ENROLLMENTS: RecentEnrollment[] = [
+  {
+    id: "renr-1",
+    studentName: "Andi Saputra",
+    avatarUrl: "https://api.dicebear.com/9.x/avataaars/svg?seed=andi",
+    courseTitle: "Next.js 14 — Build Full Stack SaaS Applications",
+    enrolledAt: "2025-04-20T14:30:00Z",
+    amount: 349000,
+  },
+  {
+    id: "renr-2",
+    studentName: "Lestari Handayani",
+    avatarUrl: "https://api.dicebear.com/9.x/avataaars/svg?seed=lestari",
+    courseTitle: "TypeScript Mastery — From Zero to Production",
+    enrolledAt: "2025-04-19T09:15:00Z",
+    amount: 279000,
+  },
+  {
+    id: "renr-3",
+    studentName: "Bayu Setiawan",
+    avatarUrl: "https://api.dicebear.com/9.x/avataaars/svg?seed=bayu",
+    courseTitle: "Next.js 14 — Build Full Stack SaaS Applications",
+    enrolledAt: "2025-04-18T20:45:00Z",
+    amount: 349000,
+  },
+  {
+    id: "renr-4",
+    studentName: "Nadia Kusuma",
+    avatarUrl: "https://api.dicebear.com/9.x/avataaars/svg?seed=nadia",
+    courseTitle: "REST API with Laravel 11 & PostgreSQL",
+    enrolledAt: "2025-04-17T11:00:00Z",
+    amount: 0,
+  },
+  {
+    id: "renr-5",
+    studentName: "Teguh Prasetyo",
+    avatarUrl: "https://api.dicebear.com/9.x/avataaars/svg?seed=teguh",
+    courseTitle: "TypeScript Mastery — From Zero to Production",
+    enrolledAt: "2025-04-16T16:20:00Z",
+    amount: 279000,
+  },
+]
+
+// ============================================================
+// CURRENT LESSON (video player page)
+// ============================================================
+
+export const MOCK_CURRENT_LESSON: Lesson = {
+  id: "les-5",
+  title: "Nested layouts & route groups",
+  description: "Learn how Next.js App Router handles nested layouts and route groups. We'll build a real-world layout structure with marketing pages, dashboard, and authenticated routes — each with their own layout wrappers.",
+  type: "VIDEO",
+  position: 2,
+  isFree: false,
+  duration: 840,
+  videoUrl: null,
+  videoPlaybackId: null,
+  content: "In this lesson, you'll learn:\n\n1. How layouts nest automatically in the App Router\n2. Route groups with parentheses — (marketing), (dashboard), (player)\n3. Shared layouts vs. per-route layouts\n4. When to use layout.tsx vs. template.tsx\n5. Practical example: building Learnify's layout structure",
+  chapterId: "ch-2",
+}
+
+// ============================================================
+// QUIZ (course player quiz tab)
+// ============================================================
+
+export const MOCK_QUIZ: Quiz = {
+  id: "quiz-1",
+  title: "Quiz — App Router Concepts",
+  passingScore: 75,
+  allowRetake: true,
+  maxAttempts: 3,
+  timeLimit: 600,
+  questions: [
+    {
+      id: "q-1",
+      text: "Apa perbedaan utama antara Server Component dan Client Component di Next.js?",
+      explanation: "Server Components dirender di server dan tidak mengirim JavaScript ke browser. Client Components dirender di browser dan membutuhkan 'use client' directive.",
+      position: 1,
+      points: 25,
+      options: [
+        { id: "q1-a", text: "Server Component dirender di server, Client Component dirender di browser", isCorrect: true, position: 1 },
+        { id: "q1-b", text: "Server Component lebih cepat karena menggunakan cache", isCorrect: false, position: 2 },
+        { id: "q1-c", text: "Client Component tidak bisa mengakses database", isCorrect: false, position: 3 },
+        { id: "q1-d", text: "Tidak ada perbedaan, hanya penamaan berbeda", isCorrect: false, position: 4 },
+      ],
+    },
+    {
+      id: "q-2",
+      text: "Bagaimana cara membuat route group di App Router?",
+      explanation: "Route group dibuat dengan membungkus nama folder dalam tanda kurung, misalnya (marketing). Folder ini tidak mempengaruhi URL path.",
+      position: 2,
+      points: 25,
+      options: [
+        { id: "q2-a", text: "Menggunakan underscore: _marketing/page.tsx", isCorrect: false, position: 1 },
+        { id: "q2-b", text: "Menggunakan tanda kurung: (marketing)/page.tsx", isCorrect: true, position: 2 },
+        { id: "q2-c", text: "Menggunakan bracket: [marketing]/page.tsx", isCorrect: false, position: 3 },
+        { id: "q2-d", text: "Menggunakan config di next.config.ts", isCorrect: false, position: 4 },
+      ],
+    },
+    {
+      id: "q-3",
+      text: "Apa fungsi file loading.tsx dalam App Router?",
+      explanation: "loading.tsx menampilkan UI loading otomatis menggunakan React Suspense saat konten halaman sedang dimuat.",
+      position: 3,
+      points: 25,
+      options: [
+        { id: "q3-a", text: "Menampilkan animasi loading saat aplikasi pertama kali dibuka", isCorrect: false, position: 1 },
+        { id: "q3-b", text: "Menampilkan skeleton UI otomatis via Suspense saat halaman dimuat", isCorrect: true, position: 2 },
+        { id: "q3-c", text: "Mengatur timeout untuk API request", isCorrect: false, position: 3 },
+        { id: "q3-d", text: "Menampilkan progress bar di atas halaman", isCorrect: false, position: 4 },
+      ],
+    },
+    {
+      id: "q-4",
+      text: "Kapan sebaiknya menggunakan 'use client' directive?",
+      explanation: "Gunakan 'use client' hanya ketika component membutuhkan interaktivitas browser seperti useState, useEffect, onClick, atau browser API lainnya.",
+      position: 4,
+      points: 25,
+      options: [
+        { id: "q4-a", text: "Di setiap component agar bisa menggunakan hooks", isCorrect: false, position: 1 },
+        { id: "q4-b", text: "Hanya di layout.tsx", isCorrect: false, position: 2 },
+        { id: "q4-c", text: "Ketika component butuh interaktivitas: state, effects, atau event handlers", isCorrect: true, position: 3 },
+        { id: "q4-d", text: "Ketika component mengambil data dari database", isCorrect: false, position: 4 },
+      ],
+    },
+  ],
+}
 
 // ============================================================
 // HELPER FUNCTIONS

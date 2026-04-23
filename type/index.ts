@@ -224,6 +224,28 @@ export interface QuizAttempt {
   quizId: string
 }
 
+// ---- Testimonial --------------------------------------------
+
+export interface Testimonial {
+  id: string
+  quote: string
+  authorName: string
+  authorRole: string
+  authorCompany: string
+  avatarUrl: string
+}
+
+// ---- Recent Enrollment (Instructor Dashboard) ---------------
+
+export interface RecentEnrollment {
+  id: string
+  studentName: string
+  avatarUrl: string
+  courseTitle: string
+  enrolledAt: string
+  amount: number
+}
+
 // ---- Instructor Analytics -----------------------------------
 
 export interface InstructorStats {
