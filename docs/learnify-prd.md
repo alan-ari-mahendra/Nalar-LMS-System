@@ -411,42 +411,41 @@ DRAFT → PENDING_REVIEW → PUBLISHED
 ### 7.2 Folder Structure
 
 ```
-src/
-├── app/
-│   ├── (marketing)/          # landing, courses catalog — no auth layout
-│   │   ├── layout.tsx
-│   │   ├── page.tsx
-│   │   └── courses/
-│   │       ├── page.tsx
-│   │       └── [slug]/page.tsx
-│   ├── (player)/             # fullscreen layout (no navbar)
-│   │   ├── layout.tsx
-│   │   └── learn/[courseId]/[lessonId]/page.tsx
-│   ├── (dashboard)/          # shared dashboard sidebar layout
-│   │   ├── layout.tsx
-│   │   ├── dashboard/page.tsx
-│   │   └── dashboard/instructor/page.tsx
-│   ├── auth/
-│   │   ├── login/page.tsx
-│   │   └── register/page.tsx
-│   └── certificate/[verifyCode]/page.tsx
-├── components/
-│   ├── ui/                   # shadcn primitives only
-│   ├── marketing/            # navbar, hero, footer, sections
-│   ├── course/               # course-card, player, curriculum-sidebar
-│   ├── dashboard/            # stats-card, revenue-chart, course-table
-│   └── shared/               # avatar, rating-stars, progress-bar
-├── mock/
-│   └── data.ts               # ALL mock data — active in Phase 1-2
-├── types/
-│   └── index.ts              # shared TypeScript types
-└── lib/
-    └── utils.ts              # cn(), shared formatters
+app/
+├── (marketing)/          # landing, courses catalog — no auth layout
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── courses/
+│       ├── page.tsx
+│       └── [slug]/page.tsx
+├── (player)/             # fullscreen layout (no navbar)
+│   ├── layout.tsx
+│   └── learn/[courseId]/[lessonId]/page.tsx
+├── (dashboard)/          # shared dashboard sidebar layout
+│   ├── layout.tsx
+│   ├── dashboard/page.tsx
+│   └── dashboard/instructor/page.tsx
+├── auth/
+│   ├── login/page.tsx
+│   └── register/page.tsx
+└── certificate/[verifyCode]/page.tsx
+components/
+├── ui/                   # shadcn primitives only
+├── marketing/            # navbar, hero, footer, sections
+├── course/               # course-card, player, curriculum-sidebar
+├── dashboard/            # stats-card, revenue-chart, course-table
+└── shared/               # avatar, rating-stars, progress-bar
+mock/
+└── data.ts               # ALL mock data — active in Phase 1-2
+type/
+└── index.ts              # shared TypeScript types
+lib/
+└── utils.ts              # cn(), shared formatters
 
 # Folders added in Phase 3 (API integration):
-# src/actions/               (course.ts, enrollment.ts, progress.ts, quiz.ts)
-# src/lib/prisma.ts
-# src/lib/supabase/          (client.ts, server.ts)
+# actions/               (course.ts, enrollment.ts, progress.ts, quiz.ts)
+# lib/prisma.ts
+# lib/supabase/          (client.ts, server.ts)
 # prisma/schema.prisma
 ```
 
@@ -587,9 +586,9 @@ The following features are intentionally excluded from v1 to keep scope manageab
 - [ ] Install dependencies: lucide-react, recharts, next/font
 - [ ] Configure `next.config.js` image domains (unsplash, dicebear)
 - [ ] Add Obsidian theme colors to `tailwind.config.ts`
-- [ ] Create `src/types/index.ts` (all shared types)
-- [ ] Create `src/mock/data.ts` (all mock data + helper functions)
-- [ ] Create `src/lib/utils.ts` with `cn()` helper
+- [ ] Create `type/index.ts` (all shared types)
+- [ ] Create `mock/data.ts` (all mock data + helper functions)
+- [ ] Create `lib/utils.ts` with `cn()` helper
 - [ ] Build base layouts: `(marketing)`, `(dashboard)`, `(player)`
 - [ ] Stub all routes with placeholder pages (no 404s)
 - [ ] Place `CLAUDE.md` at project root
@@ -624,7 +623,7 @@ The following features are intentionally excluded from v1 to keep scope manageab
 - [ ] Prisma schema + migrations (`prisma/schema.prisma`)
 - [ ] Supabase `handle_new_user` trigger for auto Profile creation
 - [ ] RLS policies on all tables
-- [ ] `src/lib/prisma.ts` and `src/lib/supabase/` setup
+- [ ] `lib/prisma.ts` and `lib/supabase/` setup
 - [ ] Auth flow: register, login, session via Supabase Auth
 - [ ] `middleware.ts` with role-based route protection
 - [ ] Replace mock data with server actions one page at a time:
@@ -674,7 +673,7 @@ The `CLAUDE.md` at project root governs all Claude Code behavior. Full file is m
 
 **UI Phase (current):**
 - All data from `@/mock/data.ts` — no DB queries, no server actions, no API calls
-- Types from `@/types` — never use `any`
+- Types from `@/type` — never use `any`
 - Images via `next/image`, navigation via `next/link`
 - Match Obsidian colors exactly (Section 4.2)
 - Every component needs loading skeleton and empty state
