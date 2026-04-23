@@ -1,26 +1,88 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ============================================================
+   Obsidian Design System — Tailwind v4 Theme
+   ============================================================ */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Fonts */
+  --font-sans: var(--font-geist-sans), "Geist", system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), "Geist Mono", monospace;
+  --font-headline: var(--font-geist-sans), "Geist", system-ui, sans-serif;
+  --font-body: var(--font-geist-sans), "Geist", system-ui, sans-serif;
+  --font-label: var(--font-geist-sans), "Geist", system-ui, sans-serif;
+
+  /* Core colors — Obsidian theme */
+  --color-primary: #a78bfa;
+  --color-primary-container: #7c3aed;
+  --color-primary-fixed: #ede9fe;
+  --color-primary-fixed-dim: #c4b5fd;
+  --color-on-primary: #0a0012;
+  --color-on-primary-container: #ede9fe;
+
+  --color-background: #09090b;
+  --color-on-background: #fafafa;
+
+  --color-surface: #0c0c0f;
+  --color-surface-dim: #0c0c0f;
+  --color-surface-bright: #18181b;
+  --color-surface-variant: #18181b;
+  --color-surface-container-lowest: #09090b;
+  --color-surface-container-low: #0f0f12;
+  --color-surface-container: #121215;
+  --color-surface-container-high: #18181b;
+  --color-surface-container-highest: #1e1e22;
+  --color-on-surface: #fafafa;
+  --color-on-surface-variant: #a1a1aa;
+
+  --color-outline: #52525b;
+  --color-outline-variant: #27272a;
+
+  --color-tertiary: #34d399;
+  --color-tertiary-container: #065f46;
+  --color-on-tertiary-container: #bbf7d0;
+
+  --color-secondary: #71717a;
+  --color-secondary-container: #27272a;
+  --color-on-secondary-container: #a1a1aa;
+
+  --color-error: #ef4444;
+  --color-error-container: #3b1111;
+  --color-on-error-container: #fca5a5;
+
+  /* Border radius */
+  --radius: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ============================================================
+   Base styles
+   ============================================================ */
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  background-color: #09090b;
+  color: #fafafa;
+}
+
+/* ============================================================
+   Utility classes
+   ============================================================ */
+
+/* Hero grid dot pattern */
+.grid-bg {
+  background-image: radial-gradient(#27272a 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Dotted connecting line (How It Works section) */
+.dotted-line {
+  background-image: radial-gradient(circle, #52525b 1px, transparent 1px);
+  background-size: 8px 8px;
+}
+
+/* Material Symbols size override utility */
+.material-symbols-outlined {
+  font-size: 20px;
 }
