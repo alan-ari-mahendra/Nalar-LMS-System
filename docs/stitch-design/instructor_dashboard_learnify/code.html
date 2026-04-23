@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Instructor Dashboard | Obsidian LMS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#09090b",
+                        "on-primary-fixed-variant": "#5b21b6",
+                        "primary-fixed": "#ede9fe",
+                        "on-tertiary": "#001a12",
+                        "inverse-surface": "#fafafa",
+                        "tertiary": "#34d399",
+                        "surface-container-lowest": "#09090b",
+                        "outline": "#52525b",
+                        "on-secondary-fixed": "#18181b",
+                        "surface-bright": "#18181b",
+                        "background": "#09090b",
+                        "surface-tint": "#a78bfa",
+                        "secondary": "#71717a",
+                        "on-primary": "#0a0012",
+                        "primary-container": "#7c3aed",
+                        "tertiary-container": "#065f46",
+                        "on-error": "#1a0000",
+                        "inverse-primary": "#5b21b6",
+                        "error": "#ef4444",
+                        "surface": "#0c0c0f",
+                        "surface-container-highest": "#1e1e22",
+                        "primary": "#a78bfa",
+                        "on-surface-variant": "#a1a1aa",
+                        "on-tertiary-fixed-variant": "#047857",
+                        "on-error-container": "#fca5a5",
+                        "tertiary-fixed-dim": "#6ee7b7",
+                        "surface-dim": "#0c0c0f",
+                        "tertiary-fixed": "#bbf7d0",
+                        "on-primary-fixed": "#2e1065",
+                        "error-container": "#3b1111",
+                        "on-primary-container": "#ede9fe",
+                        "inverse-on-surface": "#09090b",
+                        "surface-container": "#121215",
+                        "on-tertiary-container": "#bbf7d0",
+                        "surface-variant": "#18181b",
+                        "surface-container-high": "#18181b",
+                        "on-tertiary-fixed": "#003318",
+                        "primary-fixed-dim": "#c4b5fd",
+                        "on-background": "#fafafa",
+                        "secondary-fixed-dim": "#71717a",
+                        "on-secondary-container": "#a1a1aa",
+                        "secondary-fixed": "#a1a1aa",
+                        "secondary-container": "#27272a",
+                        "outline-variant": "#27272a",
+                        "on-surface": "#fafafa",
+                        "surface-container-low": "#0f0f12",
+                        "on-secondary-fixed-variant": "#3f3f46"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Geist"],
+                        "body": ["Geist"],
+                        "label": ["Geist"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Geist', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- SideNavBar Integration -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-[#09090b] border-r border-[#27272a] flex flex-col z-50">
+<div class="px-6 py-8">
+<div class="flex items-center gap-2 mb-10">
+<div class="w-8 h-8 bg-primary-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container text-lg" style="font-variation-settings: 'FILL' 1;">terminal</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xl font-bold text-[#fafafa] tracking-tighter">Obsidian LMS</span>
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant">Instructor Portal</span>
+</div>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-[#a78bfa] border-r-2 border-[#a78bfa] bg-[#0c0c0f] transition-colors font-['Geist'] tracking-tight" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span>Overview</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#a1a1aa] hover:bg-[#18181b] hover:text-[#fafafa] transition-colors font-['Geist'] tracking-tight" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span>My Courses</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#a1a1aa] hover:bg-[#18181b] hover:text-[#fafafa] transition-colors font-['Geist'] tracking-tight" href="#">
+<span class="material-symbols-outlined">group</span>
+<span>Students</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#a1a1aa] hover:bg-[#18181b] hover:text-[#fafafa] transition-colors font-['Geist'] tracking-tight" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span>Revenue</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#a1a1aa] hover:bg-[#18181b] hover:text-[#fafafa] transition-colors font-['Geist'] tracking-tight" href="#">
+<span class="material-symbols-outlined">star</span>
+<span>Reviews</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#a1a1aa] hover:bg-[#18181b] hover:text-[#fafafa] transition-colors font-['Geist'] tracking-tight" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto p-6 border-t border-[#27272a]">
+<div class="flex items-center gap-3">
+<img alt="Instructor Profile" class="w-10 h-10 rounded-full border border-outline-variant object-cover" data-alt="Professional portrait of a male instructor with a friendly smile, dark studio background, high-end photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC240ZZVe_isAlDBsTP8rYbvQyHw4lQL4qDcNd-JyAhHBbbSDsT91baz2KFhfT0kQN-sopURhQP2nUVLDwlni_Ek5oAc3xIdiMto0BIXpX7Y4N8LPfYa7C7NGJjuwNISv9P3sFsO1ULWVpqF-xSYwDlVlm0y0CZP8n55n6baH5OL00VH0gIRrQl4QHv2Uf1iAElPW5QlKxN54JC19eQnPxaT0nEkjJ_uGIFMelsLkZBwZxiGtEGPB-kKHS_jOqOaUickOq6tIKfKUM"/>
+<div>
+<div class="text-sm font-bold text-on-surface">Alex Rivera</div>
+<div class="text-xs text-on-surface-variant">Senior Developer</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 flex-1">
+<!-- TopNavBar Integration -->
+<header class="sticky top-0 z-40 bg-[#09090b]/80 backdrop-blur-md border-b border-[#27272a] flex justify-between items-center px-8 py-4">
+<div class="flex items-center gap-4">
+<h1 class="text-lg font-bold text-[#fafafa] font-['Geist'] tracking-tight">Dashboard</h1>
+<div class="relative group">
+<span class="absolute inset-y-0 left-3 flex items-center text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">search</span>
+</span>
+<input class="bg-surface-container border border-outline-variant rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none w-64 transition-all" placeholder="Search courses or students..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<button class="text-[#a1a1aa] hover:text-[#fafafa] transition-all duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-[#a1a1aa] hover:text-[#fafafa] transition-all duration-200">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+<button class="bg-primary hover:bg-primary-container text-on-primary font-bold px-6 py-2 rounded-lg text-sm transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                    Create New Course
+                </button>
+</div>
+</header>
+<!-- Canvas -->
+<div class="p-8 space-y-8">
+<!-- Bento Stats Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-surface-container border border-outline-variant p-6 rounded-xl">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary-container/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">payments</span>
+</div>
+<span class="text-tertiary text-xs font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                            +12%
+                        </span>
+</div>
+<div class="text-on-surface-variant text-sm font-medium">Total Revenue</div>
+<div class="text-2xl font-bold mt-1">Rp 14,200,000</div>
+<div class="text-[10px] text-on-surface-variant mt-2">v.s. Rp 12.6M last month</div>
+</div>
+<div class="bg-surface-container border border-outline-variant p-6 rounded-xl">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary-container/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">group</span>
+</div>
+<span class="text-tertiary text-xs font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+                            +34
+                        </span>
+</div>
+<div class="text-on-surface-variant text-sm font-medium">Total Students</div>
+<div class="text-2xl font-bold mt-1">842</div>
+<div class="text-[10px] text-on-surface-variant mt-2">New registrations this week</div>
+</div>
+<div class="bg-surface-container border border-outline-variant p-6 rounded-xl">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary-container/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">menu_book</span>
+</div>
+</div>
+<div class="text-on-surface-variant text-sm font-medium">Active Courses</div>
+<div class="text-2xl font-bold mt-1">6</div>
+<div class="text-[10px] text-on-surface-variant mt-2">2 courses in draft mode</div>
+</div>
+<div class="bg-surface-container border border-outline-variant p-6 rounded-xl">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary-container/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">star</span>
+</div>
+<span class="text-on-surface-variant text-xs font-medium">452 reviews</span>
+</div>
+<div class="text-on-surface-variant text-sm font-medium">Avg. Rating</div>
+<div class="text-2xl font-bold mt-1 flex items-center gap-2">
+                        4.8
+                        <div class="flex">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 0.5;">star_half</span>
+</div>
+</div>
+<div class="text-[10px] text-on-surface-variant mt-2">Top 1% of instructors</div>
+</div>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Revenue Chart Simulation -->
+<section class="lg:col-span-2 bg-surface-container border border-outline-variant p-8 rounded-xl">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h3 class="text-lg font-bold">Revenue Insights</h3>
+<p class="text-sm text-on-surface-variant">Monthly earnings overview</p>
+</div>
+<select class="bg-surface border border-outline-variant rounded-lg text-xs px-3 py-1.5 focus:ring-1 focus:ring-primary outline-none">
+<option>Last 6 Months</option>
+<option>Last Year</option>
+</select>
+</div>
+<div class="h-64 relative flex items-end justify-between px-2 pt-4 border-l border-b border-outline-variant">
+<!-- Simulated Chart Grid -->
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none pr-2 pb-1">
+<div class="border-t border-[#27272a] w-full"></div>
+<div class="border-t border-[#27272a] w-full"></div>
+<div class="border-t border-[#27272a] w-full"></div>
+<div class="border-t border-[#27272a] w-full"></div>
+</div>
+<!-- Simulated Bars/Lines via SVG or Divs -->
+<div class="relative w-full h-full flex items-end justify-around">
+<div class="w-12 bg-primary-container/20 border-t-2 border-primary rounded-t-sm h-[40%] group relative">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-surface-container-highest px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">Rp 1.2M</div>
+</div>
+<div class="w-12 bg-primary-container/20 border-t-2 border-primary rounded-t-sm h-[55%] group relative">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-surface-container-highest px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">Rp 1.8M</div>
+</div>
+<div class="w-12 bg-primary-container/20 border-t-2 border-primary rounded-t-sm h-[75%] group relative">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-surface-container-highest px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">Rp 2.4M</div>
+</div>
+<div class="w-12 bg-primary-container/20 border-t-2 border-primary rounded-t-sm h-[65%] group relative">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-surface-container-highest px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">Rp 2.1M</div>
+</div>
+<div class="w-12 bg-primary-container/20 border-t-2 border-primary rounded-t-sm h-[85%] group relative">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-surface-container-highest px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">Rp 2.9M</div>
+</div>
+<div class="w-12 bg-primary rounded-t-sm h-[95%] group relative">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-surface-container-highest px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">Rp 3.8M</div>
+</div>
+</div>
+</div>
+<div class="flex justify-between mt-4 text-[10px] text-on-surface-variant font-medium px-4">
+<span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MAY</span><span>JUN</span>
+</div>
+</section>
+<!-- Recent Enrollments -->
+<section class="bg-surface-container border border-outline-variant p-6 rounded-xl flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-bold">Recent Enrollments</h3>
+<button class="text-primary text-xs hover:underline">View All</button>
+</div>
+<div class="space-y-5 overflow-y-auto pr-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full border border-outline-variant object-cover" data-alt="Candid street portrait of a young man with glasses, cinematic natural lighting, urban setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBB1zDfaTWsMR8ekr4BdgXgI8dGo7QUgvhKWHGCfgyB0Taw4EA6NLDGvbE7cyXfyiIJfrmA3bymCxkEXoQCpJy45FSKNMiqFSvt6x7sGDk9M7vQ5xdmJwL4h_YrXcKfg2_JijyUK4KJw8Mm0k6n4k6q1jCLKTlJPgWhvU0cML1BZ4rtUq4uf-obNJpJxup6SoTFlmSeJeZ8yP9UlvMm0cX3LtXdWgsDFmdsQz1vC1G-4uknzR0aE_tnkBdldIIKs_jxR6MuWv1j804"/>
+<div>
+<div class="text-sm font-bold">Liam Smith</div>
+<div class="text-[10px] text-on-surface-variant">Full Stack Mastery</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-xs font-bold text-tertiary">Rp 450,000</div>
+<div class="text-[9px] text-on-surface-variant">2h ago</div>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full border border-outline-variant object-cover" data-alt="Headshot of a smiling woman with curly hair, vibrant soft lighting, modern professional aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZFicHHT1PSjB93UbWaD5MROW_TiQXh5-GVmYhYxU_M1Jy1AWnodnw9-rIQBNNSQYJGryJqRmDsUj9laaSdHfj8HNMGJ_ra2azLzuormzAeL7jVMk7T42XULWk9H5vxz5psFbD0sYKXg8nzYlaVjX5OrGP23kr29W-_ETFkdV4jDwxj3t7168geogVHUw3yba9YkU3Es4ALMwKRhZ0R9K2wnmFGX_ctcNO8kW8-494oYqYja3dCS3TnFYwK37g68_mlCD-igxxChw"/>
+<div>
+<div class="text-sm font-bold">Sarah Chen</div>
+<div class="text-[10px] text-on-surface-variant">Advanced React Patterns</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-xs font-bold text-tertiary">Rp 890,000</div>
+<div class="text-[9px] text-on-surface-variant">5h ago</div>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full border border-outline-variant object-cover" data-alt="Portrait of a person with minimalist features, soft diffused studio light, clean dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEBTPZTRBiMxQJZmDuXG61Gz70KsvU4teLPULkzUniSPU20xE1bGch374kxNMWhwvw7SwPP1xz_jhu0Gv3DD7P6vYxqdIvfJdwN3zqPACKDv-o390utpxvzTXPauYXYioApWkwKUAl3UFeOwti-mbURuj-P697sff2xtZ6GMEmLWpiDUqmhK6Vkd90L_frFgBEhWe8vzquuOlTOP-Eh9AJAoYwxk_TUC7bUbgvo0XTVco_dmosvhWUl0h1x6fYl_L4fUkeehjYsT0"/>
+<div>
+<div class="text-sm font-bold">Marcus Thorne</div>
+<div class="text-[10px] text-on-surface-variant">Python for DevOps</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-xs font-bold text-tertiary">Rp 520,000</div>
+<div class="text-[9px] text-on-surface-variant">Yesterday</div>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full border border-outline-variant object-cover" data-alt="Young woman looking thoughtfully into camera, golden hour soft lighting, artistic outdoor focus" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiQg_xAiTOVylCYnIZV5UZA-XY2Rftn8Xpuq8LifFxZsSMkNohMfj4iKVYcIem4luQjU3MzlNhPFhb32slePZi7s72xIf21sNOJ-EzGonKmy1hDrsnRO5xYR2O2UHjE05bKwmgzikVGokaPn9WCgzc9mQb_m2nQWkD2lD2zZR6vVUVZm0NrGwkYDIojpiJXHRjvUIx2bj4ndQFrNbKAGwk5nBkveSMvvVRtFlthCbHpWAKCgN7PV0MQpfkwHAj0OHENErLIhhTeyM"/>
+<div>
+<div class="text-sm font-bold">Elena Kostic</div>
+<div class="text-[10px] text-on-surface-variant">UI/UX Figma Masterclass</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-xs font-bold text-tertiary">Rp 1,200,000</div>
+<div class="text-[9px] text-on-surface-variant">2 days ago</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Course Performance Table -->
+<section class="bg-surface-container border border-outline-variant rounded-xl overflow-hidden">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center">
+<h3 class="font-bold">Course Performance</h3>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 bg-surface border border-outline-variant rounded text-xs hover:bg-surface-variant transition-colors">Export CSV</button>
+<button class="px-3 py-1.5 bg-surface border border-outline-variant rounded text-xs hover:bg-surface-variant transition-colors">Filter</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high/50 text-[11px] uppercase tracking-wider text-on-surface-variant">
+<th class="px-6 py-4 font-semibold">Course Name</th>
+<th class="px-6 py-4 font-semibold">Students</th>
+<th class="px-6 py-4 font-semibold">Rating</th>
+<th class="px-6 py-4 font-semibold">Revenue</th>
+<th class="px-6 py-4 font-semibold">Status</th>
+<th class="px-6 py-4 font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-variant/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-[#1e1e22] flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-sm">javascript</span>
+</div>
+<span class="text-sm font-medium">Modern JS: Zero to Pro</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">342</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1 text-sm">
+<span class="material-symbols-outlined text-primary text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                        4.9
+                                    </div>
+</td>
+<td class="px-6 py-4 text-sm font-medium">Rp 6,840,000</td>
+<td class="px-6 py-4">
+<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-tertiary-container/20 text-tertiary border border-tertiary/20">Published</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-3">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg">analytics</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-variant/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-[#1e1e22] flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-sm">storage</span>
+</div>
+<span class="text-sm font-medium">Database Design Fundamentals</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">188</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1 text-sm">
+<span class="material-symbols-outlined text-primary text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                        4.7
+                                    </div>
+</td>
+<td class="px-6 py-4 text-sm font-medium">Rp 2,140,000</td>
+<td class="px-6 py-4">
+<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-tertiary-container/20 text-tertiary border border-tertiary/20">Published</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-3">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg">analytics</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-variant/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-[#1e1e22] flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-sm">security</span>
+</div>
+<span class="text-sm font-medium">Ethical Hacking: The Basics</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">312</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1 text-sm">
+<span class="material-symbols-outlined text-primary text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                        4.8
+                                    </div>
+</td>
+<td class="px-6 py-4 text-sm font-medium">Rp 5,220,000</td>
+<td class="px-6 py-4">
+<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-secondary-container text-secondary border border-outline-variant">Draft</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-3">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg">analytics</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Recent Reviews -->
+<section class="space-y-4">
+<div class="flex justify-between items-center">
+<h3 class="font-bold">Latest Reviews</h3>
+<button class="text-on-surface-variant text-xs hover:text-primary">Manage Reviews</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+<div class="bg-surface-container border border-outline-variant p-5 rounded-xl">
+<div class="flex items-center gap-3 mb-4">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Middle-aged businessman portrait, subtle executive lighting, blurred office background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCATVn0ezVRQ2K5uOiXozwIWuDNOMksGF0kyyCgMGch518aH5XbN-JEFUwN0Ayv3VuEO4EIL_g7oxzfnTbUqZL2Y7ZKYQETv0-9qxed75L0ck9YelC1g2Dp7z3F2md73mKCkbGC2TSQTuoI6I0pFaPrFfzmAEU15gh49FiloQd01q_5xEZ8WhRmuBPKCCzBQ3HCZ3Cu8pPNsOMUQS2toaPvGD_wInaA93T2Ffg9h6os0r28cNczhTDMHcaKER_gp-1es5Y7_5SlG_I"/>
+<div>
+<div class="text-sm font-bold">David Miller</div>
+<div class="text-[10px] text-on-surface-variant">Modern JS: Zero to Pro</div>
+</div>
+</div>
+<div class="flex text-primary mb-2">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-xs text-on-surface-variant line-clamp-2 italic mb-4 leading-relaxed">
+                            "Excellent course! The explanations are crystal clear and the projects are very practical."
+                        </p>
+<button class="w-full py-2 bg-surface hover:bg-surface-variant border border-outline-variant rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors">Reply</button>
+</div>
+<div class="bg-surface-container border border-outline-variant p-5 rounded-xl">
+<div class="flex items-center gap-3 mb-4">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Close-up portrait of a woman with freckles, natural window light, artistic and intimate mood" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCG1oPSdzMPreLoaQpspv8EJet08dc3gjwrgf8beH4XtYQ2A0-Lru9Jql-z9D8ZcSs5xQaPhH0kavSwDJWIoBJsq6rUBY_tkX1LB3S537tOwCEv5l6ZgNUFEWzvhRrszq-K7yyVyStic6bc9H4PX6yboofCh8LcqVt4j3LD7o2VI83vy-Lw-hTvqQoZ6sNrm5IwsC85BIJ_Gw58lBVv0LVL1rNB80b_DAXD7lbG688Ie4dv9FM9-H6DQIJkT7WNl-0J1I9OquNkOhw"/>
+<div>
+<div class="text-sm font-bold">Sophie Turner</div>
+<div class="text-[10px] text-on-surface-variant">UI/UX Masterclass</div>
+</div>
+</div>
+<div class="flex text-primary mb-2">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs">star</span>
+</div>
+<p class="text-xs text-on-surface-variant line-clamp-2 italic mb-4 leading-relaxed">
+                            "Really enjoyed the Figma sections. I wish there was more about design handoff though."
+                        </p>
+<button class="w-full py-2 bg-surface hover:bg-surface-variant border border-outline-variant rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors">Reply</button>
+</div>
+<div class="bg-surface-container border border-outline-variant p-5 rounded-xl">
+<div class="flex items-center gap-3 mb-4">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Portrait of a young man with a slight beard, dramatic cinematic shadows, moody dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIAdPcb7O7Imw_KBTl6OYINnpshy-ClbNGDOKCkxIht3VDtFetcZvIiHtcS3n7hynCjpSTZrhGoRboVbcCFcfEtcYkxm9zAkDWuo0q778QLfuFqg0QGrNtWYYX2xekdVkyH8ZQOGtda6mQCcE8INLUSSs4KOeQntwuWI59ChG-7xKJUrszu6d3GJ3TmFVdNUTazVmQV3TnlnNIFmf--bUburHN77pszDFQUMOtJ-wkY1HGXTok4wwDk3ocB9FkEATquc80hoWOTh4"/>
+<div>
+<div class="text-sm font-bold">James Wilson</div>
+<div class="text-[10px] text-on-surface-variant">Python for DevOps</div>
+</div>
+</div>
+<div class="flex text-primary mb-2">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-xs text-on-surface-variant line-clamp-2 italic mb-4 leading-relaxed">
+                            "This course helped me automate my whole workflow. Best investment this year!"
+                        </p>
+<button class="w-full py-2 bg-surface hover:bg-surface-variant border border-outline-variant rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors">Reply</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>

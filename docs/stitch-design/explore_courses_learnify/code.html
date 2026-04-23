@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduVault | Explore Courses</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#18181b",
+                        "tertiary-container": "#065f46",
+                        "surface": "#0c0c0f",
+                        "primary": "#a78bfa",
+                        "on-secondary-container": "#a1a1aa",
+                        "on-secondary-fixed": "#18181b",
+                        "tertiary-fixed": "#bbf7d0",
+                        "on-tertiary-fixed-variant": "#047857",
+                        "surface-container-low": "#0f0f12",
+                        "on-secondary": "#09090b",
+                        "on-surface-variant": "#a1a1aa",
+                        "surface-container": "#121215",
+                        "surface-tint": "#a78bfa",
+                        "on-primary-fixed": "#2e1065",
+                        "surface-container-highest": "#1e1e22",
+                        "surface-container-lowest": "#09090b",
+                        "on-tertiary-fixed": "#003318",
+                        "surface-bright": "#18181b",
+                        "error-container": "#3b1111",
+                        "secondary-fixed": "#a1a1aa",
+                        "tertiary": "#34d399",
+                        "primary-container": "#7c3aed",
+                        "background": "#09090b",
+                        "secondary-container": "#27272a",
+                        "on-error": "#1a0000",
+                        "on-primary-fixed-variant": "#5b21b6",
+                        "on-surface": "#fafafa",
+                        "primary-fixed": "#ede9fe",
+                        "surface-dim": "#0c0c0f",
+                        "on-tertiary-container": "#bbf7d0",
+                        "on-background": "#fafafa",
+                        "inverse-surface": "#fafafa",
+                        "secondary": "#71717a",
+                        "outline": "#52525b",
+                        "on-primary": "#0a0012",
+                        "inverse-on-surface": "#09090b",
+                        "error": "#ef4444",
+                        "inverse-primary": "#5b21b6",
+                        "on-secondary-fixed-variant": "#3f3f46",
+                        "on-error-container": "#fca5a5",
+                        "on-primary-container": "#ede9fe",
+                        "tertiary-fixed-dim": "#6ee7b7",
+                        "on-tertiary": "#001a12",
+                        "surface-container-high": "#18181b",
+                        "secondary-fixed-dim": "#71717a",
+                        "primary-fixed-dim": "#c4b5fd",
+                        "outline-variant": "#27272a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Geist"],
+                        "body": ["Geist"],
+                        "label": ["Geist"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Geist', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background">
+<!-- TopNavBar -->
+<nav class="bg-zinc-950 dark:bg-zinc-950 border-b border-zinc-800 dark:border-zinc-800 docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center px-6 py-3 w-full max-w-screen-2xl mx-auto font-geist tracking-tight">
+<div class="text-xl font-black text-zinc-50 dark:text-zinc-50 flex items-center gap-2">
+<span class="material-symbols-outlined text-violet-400" data-icon="auto_awesome">auto_awesome</span>
+                EduVault
+            </div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-violet-400 border-b-2 border-violet-400 pb-1 transition-all" href="#">Browse</a>
+<a class="text-zinc-400 dark:text-zinc-400 hover:text-zinc-50 hover:bg-zinc-900 px-2 py-1 transition-all" href="#">My Courses</a>
+<a class="text-zinc-400 dark:text-zinc-400 hover:text-zinc-50 hover:bg-zinc-900 px-2 py-1 transition-all" href="#">Instructors</a>
+<a class="text-zinc-400 dark:text-zinc-400 hover:text-zinc-50 hover:bg-zinc-900 px-2 py-1 transition-all" href="#">Community</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-zinc-400 hover:text-zinc-50 scale-95 active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+</button>
+<button class="text-zinc-400 hover:text-zinc-50 scale-95 active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 overflow-hidden">
+<img alt="User profile" data-alt="Close up portrait of a young professional man with a friendly expression in clean studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWGtb_L-TkOOPco_OdJ1zC8xc8sdy56hegsP50LWMvrt8aPhV0Y6FkGdAgENa7UusOlOgDz4OVDGdsFIW0JCzqdXze_dNx49B4jwCIl-Zq4Rr8DBtedC4Bcdgo7jZbpYvz5UTh_LJE8-jTnZz45FItkf34ksaTolhiVo4r0rYzQUmUTSbq0hzZbc1YnowuntrnL0YE_O11qRUlkuTPDWKsJJ815SwduLNfSQC1UINyfPgZ7VhAAq9bRzarbGn8w15K1fixI4cKmcQ"/>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="max-w-screen-2xl mx-auto px-6 py-12">
+<!-- Header Section -->
+<header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h1 class="text-4xl md:text-5xl font-black tracking-tight text-on-surface mb-2">Explore Courses</h1>
+<p class="text-on-secondary-container">Showing 24 courses across all categories</p>
+</div>
+<div class="w-full md:w-[400px] relative">
+<input class="w-full bg-surface-container border border-outline-variant rounded-lg px-12 py-3 focus:outline-none focus:ring-2 focus:ring-primary text-on-surface placeholder:text-outline" placeholder="Search courses, skills, or authors..." type="text"/>
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+</div>
+</header>
+<div class="flex flex-col md:flex-row gap-8">
+<!-- Sticky Sidebar -->
+<aside class="w-full md:w-[260px] flex-shrink-0">
+<div class="sticky top-24 space-y-8">
+<div class="flex items-center justify-between">
+<h2 class="font-bold text-lg text-on-surface">Filters</h2>
+<button class="text-xs font-semibold text-primary uppercase tracking-wider hover:underline">Clear all</button>
+</div>
+<!-- Category Filter -->
+<div class="space-y-3">
+<h3 class="text-sm font-semibold text-on-secondary-container uppercase tracking-widest">Category</h3>
+<div class="space-y-2">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="form-checkbox bg-surface-container-highest border-outline-variant rounded text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-on-surface group-hover:text-primary transition-colors">Web Development</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="form-checkbox bg-surface-container-highest border-outline-variant rounded text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-on-surface group-hover:text-primary transition-colors">UI/UX Design</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="form-checkbox bg-surface-container-highest border-outline-variant rounded text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-on-surface group-hover:text-primary transition-colors">Data Science</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="form-checkbox bg-surface-container-highest border-outline-variant rounded text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-on-surface group-hover:text-primary transition-colors">Mobile Dev</span>
+</label>
+</div>
+</div>
+<!-- Level Filter -->
+<div class="space-y-3">
+<h3 class="text-sm font-semibold text-on-secondary-container uppercase tracking-widest">Level</h3>
+<div class="space-y-2">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="form-radio bg-surface-container-highest border-outline-variant text-primary focus:ring-primary" name="level" type="radio"/>
+<span class="text-on-surface">All Levels</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="form-radio bg-surface-container-highest border-outline-variant text-primary focus:ring-primary" name="level" type="radio"/>
+<span class="text-on-surface">Beginner</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="form-radio bg-surface-container-highest border-outline-variant text-primary focus:ring-primary" name="level" type="radio"/>
+<span class="text-on-surface">Intermediate</span>
+</label>
+</div>
+</div>
+<!-- Rating Filter -->
+<div class="space-y-3">
+<h3 class="text-sm font-semibold text-on-secondary-container uppercase tracking-widest">Rating</h3>
+<div class="space-y-2">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="form-checkbox bg-surface-container-highest border-outline-variant rounded text-primary focus:ring-primary" type="checkbox"/>
+<div class="flex items-center text-on-surface group-hover:text-primary transition-colors">
+                                    4.0 <span class="material-symbols-outlined text-[18px] ml-1" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span> &amp; up
+                                </div>
+</label>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Grid Area -->
+<section class="flex-grow">
+<div class="flex items-center justify-between mb-8 border-b border-outline-variant pb-4">
+<div class="flex gap-4">
+<button class="bg-surface-container-highest text-on-surface px-4 py-2 rounded-lg flex items-center gap-2 border border-outline-variant hover:border-primary transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="sort">sort</span>
+                            Sort by: Newest
+                        </button>
+</div>
+<div class="flex gap-2">
+<button class="p-2 bg-surface-container-highest text-primary border border-outline-variant rounded-lg">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+</button>
+<button class="p-2 text-on-secondary-container border border-transparent hover:border-outline-variant rounded-lg">
+<span class="material-symbols-outlined" data-icon="list">list</span>
+</button>
+</div>
+</div>
+<!-- Course Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<!-- Course Card 1 -->
+<div class="group bg-surface-container border border-outline-variant rounded-xl overflow-hidden hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(167,139,250,0.1)] hover:border-primary transition-all duration-300">
+<div class="aspect-video relative overflow-hidden">
+<img alt="Coding workspace" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Top-down view of a modern clean workspace with a laptop, keyboard, and blue ambient light on the code screens" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBytBondhpSAmfsC5zICib4T0CcYna-YcO0cjke2tJN6bsefsX-GKivuKhKHohf56Gdi9Ea8jSq403j88BvisWZCR1QnwXHHI5_1hkIfUsn_4vO8yD3M7m7or4V3joBQ3lltAggMVjgntfLrgFaxUxhCXx7q3_GGFTfBh1ByAoKcbrW4X-EX3puxeXRyEuOKNJyBy5E4yV8780GAH2bChBDD9hM2At6ez7-cz3_OfgdAcJqYUGApldPjThMjmOVBd2-gHlxX0xDmSg"/>
+<div class="absolute top-3 left-3 bg-zinc-950/80 backdrop-blur-md px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest text-primary border border-primary/20">Web Dev</div>
+</div>
+<div class="p-5 space-y-4">
+<h3 class="text-lg font-bold text-on-surface leading-tight line-clamp-2">Advanced React Patterns: Building Scaleable Systems</h3>
+<div class="flex items-center gap-3">
+<img alt="Instructor" class="w-8 h-8 rounded-full" data-alt="Professional studio headshot of a developer smiling against a dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhAusjqwW_Z6IAs8X9AosTKzGvObhUH8Ega6DYiongVbJfX35xxoC0MGAKlKQ8_QPLGmy7BLletcGxhVoFed0qpFg8-Lm1WOxN3CpN-01aQUlqm4L_EsbiCl9USCbWScWqTNf7gUKR0TV78I2B1Lf6QNqtzmmwlLu2vA0HZLugyuk8HvmGGsmwAaFBer8xVtvcQnYqvUn8zeaGKus2tIeqt9Gr5J1o0G1EBfyoeUPUEjEgEWst_aecXnagpCJvfl29hcUwPSpEiaE"/>
+<span class="text-sm text-on-secondary-container">Alex Rivera</span>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/30">
+<div class="flex items-center gap-1 text-tertiary">
+<span class="text-sm font-bold">4.9</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs text-on-secondary-container font-normal">(1.2k)</span>
+</div>
+<div class="text-on-surface font-bold">$89.99</div>
+</div>
+</div>
+</div>
+<!-- Course Card 2 -->
+<div class="group bg-surface-container border border-outline-variant rounded-xl overflow-hidden hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(167,139,250,0.1)] hover:border-primary transition-all duration-300">
+<div class="aspect-video relative overflow-hidden">
+<img alt="Design workflow" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Abstract colorful light streaks mimicking the path of a cursor over a digital user interface design wireframe" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3ihWVeTgZFCr8xHh_uYe3qutaWjY0GpmsHvo3HGvmcHtUJIBqikYxYDtAvCVGsEh-ajs2qja2RG0RJu6CfW_putl4lnza7V6AB6CLxxowiUQMLoOPUNk3XvCjbB2IE5DbXL6DtloOErWsLpiUOQPntxsnwzjQhqAadl_hYKzFauZGQ1-H87Oz05lOf_cQM48pmM8Abc15sCNsYrYRNQegBXL63X0H_8ZEh2ElLvjUk_CGSua24o2rwVzodwu1cgJ4wxO58fveKtM"/>
+<div class="absolute top-3 left-3 bg-zinc-950/80 backdrop-blur-md px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest text-primary border border-primary/20">UI/UX Design</div>
+</div>
+<div class="p-5 space-y-4">
+<h3 class="text-lg font-bold text-on-surface leading-tight line-clamp-2">Mastering Figma: From Wireframes to High-Fi Prototyping</h3>
+<div class="flex items-center gap-3">
+<img alt="Instructor" class="w-8 h-8 rounded-full" data-alt="Portrait of a young creative designer with glasses and a modern hairstyle in a bright office environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyGJf6_PB7uafRf-fdQyu9PLOfBnhnV9IRKuYbFdYa6JtC-jbAmrlm4_Z4X6nFgkP19L4ZnF0W2BnpfOPfNvg6tMnfro_YHhCip-gn21M-e7IHXI1wkJVgdBLRP1Ndgkic7n8ljbPKaU9eHoVmhbbdDe_liXQ_4qXmhg4cIwUmvzyooXrb6niuwcKU78pe1T3Sv0NKezSw7aKKKBH_jVBI7KkF8Xv41SG6zDQwmVHqCFZEXNaovccJckgHwHQ70UDfR_etXFgPciQ"/>
+<span class="text-sm text-on-secondary-container">Sarah Chen</span>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/30">
+<div class="flex items-center gap-1 text-tertiary">
+<span class="text-sm font-bold">4.8</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs text-on-secondary-container font-normal">(850)</span>
+</div>
+<div class="text-on-surface font-bold">$45.00</div>
+</div>
+</div>
+</div>
+<!-- Course Card 3 -->
+<div class="group bg-surface-container border border-outline-variant rounded-xl overflow-hidden hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(167,139,250,0.1)] hover:border-primary transition-all duration-300">
+<div class="aspect-video relative overflow-hidden">
+<img alt="Data visualization" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Futuristic data analysis interface with glowing charts, 3D bar graphs, and network nodes in deep violet and teal" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2Imbb7BjgDxAhGB-shOX_-M3pNamKJ1YJN3KqaIlD6IPESKRb9UqCLb4D-fmZvh9u5WyFJ7eTmnuRhFEd9UJv8-9YjrdSq87OvYlCN180HKMsLsl4O-czqTohkFvrpgRzjXivA7gd_iN8ZZ66DR3-tWgnj2rCQGKYRS6E5bCFCgoAv2b_nzp_tsfwnYpugMm6QR_LvZCk6FBpfHySR3oM2oRtXPLtPQw3DJzEh7MCMQSPFcZjHlXoeguw-ueoRvQePV7Z9UrWMbE"/>
+<div class="absolute top-3 left-3 bg-zinc-950/80 backdrop-blur-md px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest text-primary border border-primary/20">Data Science</div>
+</div>
+<div class="p-5 space-y-4">
+<h3 class="text-lg font-bold text-on-surface leading-tight line-clamp-2">Python for Data Analysis: The Complete 2024 Bootcamp</h3>
+<div class="flex items-center gap-3">
+<img alt="Instructor" class="w-8 h-8 rounded-full" data-alt="Confident mature instructor in professional attire with soft bokeh background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMmFeHl6mmTEk30Uv7n5go04RadTjczPRmV3Rqj_o3IOPW2XH_nQAsG7Vd_8GYFlu4giNbeWNKcKqo8sBKFeH3AUkoAiLuPH-OTfjPW0JJc7XRKF3il76u95-M2Xpzo1hK8saNfur8JM8w-Z_92GPh1QXgvWrG7XiZ7tf86xPt-sbhztV4PC0sy443S8ajMY7j_yGHPi4-tAz6h541aAmn1QFM00zQo9G0Sps8TDw8FGuBPIKYaCAuuUTMd5f-NZYo0zSzlsSsDH4"/>
+<span class="text-sm text-on-secondary-container">Dr. James Miller</span>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/30">
+<div class="flex items-center gap-1 text-tertiary">
+<span class="text-sm font-bold">5.0</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs text-on-secondary-container font-normal">(2.1k)</span>
+</div>
+<div class="text-primary font-bold">Free</div>
+</div>
+</div>
+</div>
+<!-- Course Card 4 -->
+<div class="group bg-surface-container border border-outline-variant rounded-xl overflow-hidden hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(167,139,250,0.1)] hover:border-primary transition-all duration-300">
+<div class="aspect-video relative overflow-hidden">
+<img alt="JavaScript" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Close-up of a code editor showing colorful React and JavaScript syntax on a dark screen background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDirRJOJPhl1sx0_x7w0nczpd793lTA_dfDjt2ysjoj834ca27slXNdmEo0kLzVpPkN2O5FvpEvDx1i_E_wE8ij3PSkgCu299gX4btBUR4I3-KgjtptYy_AeShncEXl_KNsAbIkQmD4yJ9eliDwgWq5fQqevoqHDZip2PLzIokJ2MaU8cHBeBwg6LagOV47OTqEp8YrkJAnVynrK4gEHtLvKUVJcWHybQ7h_gvAfNsfV0UIM7E-syFqnwai-mOvLgPcwmHjfIICQUM"/>
+<div class="absolute top-3 left-3 bg-zinc-950/80 backdrop-blur-md px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest text-primary border border-primary/20">Web Dev</div>
+</div>
+<div class="p-5 space-y-4">
+<h3 class="text-lg font-bold text-on-surface leading-tight line-clamp-2">Full-Stack Next.js 14: Server Components &amp; Beyond</h3>
+<div class="flex items-center gap-3">
+<img alt="Instructor" class="w-8 h-8 rounded-full" data-alt="Portrait of a female software engineer smiling, shot in soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpYes9C746Mm6iTnd1ocQ2JMRjgeUYMgx13AsLKiVaTkNyHVbnSQgVt4Q8fzbc_K01Jmp4hTN0HtBRYyR__P6S4zHFs5B3uzrqvugClj8ZO00hHEkalGEM50BhOlekR1qGnN1rLsADBiS17Y2edfR48lXRzNys2YsIqyiem05_6MHS-Bg4oMkpC1hHFfuW_tc8CV15QrzKOi9Al_DQZQLtLm0usRsoix1QC4cjpMzBp1upyiK_oGZ8QyjbhRLJWQXljHsn5cpeXY"/>
+<span class="text-sm text-on-secondary-container">Elena Sokolov</span>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/30">
+<div class="flex items-center gap-1 text-tertiary">
+<span class="text-sm font-bold">4.7</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs text-on-secondary-container font-normal">(430)</span>
+</div>
+<div class="text-on-surface font-bold">$129.99</div>
+</div>
+</div>
+</div>
+<!-- Course Card 5 -->
+<div class="group bg-surface-container border border-outline-variant rounded-xl overflow-hidden hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(167,139,250,0.1)] hover:border-primary transition-all duration-300">
+<div class="aspect-video relative overflow-hidden">
+<img alt="UI Design" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Clean and minimal aesthetic featuring geometric shapes and soft pastel glows representing UI design principles" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcxad0et1yTeSN4cOyP3ZjuysVhnAF2ZaR5Oiz1GVa3D1zkc_ZvLAbrsnyCGkXBaEl_D-C9zEm0lFgNOC4--Hk9zyvokfo2bRFwL7BcLSIQVgOZXO41FS_YJLPbZFapMRFaOFA3cj_CwUrMl47_arrdPnln95Wc_3ydK9oRDLnsLDktWWuPzgsTL10zu2J-yU2Wf2I0m2j5IA65hS85XbI9LcN7LB3bZL8l3ZN821OSQ8Lw8eRjzwxybtfJypex9XtAmlVyHAsFFk"/>
+<div class="absolute top-3 left-3 bg-zinc-950/80 backdrop-blur-md px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest text-primary border border-primary/20">UI/UX Design</div>
+</div>
+<div class="p-5 space-y-4">
+<h3 class="text-lg font-bold text-on-surface leading-tight line-clamp-2">Design Systems for Enterprise: Scale with Consistency</h3>
+<div class="flex items-center gap-3">
+<img alt="Instructor" class="w-8 h-8 rounded-full" data-alt="Headshot of a creative director with a focused and professional expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiBXihXYFS-Wtx4ykY1lOz8ZJdC5rOnYfL3Yk3mO-B2lynVdEy6hPvbqGSsvHppnzOJC2ilyU8Tqh6ec7K6Qr0ORq4hbUlHRTD3YVOCfE56TJ-fRAN6Kc8PoXxHyLA3Bvn8_1z8jUuCWgRXjZ85HKdaN7cKaOWiArz-hic41w1VDN5ys9SzOnFS1Wsfc28Kr6fCAMVvHIis4zMt-lJfGo8lCDrOZne4TRejCrD3HgWuodl2OKoyzsSizX6od6mbNwgJtjKQF1Enpg"/>
+<span class="text-sm text-on-secondary-container">David Wu</span>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/30">
+<div class="flex items-center gap-1 text-tertiary">
+<span class="text-sm font-bold">4.9</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs text-on-secondary-container font-normal">(560)</span>
+</div>
+<div class="text-on-surface font-bold">$94.00</div>
+</div>
+</div>
+</div>
+<!-- Course Card 6 -->
+<div class="group bg-surface-container border border-outline-variant rounded-xl overflow-hidden hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(167,139,250,0.1)] hover:border-primary transition-all duration-300">
+<div class="aspect-video relative overflow-hidden">
+<img alt="Machine Learning" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Conceptual visualization of a neural network with glowing connections and processing nodes in a dark space" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHkMB6Thv9cnRHDaewSkwuArtKdmQoc2pliJ0zZnqWnPfucjn3F99NGQQJkWOA65I7nvgiGVCQymi4bhKxarw8gmVoBYbJ4sJdhrdLVzwmFYSbRNarz7sghKxIvGktZXKLDVsremic9KBPQwvN_vf41kYTILZazSf75-CA40hymLqcmOXncL5XxPTIfHz63euNvLQm08yniKt1O0iqIfMYeZnVPwkTdakPrc-MpeXx5Ut_Sfdj1aAATj-5fGZl3cNPPQ6waGfK_Lc"/>
+<div class="absolute top-3 left-3 bg-zinc-950/80 backdrop-blur-md px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest text-primary border border-primary/20">Data Science</div>
+</div>
+<div class="p-5 space-y-4">
+<h3 class="text-lg font-bold text-on-surface leading-tight line-clamp-2">Machine Learning A-Z: Hands-On Python &amp; R In Data Science</h3>
+<div class="flex items-center gap-3">
+<img alt="Instructor" class="w-8 h-8 rounded-full" data-alt="Professional woman in a suit smiling, ideal for an educational platform profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDtPHm4n7_GwVj_yVUKDh3_BSRQtQ1Z_QWqkhpvLoHUXFy5zO9xhmpujhCFKXIopNU29uJdqCBbkbIARNpGlv4gnMQ2PPZIGexk4BRFkh36cu4P6Xg4SDoc2V2pStDWn0OQ0hFYF70V7CdV_cj_8hX0C6YYfkYyu-eYIZPizJwwiTlfOhRYEJrIAr3r3Gf_jWoQkItHXw7dLPRpTkpr60BUTenwq5lss-AUexzugk3DNmtACVwK21NEHzW2yNi0-O6_eQcy175Dkc"/>
+<span class="text-sm text-on-secondary-container">Maria Garcia</span>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/30">
+<div class="flex items-center gap-1 text-tertiary">
+<span class="text-sm font-bold">4.6</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs text-on-secondary-container font-normal">(3.4k)</span>
+</div>
+<div class="text-on-surface font-bold">$19.99</div>
+</div>
+</div>
+</div>
+<!-- Course Card 7 -->
+<div class="group bg-surface-container border border-outline-variant rounded-xl overflow-hidden hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(167,139,250,0.1)] hover:border-primary transition-all duration-300">
+<div class="aspect-video relative overflow-hidden">
+<img alt="Frontend" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Vibrant digital illustration of abstract shapes representing modern frontend frameworks like Vue and Angular" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjA1eiQfzpm3R3lpf8gFxTCZ_iQxJqdMV5_NhE8YsOzJpz5MvXt_7c30YRLkJF8AAmmiCtddMBEFOAI3CUwoTzV646-wvLwxE3-BCPwi3CUcJwFRRtcF3vfgA9pXV2PV31KmAx9Oiiz4rwxf8efB8oIVU2nPKHyhu_myq2DShxF_3zQP1TDKohOJNOXxQBBlSTUy86LPCav32EvVLSSCd6deowRoi3q0wisw3AMEEv-aQjVOoCt-G8dQtb7a8fWMhszAvsmOladQM"/>
+<div class="absolute top-3 left-3 bg-zinc-950/80 backdrop-blur-md px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest text-primary border border-primary/20">Web Dev</div>
+</div>
+<div class="p-5 space-y-4">
+<h3 class="text-lg font-bold text-on-surface leading-tight line-clamp-2">The Complete CSS Grid &amp; Flexbox Masterclass</h3>
+<div class="flex items-center gap-3">
+<img alt="Instructor" class="w-8 h-8 rounded-full" data-alt="Portrait of a male instructor with a warm smile and approachable look" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxZDzUQYuRFQeTl5EWgF-5oZUFDU9FN7bttKwx8Mw6MqDBPXLiUwI75maWLQGvKIkWZafHNEC6cVntw8G68G4q1wdIKBNF0GvY72rHYYNXY5qNN-LuGD0Maixmqv8DvNY5wc_B3lR6zZtVrAdNZhBOj0p9WYvryxBZUp_nV_vgxp4B5PsBsu5wSKlpmiSZO52ofYlJkdiEWTNliMhA4iVtrpAlC0rkpRLuCju-zQV3HHjf5GF3OF4ee37ESSlwR6WCPf-oUuYXdQQ"/>
+<span class="text-sm text-on-secondary-container">Marcus Thorne</span>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/30">
+<div class="flex items-center gap-1 text-tertiary">
+<span class="text-sm font-bold">4.9</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs text-on-secondary-container font-normal">(1.8k)</span>
+</div>
+<div class="text-primary font-bold">Free</div>
+</div>
+</div>
+</div>
+<!-- Course Card 8 -->
+<div class="group bg-surface-container border border-outline-variant rounded-xl overflow-hidden hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(167,139,250,0.1)] hover:border-primary transition-all duration-300">
+<div class="aspect-video relative overflow-hidden">
+<img alt="Mobile Dev" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Close-up of a high-end smartphone displaying a vibrant and modern mobile app user interface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSXu1kIQrAY1ejAHwTyj6yYnzDPxT0UwW6a--POalhs6wq6lEz9iAAtXMdZ6OP3XdFx-o1AJf3dDF5BJF7dvRQ5S18FckEGZjtByARoSeEK25Z_r5yeAMk3tW090jHSyJs8Ek48IqEzErpSITOnvdXcAlUI_NzR4uUsEBedW-V3onUoiBR3rSqkhBNErLd3uGbxUoasCzvIqFVs-N8K8_25zA1-emdoQnCm1KLtgcPtaBVjHU-M9r_rHJpL9qZBgjA6FMQQGI3u-A"/>
+<div class="absolute top-3 left-3 bg-zinc-950/80 backdrop-blur-md px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest text-primary border border-primary/20">Mobile Dev</div>
+</div>
+<div class="p-5 space-y-4">
+<h3 class="text-lg font-bold text-on-surface leading-tight line-clamp-2">SwiftUI Essentials: iOS 17 App Development</h3>
+<div class="flex items-center gap-3">
+<img alt="Instructor" class="w-8 h-8 rounded-full" data-alt="Studio portrait of a woman with modern style, expressive and professional" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoWvzMlOuyM-XuYyCTFKMQ67E4LnNvaHxmQOusjwFIbQuIPdik20qF_WEHuOAUNkPBs6eFoQWjuhsZzt4ahR4bRLwpRgyqmEZoEAagaGusrXj5AgsuZon6JfJsWb9VUWhikHGHp04Tyo6FJAPEhIwjD71DhZwSzFoQYFrIW7PZ2rYPut1lmnuPJcUWWMX5-a-5KHOic7euY7O8lg6VyCEXuWKQL3AuWru24wNMzmABxPSJZ0NldOQPaXbuWx91DnReWpucqTCzN3Q"/>
+<span class="text-sm text-on-secondary-container">Jessica Bell</span>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/30">
+<div class="flex items-center gap-1 text-tertiary">
+<span class="text-sm font-bold">4.8</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs text-on-secondary-container font-normal">(920)</span>
+</div>
+<div class="text-on-surface font-bold">$79.00</div>
+</div>
+</div>
+</div>
+<!-- Course Card 9 -->
+<div class="group bg-surface-container border border-outline-variant rounded-xl overflow-hidden hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(167,139,250,0.1)] hover:border-primary transition-all duration-300">
+<div class="aspect-video relative overflow-hidden">
+<img alt="Backend" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Dark abstract imagery of glowing server rack lines and data streams in a secure data center environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrgpbxb8JwO5JsVXu_bOGLFq7jV_um3qCEdm4CwLDSH28EcFBjGxg8rgjE_gt-5mz0x6N_2cyunG5Kt_DdzfFpKYw-SstW1OZcUhR9f-gL1KeQ-c1K8m9WATbl9XtwijuKGHJ3LtIWaqH0I6DeH7L-5zWXT8JDKbMh881w41RZ9e06j-0NnXel-qAeXNDM8xRHNnLzBEFm-9n_K7eLgY7j6nT3Vu5iSkolhKLeu6ybnyGxttAUhaP-YADyRsXEmsot2QwK9hgPIx8"/>
+<div class="absolute top-3 left-3 bg-zinc-950/80 backdrop-blur-md px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest text-primary border border-primary/20">DevOps</div>
+</div>
+<div class="p-5 space-y-4">
+<h3 class="text-lg font-bold text-on-surface leading-tight line-clamp-2">Kubernetes for Absolute Beginners: Go from Zero to Hero</h3>
+<div class="flex items-center gap-3">
+<img alt="Instructor" class="w-8 h-8 rounded-full" data-alt="Portrait of an experienced IT professional in business casual wear, looking confident" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQNu81bo1pzfPD_mDRVGUj6myBnA5ft5IX9xwPKaj9YxDzBBbo3TetP0a2HmHvbv43kxi8BKhviHFj5zx48GUSt-y695KKD5yUj4tZS-pdUhZI7Tn4ltka-uHJKkaOLDhnrpQa2MoD0MWcaimUkry-hqqqAvWYFsXmJwMEGnEEEuW-vbd5StoHKQ7IUgpy6PauI_x_Bt3-wObQGvJEzRkH0RB2mLjU8fhKUUYdFbq50zKsoWhePN2Cfhx1DcfXWILirm9zlLnD4Fk"/>
+<span class="text-sm text-on-secondary-container">Steve Rogers</span>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/30">
+<div class="flex items-center gap-1 text-tertiary">
+<span class="text-sm font-bold">4.5</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs text-on-secondary-container font-normal">(1.1k)</span>
+</div>
+<div class="text-on-surface font-bold">$109.99</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-16 flex justify-center items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface hover:border-primary transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-on-primary font-bold">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface hover:border-primary transition-colors">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface hover:border-primary transition-colors">3</button>
+<span class="text-outline mx-2">...</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface hover:border-primary transition-colors">8</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface hover:border-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-zinc-950 dark:bg-zinc-950 border-t border-zinc-800 dark:border-zinc-800 font-geist text-sm">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 w-full max-w-7xl mx-auto gap-8">
+<div class="flex flex-col items-center md:items-start gap-4">
+<div class="text-lg font-bold text-zinc-50 flex items-center gap-2">
+<span class="material-symbols-outlined text-violet-400" data-icon="auto_awesome">auto_awesome</span>
+                    EduVault
+                </div>
+<p class="text-zinc-500 dark:text-zinc-500 text-center md:text-left max-w-xs">Empowering the next generation of digital creators with precision-crafted learning paths.</p>
+<p class="text-zinc-500 dark:text-zinc-500 mt-2">© 2024 EduVault. Precision in Learning.</p>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-x-12 gap-y-4">
+<a class="text-zinc-500 dark:text-zinc-500 hover:text-zinc-300 transition-colors opacity-80 hover:opacity-100" href="#">Terms of Service</a>
+<a class="text-zinc-500 dark:text-zinc-500 hover:text-zinc-300 transition-colors opacity-80 hover:opacity-100" href="#">Privacy Policy</a>
+<a class="text-zinc-500 dark:text-zinc-500 hover:text-zinc-300 transition-colors opacity-80 hover:opacity-100" href="#">Help Center</a>
+<a class="text-zinc-500 dark:text-zinc-500 hover:text-zinc-300 transition-colors opacity-80 hover:opacity-100" href="#">API Status</a>
+</div>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center hover:bg-violet-400/10 hover:border-violet-400 transition-all text-zinc-400 hover:text-violet-400" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="public">public</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center hover:bg-violet-400/10 hover:border-violet-400 transition-all text-zinc-400 hover:text-violet-400" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="groups">groups</span>
+</a>
+</div>
+</div>
+</footer>
+</body></html>

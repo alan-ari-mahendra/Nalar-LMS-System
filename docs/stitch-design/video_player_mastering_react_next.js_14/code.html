@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Obsidian LMS - Mastering React &amp; Next.js 14</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#fafafa",
+                        "on-primary-fixed": "#2e1065",
+                        "secondary-fixed": "#a1a1aa",
+                        "outline": "#52525b",
+                        "surface-container-low": "#0f0f12",
+                        "background": "#09090b",
+                        "on-secondary-fixed": "#18181b",
+                        "tertiary-fixed-dim": "#6ee7b7",
+                        "surface-tint": "#a78bfa",
+                        "inverse-primary": "#5b21b6",
+                        "primary-fixed-dim": "#c4b5fd",
+                        "error-container": "#3b1111",
+                        "inverse-surface": "#fafafa",
+                        "surface-dim": "#0c0c0f",
+                        "surface-container-high": "#18181b",
+                        "on-tertiary-container": "#bbf7d0",
+                        "on-primary-fixed-variant": "#5b21b6",
+                        "surface": "#0c0c0f",
+                        "on-secondary": "#09090b",
+                        "on-error-container": "#fca5a5",
+                        "error": "#ef4444",
+                        "tertiary-fixed": "#bbf7d0",
+                        "secondary-container": "#27272a",
+                        "secondary-fixed-dim": "#71717a",
+                        "on-tertiary": "#001a12",
+                        "primary-container": "#7c3aed",
+                        "on-primary-container": "#ede9fe",
+                        "surface-container-lowest": "#09090b",
+                        "surface-bright": "#18181b",
+                        "secondary": "#71717a",
+                        "on-error": "#1a0000",
+                        "on-secondary-fixed-variant": "#3f3f46",
+                        "on-background": "#fafafa",
+                        "surface-variant": "#18181b",
+                        "on-secondary-container": "#a1a1aa",
+                        "surface-container-highest": "#1e1e22",
+                        "primary": "#a78bfa",
+                        "on-tertiary-fixed-variant": "#047857",
+                        "surface-container": "#121215",
+                        "on-tertiary-fixed": "#003318",
+                        "tertiary-container": "#065f46",
+                        "on-primary": "#0a0012",
+                        "primary-fixed": "#ede9fe",
+                        "outline-variant": "#27272a",
+                        "on-surface-variant": "#a1a1aa",
+                        "inverse-on-surface": "#09090b",
+                        "tertiary": "#34d399"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Geist"],
+                        "body": ["Geist"],
+                        "label": ["Geist"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Geist', sans-serif; background-color: #09090b; color: #fafafa; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0c0c0f; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
+    </style>
+</head>
+<body class="flex flex-col h-screen overflow-hidden">
+<!-- TopNavBar (Shared Component Translation) -->
+<header class="bg-[#09090b] text-[#a78bfa] font-geist tracking-tight docked full-width top-0 border-b border-[#27272a] flat no shadows flex justify-between items-center px-6 h-16 w-full shrink-0 z-50">
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center w-8 h-8 rounded-full hover:bg-[#18181b] transition-colors">
+<span class="material-symbols-outlined text-[#fafafa]">arrow_back</span>
+</button>
+<div class="flex flex-col">
+<span class="text-xl font-bold text-[#fafafa] leading-tight">Mastering React &amp; Next.js 14</span>
+</div>
+</div>
+<div class="hidden lg:flex items-center bg-[#18181b] px-4 py-1.5 rounded-full border border-[#27272a]">
+<span class="text-sm font-medium text-[#a1a1aa]">Module 4: Scalability - <span class="text-[#fafafa]">Systems Architecture at Scale</span></span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex flex-col items-end">
+<span class="text-xs text-[#a1a1aa] font-medium uppercase tracking-wider">Course Progress</span>
+<div class="flex items-center gap-3">
+<span class="text-sm font-bold text-[#fafafa]">12 / 42 lessons (28%)</span>
+<div class="w-24 h-1.5 bg-[#27272a] rounded-full overflow-hidden">
+<div class="bg-[#a78bfa] h-full w-[28%]"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="material-symbols-outlined text-[#a1a1aa] hover:text-[#fafafa] transition-colors">notifications</button>
+<button class="material-symbols-outlined text-[#a1a1aa] hover:text-[#fafafa] transition-colors">settings</button>
+</div>
+</div>
+</header>
+<main class="flex flex-1 overflow-hidden">
+<!-- Main Video Area -->
+<section class="flex-1 flex flex-col overflow-y-auto custom-scrollbar bg-[#09090b]">
+<!-- 16:9 Video Player -->
+<div class="relative w-full aspect-video bg-black group cursor-pointer">
+<img class="w-full h-full object-cover opacity-40" data-alt="Technical code background with glowing violet and blue accents, abstract lines representing data flow and system architecture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuHOPUfH1J9e-z6viFJCcuHYu-NgFVLCY9G5cNCnlXUr_bDAXmcYegHpKOlc2UzPJ_hb-nojqWuBxJzBGgsQ0WT9ay7tkFCZuh0x1FbokW_VNNB1fH8IxW-Che1xt7Zr7MF4bxPjPxToXZf8bMQIkYREdSsvrKoxYxQJlfgAbcRlLeXsUzQsVn03iSyhLGWvN9Lv0rUYpfOcDb327wSFFp5Wx_-b_Nms-T-OeBs0SMCFkymg5H09GrugacrOE72C76ktVuhvOvaNc"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-20 h-20 bg-primary/20 backdrop-blur-sm border-2 border-primary rounded-full flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300">
+<span class="material-symbols-outlined text-5xl" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+<!-- Hover Overlay Controls Preview -->
+<div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<!-- Content Details -->
+<div class="p-8 max-w-5xl mx-auto w-full">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+<div>
+<h1 class="text-3xl font-bold text-on-surface tracking-tight mb-2">Systems Architecture at Scale</h1>
+<p class="text-on-surface-variant">In this lesson, we explore how to handle millions of concurrent users using Next.js 14 and edge computing.</p>
+</div>
+<div class="flex items-center gap-4 shrink-0">
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 hover:brightness-110 transition-all">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                            Mark as Complete
+                        </button>
+<a class="text-primary font-medium hover:underline flex items-center gap-1.5" href="#">
+<span class="material-symbols-outlined text-sm">download</span>
+                            Resources
+                        </a>
+</div>
+</div>
+<!-- Interactive Tabs -->
+<div class="border-b border-outline-variant flex gap-8 mb-6">
+<button class="pb-4 text-primary border-b-2 border-primary font-bold">Overview</button>
+<button class="pb-4 text-on-surface-variant hover:text-on-surface transition-colors font-medium">Notes</button>
+<button class="pb-4 text-on-surface-variant hover:text-on-surface transition-colors font-medium">Discussion</button>
+</div>
+<!-- Tab Content: Overview -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="md:col-span-2 space-y-6">
+<div class="bg-surface-container rounded-xl p-6 border border-outline-variant">
+<h3 class="text-lg font-bold mb-4">Lesson Summary</h3>
+<p class="text-on-surface-variant leading-relaxed">
+                                Learn the fundamental principles of scaling web applications. We'll cover horizontal vs vertical scaling, the role of Content Delivery Networks (CDNs), and how Next.js features like Incremental Static Regeneration (ISR) contribute to high-performance systems at scale.
+                            </p>
+</div>
+<div class="space-y-4">
+<h3 class="text-lg font-bold">Key Topics Covered</h3>
+<ul class="space-y-3">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary mt-0.5">task_alt</span>
+<span class="text-on-surface-variant">Edge Runtime vs Node.js Runtime in Next.js</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary mt-0.5">task_alt</span>
+<span class="text-on-surface-variant">Global Database Replication strategies</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary mt-0.5">task_alt</span>
+<span class="text-on-surface-variant">Caching layers and Cache Invalidation patterns</span>
+</li>
+</ul>
+</div>
+</div>
+<div class="space-y-6">
+<div class="bg-surface-container-high rounded-xl p-6 border border-outline-variant">
+<h3 class="text-sm font-bold text-on-surface uppercase tracking-widest mb-4">Instructor</h3>
+<div class="flex items-center gap-4">
+<img class="w-12 h-12 rounded-full object-cover border border-outline" data-alt="Portrait of a senior software engineer with a friendly expression in a modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHQILk6PVBpf52vgPOHPkOa9VIyd0o12Ah69GZn-5mx_pHDL1CwOUz7VSlOXFPE77jXa0wELljPWipyDoIt-sKZ04WtgTdyJUxGLDN5iuMx5-nX0MBQsrRjRUd-USGPRhsAwF_3hlzYW8aW3RnMIHkvAB2JTClGII32fnbq0jEvOft3gm_wr_hRK3b2GT26KS26n6LGWNXyM_433Bqvl9Jfif6DmyrSj-urDTTE2SFi9mNjo4Q1gle8l3lR4tA4H-Qv5ClaspUuJo"/>
+<div>
+<p class="font-bold text-on-surface">Marcus Thorne</p>
+<p class="text-xs text-on-surface-variant">Staff Engineer @ Vercel</p>
+</div>
+</div>
+</div>
+<div class="bg-primary/5 rounded-xl p-6 border border-primary/20">
+<h3 class="text-sm font-bold text-primary uppercase tracking-widest mb-2">Assignment</h3>
+<p class="text-sm text-on-surface-variant mb-4">Build a global edge-cached API route using Upstash Redis.</p>
+<button class="w-full py-2 bg-primary/10 border border-primary/20 text-primary rounded-lg text-sm font-bold hover:bg-primary/20 transition-colors">
+                                View Details
+                            </button>
+</div>
+</div>
+</div>
+<!-- Bottom spacing for player bar -->
+<div class="h-32"></div>
+</div>
+</section>
+<!-- SideNavBar (Shared Component Translation) -->
+<aside class="bg-[#0c0c0f] text-[#a78bfa] font-geist text-sm h-full border-l border-[#27272a] flat no shadows flex flex-col w-80 h-screen sticky top-0 shrink-0">
+<div class="p-6 border-b border-[#27272a]">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-lg bg-[#27272a] flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface">layers</span>
+</div>
+<div>
+<h2 class="text-[#fafafa] font-semibold">Course Content</h2>
+<p class="text-[10px] text-[#a1a1aa] uppercase tracking-tighter">4 Modules • 42 Lessons</p>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar">
+<!-- Module 1 -->
+<div class="border-b border-[#27272a]">
+<button class="w-full px-6 py-4 flex items-center justify-between text-[#fafafa] font-bold bg-[#18181b]/50">
+<span>Module 1: Foundations</span>
+<span class="material-symbols-outlined text-sm">keyboard_arrow_down</span>
+</button>
+<div class="bg-[#0c0c0f]">
+<div class="flex items-center gap-4 px-6 py-3 text-[#a1a1aa] hover:bg-[#27272a] hover:text-[#fafafa] transition-all cursor-pointer">
+<span class="material-symbols-outlined text-tertiary text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>The React Paradigm</span>
+</div>
+<div class="flex items-center gap-4 px-6 py-3 text-[#a1a1aa] hover:bg-[#27272a] hover:text-[#fafafa] transition-all cursor-pointer">
+<span class="material-symbols-outlined text-tertiary text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Server Components 101</span>
+</div>
+</div>
+</div>
+<!-- Module 4 (Active) -->
+<div class="border-b border-[#27272a]">
+<button class="w-full px-6 py-4 flex items-center justify-between text-[#a78bfa] font-bold">
+<span>Module 4: Scalability</span>
+<span class="material-symbols-outlined text-sm">keyboard_arrow_up</span>
+</button>
+<div class="bg-[#121215]">
+<div class="flex items-center gap-4 px-6 py-3 text-[#a1a1aa] hover:bg-[#27272a] transition-all cursor-pointer">
+<span class="material-symbols-outlined text-tertiary text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>High Availability Principles</span>
+</div>
+<!-- Active Lesson -->
+<div class="flex items-center gap-4 text-[#fafafa] font-bold border-l-2 border-[#a78bfa] pl-4 py-3 bg-[#18181b] transition-all cursor-pointer">
+<span class="material-symbols-outlined text-[#a78bfa] text-lg" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+<span>Systems Architecture at Scale</span>
+</div>
+<div class="flex items-center gap-4 px-6 py-3 text-[#a1a1aa] hover:bg-[#27272a] transition-all cursor-pointer">
+<span class="material-symbols-outlined text-[#52525b] text-lg">lock</span>
+<span>Distributed Caching with Redis</span>
+</div>
+<div class="flex items-center gap-4 px-6 py-3 text-[#a1a1aa] hover:bg-[#27272a] transition-all cursor-pointer">
+<span class="material-symbols-outlined text-[#52525b] text-lg">lock</span>
+<span>Global Edge Middleware</span>
+</div>
+</div>
+</div>
+</div>
+<div class="p-6 border-t border-[#27272a] bg-[#09090b]">
+<button class="w-full py-2.5 rounded-lg border border-[#27272a] text-[#fafafa] font-medium flex items-center justify-center gap-2 hover:bg-[#18181b] transition-colors">
+<span class="material-symbols-outlined text-sm">download</span>
+                    Download Offline
+                </button>
+<div class="mt-4 flex justify-around">
+<button class="text-[#a1a1aa] hover:text-[#fafafa] transition-colors flex flex-col items-center gap-1">
+<span class="material-symbols-outlined">forum</span>
+<span class="text-[10px]">Forum</span>
+</button>
+<button class="text-[#a1a1aa] hover:text-[#fafafa] transition-colors flex flex-col items-center gap-1">
+<span class="material-symbols-outlined">help</span>
+<span class="text-[10px]">Help</span>
+</button>
+</div>
+</div>
+</aside>
+</main>
+<!-- BottomNavBar / Player Controls (Shared Component Translation) -->
+<footer class="bg-[#09090b]/95 backdrop-blur-md text-[#a78bfa] font-geist text-xs font-medium fixed bottom-0 w-full z-50 flex justify-between items-center px-8 py-4 border-t border-[#27272a] flat no shadows">
+<!-- Left: Nav Controls -->
+<div class="flex items-center gap-4">
+<button class="text-[#fafafa] p-2 hover:text-[#a78bfa] transition-colors flex flex-col items-center gap-1">
+<span class="material-symbols-outlined">skip_previous</span>
+<span>Previous</span>
+</button>
+<button class="bg-[#a78bfa] text-[#09090b] rounded-full p-4 scale-110 active:scale-95 transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">pause</span>
+</button>
+<button class="text-[#fafafa] p-2 hover:text-[#a78bfa] transition-colors flex flex-col items-center gap-1">
+<span class="material-symbols-outlined">skip_next</span>
+<span>Next</span>
+</button>
+</div>
+<!-- Center: Progress Bar -->
+<div class="flex-1 max-w-3xl mx-12 flex flex-col gap-2">
+<div class="flex justify-between text-[10px] text-[#a1a1aa] font-mono">
+<span>04:32</span>
+<span>12:45</span>
+</div>
+<div class="relative group h-1.5 w-full bg-[#27272a] rounded-full cursor-pointer">
+<div class="absolute h-full w-[35%] bg-[#a78bfa] rounded-full">
+<div class="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-[#fafafa] rounded-full scale-0 group-hover:scale-100 transition-transform"></div>
+</div>
+</div>
+</div>
+<!-- Right: Player Utility -->
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-[#fafafa] group cursor-pointer">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">volume_up</span>
+<div class="w-16 h-1 bg-[#27272a] rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[70%]"></div>
+</div>
+</div>
+<button class="px-3 py-1 rounded border border-[#27272a] text-[#fafafa] text-[10px] font-bold hover:border-[#a78bfa] transition-colors">
+                1.0x
+            </button>
+<button class="text-[#fafafa] p-2 hover:text-[#a78bfa] transition-colors flex flex-col items-center gap-1">
+<span class="material-symbols-outlined">fullscreen</span>
+<span>Fullscreen</span>
+</button>
+</div>
+</footer>
+</body></html>
