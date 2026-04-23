@@ -12,6 +12,9 @@ const nextConfig: NextConfig = {
         hostname: "api.dicebear.com",
       },
     ],
+    dangerouslyAllowSVG: true,
+    contentDispositionType: "inline",
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 };
 

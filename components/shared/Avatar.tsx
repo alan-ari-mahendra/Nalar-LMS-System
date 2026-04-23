@@ -23,6 +23,7 @@ function getInitials(name: string): string {
 
 export function Avatar({ src, name, size = "md" }: AvatarProps) {
   const s = sizeMap[size]
+  const isSvg = src?.includes(".svg") || src?.includes("/svg")
 
   if (src) {
     return (
@@ -31,6 +32,7 @@ export function Avatar({ src, name, size = "md" }: AvatarProps) {
         alt={name}
         width={s.px}
         height={s.px}
+        unoptimized={isSvg}
         className={`${s.container} rounded-full object-cover shrink-0`}
       />
     )
