@@ -439,6 +439,7 @@ body {
 - No `git commit`, `git push`, `git merge` without explicit instruction
 - One commit per completed page or component group
 - Commit format: `feat(ui): implement course catalog page`
+- **Never** add `Co-Authored-By` or any AI attribution lines in commit messages
 
 ---
 

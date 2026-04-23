@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Learnify — Online Learning Management System
+
+A portfolio-grade, full-stack LMS built to demonstrate production-ready SaaS development. Course creators can publish and monetize video-based courses, students can enroll, learn, track progress, and earn verified certificates.
+
+**Current Phase:** Phase 2 — UI with Mock Data
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript (strict) |
+| Styling | Tailwind CSS v4 + shadcn/ui |
+| Icons | Material Symbols Outlined |
+| Charts | Recharts |
+| Fonts | Geist (via next/font) |
+| Images | next/image |
+
+## Design System
+
+**Obsidian Theme** — dark SaaS aesthetic with zinc-based surfaces and violet accent (`#a78bfa`).
+
+- Source of truth: `docs/stitch-design/` (Google Stitch exports)
+- Design doc: `docs/stitch-design/obsidian/DESIGN.md`
+- All colors defined as Tailwind v4 `@theme` tokens in `app/globals.css`
+
+## Pages
+
+| Route | Description | Status |
+|---|---|---|
+| `/` | Landing page | Done |
+| `/courses` | Course catalog with filters, search, sort, pagination | Done |
+| `/courses/[slug]` | Course detail with tabs, curriculum accordion, enrollment card | Done |
+| `/learn/[courseId]/[lessonId]` | Video player with curriculum sidebar and controls | Done |
+| `/dashboard` | Student dashboard — stats, continue learning, certificates, activity | Done |
+| `/dashboard/instructor` | Instructor dashboard — revenue chart, course table, enrollments | Done |
+| `/auth/login` | Login form | Done |
+| `/auth/register` | Registration with role selection | Done |
+| `/certificate/[verifyCode]` | Public certificate verification | Done |
+
+## Project Structure
+
+```
+app/
+├── (marketing)/          # Landing, catalog, course detail
+├── (player)/             # Video player (fullscreen layout)
+├── (dashboard)/          # Student + instructor dashboards
+├── auth/                 # Login, register
+└── certificate/          # Public certificate page
+components/
+├── shared/               # Avatar, RatingStars, ProgressBar, CourseBadge, NotificationBell
+├── course/               # CourseCard, CourseCardSkeleton
+├── dashboard/            # StatsCard, SidebarNav, RevenueChart, ActivityFeedItem
+└── marketing/            # Navbar, Footer
+mock/
+└── data.ts               # All mock data + helper functions
+type/
+└── index.ts              # Shared TypeScript types
+docs/
+├── learnify-prd.md       # Product Requirements Document
+├── agents/               # Agent definitions (orchestrator, content-writer, etc.)
+└── stitch-design/        # Google Stitch design exports (HTML + PNG)
+```
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Install dependencies
+pnpm install
+
+# Run development server
 pnpm dev
-# or
-bun dev
+
+# Type check
+npx tsc --noEmit
+
+# Build
+pnpm build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Mock Data
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+All data is sourced from `mock/data.ts` during Phase 2. No database, no API calls, no auth checks. Import paths:
 
-## Learn More
+```tsx
+import { MOCK_COURSES, formatPrice } from "@/mock/data"
+import type { Course } from "@/type"
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Implementation Phases
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [x] **Phase 1** — Project setup, design system, mock data foundation
+- [x] **Phase 2** — UI implementation from Stitch designs (current)
+- [ ] **Phase 3** — Backend (Supabase Auth, Prisma, server actions)
+- [ ] **Phase 4** — Business logic (payments, video, course builder, admin)
+- [ ] **Phase 5** — QA, deploy, Lighthouse audit
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Author
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Alan Pramadhana
