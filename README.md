@@ -99,4 +99,4 @@ import type { Course } from "@/type"
 
 ## Author
 
-Alan Pramadhana
+Alan Ari Mahendra

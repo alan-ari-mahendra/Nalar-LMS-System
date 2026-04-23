@@ -25,7 +25,7 @@ export default function RegisterPage() {
               <input
                 id="fullName"
                 type="text"
-                placeholder="Alan Pramadhana"
+                placeholder="Alan Ari Mahendra"
                 className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
               />
             </div>

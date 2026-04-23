@@ -686,5 +686,5 @@ See `CLAUDE.md` in project root for complete rules.
 
 ---
 
-*Document maintained by: Alan Pramadhana*  
+*Document maintained by: Alan Ari Mahendra*  
 *Repo: learnify / portfolio project*

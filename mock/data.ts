@@ -473,7 +473,7 @@ export const MOCK_COURSE_DETAIL: CourseDetail = {
 export const MOCK_CURRENT_USER: Profile = {
   id: "user-1",
   email: "alan@example.com",
-  fullName: "Alan Pramadhana",
+  fullName: "Alan Ari Mahendra",
   avatarUrl: "https://api.dicebear.com/9.x/avataaars/svg?seed=alan",
   bio: "Full stack developer passionate about building SaaS products.",
   headline: "Full Stack Developer",
@@ -550,7 +550,7 @@ export const MOCK_CERTIFICATES: Certificate[] = [
     verifyCode: "LRN-2025-CERT-A1B2C3",
     issuedAt: "2025-03-10T00:00:00Z",
     studentId: "user-1",
-    student: { id: "user-1", fullName: "Alan Pramadhana", avatarUrl: "https://api.dicebear.com/9.x/avataaars/svg?seed=alan" },
+    student: { id: "user-1", fullName: "Alan Ari Mahendra", avatarUrl: "https://api.dicebear.com/9.x/avataaars/svg?seed=alan" },
     courseId: "course-3",
     course: { id: "course-3", title: "REST API with Laravel 11 & PostgreSQL", slug: "rest-api-laravel-11-postgresql", thumbnailUrl: MOCK_COURSES[2].thumbnailUrl },
     instructor: { id: "inst-1", fullName: "Rina Maharani" },
