@@ -12,7 +12,7 @@ export {
   login,
   logout,
   getCurrentUser,
-  RegisterSchema,
-  LoginSchema,
 } from "./actions"
+export { RegisterSchema, LoginSchema } from "./schemas"
+export type { RegisterInput, LoginInput } from "./schemas"
 export { requireAuth, requireRole, can } from "./guards"

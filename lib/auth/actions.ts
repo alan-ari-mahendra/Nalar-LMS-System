@@ -1,33 +1,12 @@
 "use server"
 
-import { z } from "zod/v4"
 import { prisma } from "@/lib/db"
 import { hashPassword, verifyPassword } from "./password"
 import { createSession, deleteSession, getSession, getSessionToken } from "./session"
+import { RegisterSchema, LoginSchema } from "./schemas"
+import type { RegisterInput, LoginInput } from "./schemas"
 import type { User } from "@prisma/client"
 import type { Role } from "@prisma/client"
-
-// --- Schemas ---
-
-export const RegisterSchema = z.object({
-  name: z.string().min(2).max(100),
-  email: z.string().email(),
-  password: z
-    .string()
-    .min(8)
-    .max(100)
-    .regex(/[A-Z]/, "Must contain uppercase")
-    .regex(/[0-9]/, "Must contain number"),
-  role: z.enum(["STUDENT", "TEACHER"]),
-})
-
-export const LoginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1),
-})
-
-type RegisterInput = z.infer<typeof RegisterSchema>
-type LoginInput = z.infer<typeof LoginSchema>
 
 // --- Error Map ---
 
