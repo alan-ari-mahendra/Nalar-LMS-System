@@ -1,0 +1,152 @@
+// prisma/schema.prisma
+// Phase 3a — Auth + RBAC
+// Database: Neon PostgreSQL (pooled)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum AuthProvider {
+  EMAIL
+  GOOGLE
+  GITHUB
+}
+
+// ============================================================
+// USER
+// Core identity — satu row per user
+// ============================================================
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  name          String?
+  avatarUrl     String?
+  role          Role     @default(STUDENT)
+  isActive      Boolean  @default(true)
+  deletedAt     DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  credentials   Credential[]
+  sessions      Session[]
+  auditLogs     AuditLog[]
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+// ============================================================
+// CREDENTIAL
+// Menyimpan password hash (EMAIL provider)
+// Satu user bisa punya beberapa provider (email + google)
+// ============================================================
+
+model Credential {
+  id           String       @id @default(cuid())
+  provider     AuthProvider @default(EMAIL)
+  providerId   String?                          // external ID untuk OAuth
+  passwordHash String?                          // hanya untuk EMAIL provider
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerId])
+  @@unique([userId, provider])
+  @@map("credentials")
+}
+
+// ============================================================
+// SESSION
+// Server-side session store
+// ============================================================
+
+model Session {
+  id           String   @id @default(cuid())
+  token        String   @unique @default(cuid())
+  ipAddress    String?
+  userAgent    String?
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  lastActiveAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+// ============================================================
+// EMAIL VERIFICATION TOKEN
+// ============================================================
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique @default(cuid())
+  email     String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([email])
+  @@map("verification_tokens")
+}
+
+// ============================================================
+// PASSWORD RESET TOKEN
+// ============================================================
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique @default(cuid())
+  email     String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@map("password_reset_tokens")
+}
+
+// ============================================================
+// AUDIT LOG
+// Tracks auth events — login, logout, role changes, etc.
+// ============================================================
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String                           // LOGIN, LOGOUT, REGISTER, ROLE_CHANGE, etc.
+  metadata  Json?                            // { ip, userAgent, oldRole, newRole, ... }
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
