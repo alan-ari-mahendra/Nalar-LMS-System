@@ -258,7 +258,7 @@ export const MOCK_COURSES: Course[] = [
     category: MOCK_CATEGORIES[4],
     requirements: [
       "Basic Linux command line",
-      "Some experience deploying web apps",
+      "Deployed at least one web app to a VPS or cloud provider",
     ],
     outcomes: [
       "Write production-ready Dockerfiles",
@@ -366,7 +366,7 @@ export const MOCK_COURSES: Course[] = [
     category: MOCK_CATEGORIES[1],
     requirements: [
       "No prior UX experience needed",
-      "Curiosity about user behavior",
+      "Willingness to conduct interviews and gather user feedback",
     ],
     outcomes: [
       "Plan and conduct user interviews",

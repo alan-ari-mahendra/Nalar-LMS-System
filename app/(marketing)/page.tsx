@@ -3,11 +3,11 @@ import Image from "next/image"
 import { CourseCard } from "@/components/course/CourseCard"
 import { Avatar } from "@/components/shared/Avatar"
 import { RatingStars } from "@/components/shared/RatingStars"
-import { MOCK_COURSES, MOCK_TESTIMONIALS } from "@/mock/data"
+import { MOCK_TESTIMONIALS } from "@/mock/data"
+import { getFeaturedCourses } from "@/lib/queries"
 
-const featuredCourses = MOCK_COURSES.filter((c) => c.status === "PUBLISHED").slice(0, 3)
-
-export default function LandingPage() {
+export default async function LandingPage() {
+  const featuredCourses = await getFeaturedCourses(3)
   return (
     <>
       {/* ============================================================

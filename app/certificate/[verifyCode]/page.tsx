@@ -1,9 +1,15 @@
 import Link from "next/link"
-import { MOCK_CERTIFICATES } from "@/mock/data"
+import { notFound } from "next/navigation"
+import { getCertificateByCode } from "@/lib/queries"
 
-const cert = MOCK_CERTIFICATES[0]
-
-export default function CertificatePage() {
+export default async function CertificatePage({
+  params,
+}: {
+  params: Promise<{ verifyCode: string }>
+}) {
+  const { verifyCode } = await params
+  const cert = await getCertificateByCode(verifyCode)
+  if (!cert) notFound()
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-2xl space-y-8">

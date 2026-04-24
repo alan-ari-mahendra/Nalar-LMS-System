@@ -4,21 +4,20 @@ import { StatsCard } from "@/components/dashboard/StatsCard"
 import { ActivityFeedItem } from "@/components/dashboard/ActivityFeedItem"
 import { ProgressBar } from "@/components/shared/ProgressBar"
 import { requireRole } from "@/lib/auth/guards"
-import {
-  MOCK_CURRENT_USER,
-  MOCK_STUDENT_STATS,
-  MOCK_ENROLLMENTS,
-  MOCK_CERTIFICATES,
-  MOCK_ACTIVITY,
-} from "@/mock/data"
-
-const user = MOCK_CURRENT_USER
-const stats = MOCK_STUDENT_STATS
-const enrollments = MOCK_ENROLLMENTS.filter((e) => e.progressPercent < 100)
-const certificates = MOCK_CERTIFICATES
+import { getCurrentUser } from "@/lib/auth/actions"
+import { getStudentStats, getCertificatesByUser, getEnrollmentsByUser } from "@/lib/queries"
+import { MOCK_ACTIVITY } from "@/mock/data"
 
 export default async function StudentDashboardPage() {
   await requireRole(["STUDENT", "TEACHER", "ADMIN"])
+  const currentUser = await getCurrentUser()
+  if (!currentUser) return null
+
+  const user = { fullName: currentUser.name ?? "Student" }
+  const stats = await getStudentStats(currentUser.id)
+  const allEnrollments = await getEnrollmentsByUser(currentUser.id)
+  const enrollments = allEnrollments.filter((e) => e.progressPercent < 100)
+  const certificates = await getCertificatesByUser(currentUser.id)
   return (
     <div className="space-y-10">
       {/* ============================================================

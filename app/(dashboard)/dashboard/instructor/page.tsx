@@ -5,22 +5,35 @@ import { CourseBadge } from "@/components/shared/CourseBadge"
 import { Avatar } from "@/components/shared/Avatar"
 import { RatingStars } from "@/components/shared/RatingStars"
 import { requireRole } from "@/lib/auth/guards"
-import {
-  MOCK_INSTRUCTOR_STATS,
-  MOCK_COURSE_PERFORMANCE,
-  MOCK_RECENT_ENROLLMENTS,
-  MOCK_COURSE_DETAIL,
-  formatPrice,
-  formatRelativeTime,
-} from "@/mock/data"
-
-const stats = MOCK_INSTRUCTOR_STATS
-const courses = MOCK_COURSE_PERFORMANCE
-const recentEnrollments = MOCK_RECENT_ENROLLMENTS
-const reviews = MOCK_COURSE_DETAIL.reviews
+import { getCurrentUser } from "@/lib/auth/actions"
+import { getInstructorStats, getRecentEnrollmentsByInstructor, getCourseBySlug } from "@/lib/queries"
+import { formatPrice, formatRelativeTime } from "@/lib/utils"
 
 export default async function InstructorDashboardPage() {
   await requireRole(["TEACHER", "ADMIN"])
+  const currentUser = await getCurrentUser()
+  if (!currentUser) return null
+
+  const instructorData = await getInstructorStats(currentUser.id)
+  const stats = {
+    ...instructorData,
+    monthlyRevenue: instructorData.monthlyRevenue,
+  }
+  const courses = instructorData.coursePerformance
+  const recentEnrollmentsRaw = await getRecentEnrollmentsByInstructor(currentUser.id, 5)
+  const recentEnrollments = recentEnrollmentsRaw.map((e) => ({
+    id: e.id,
+    studentName: e.user.name ?? "Student",
+    avatarUrl: e.user.avatarUrl ?? "",
+    courseTitle: e.course.title,
+    amount: Number(e.course.price),
+    enrolledAt: e.enrolledAt.toISOString(),
+  }))
+
+  // Get reviews from first published course
+  const firstCourse = courses.find((c) => c.status === "PUBLISHED")
+  const courseDetail = firstCourse ? await getCourseBySlug("nextjs-14-fullstack-saas") : null
+  const reviews = courseDetail?.reviews ?? []
   return (
     <div className="space-y-8">
       {/* ============================================================

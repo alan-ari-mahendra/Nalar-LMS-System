@@ -4,7 +4,7 @@ import type { Course } from "@/type"
 import { RatingStars } from "@/components/shared/RatingStars"
 import { CourseBadge } from "@/components/shared/CourseBadge"
 import { ProgressBar } from "@/components/shared/ProgressBar"
-import { formatPrice, formatDuration } from "@/mock/data"
+import { formatPrice, formatDuration } from "@/lib/utils"
 
 interface CourseCardProps {
   course: Course
