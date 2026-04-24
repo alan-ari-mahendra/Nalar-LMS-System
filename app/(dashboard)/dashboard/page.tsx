@@ -3,6 +3,7 @@ import Link from "next/link"
 import { StatsCard } from "@/components/dashboard/StatsCard"
 import { ActivityFeedItem } from "@/components/dashboard/ActivityFeedItem"
 import { ProgressBar } from "@/components/shared/ProgressBar"
+import { requireRole } from "@/lib/auth/guards"
 import {
   MOCK_CURRENT_USER,
   MOCK_STUDENT_STATS,
@@ -16,7 +17,8 @@ const stats = MOCK_STUDENT_STATS
 const enrollments = MOCK_ENROLLMENTS.filter((e) => e.progressPercent < 100)
 const certificates = MOCK_CERTIFICATES
 
-export default function StudentDashboardPage() {
+export default async function StudentDashboardPage() {
+  await requireRole(["STUDENT", "TEACHER", "ADMIN"])
   return (
     <div className="space-y-10">
       {/* ============================================================

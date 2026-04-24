@@ -4,6 +4,7 @@ import { RevenueChart } from "@/components/dashboard/RevenueChart"
 import { CourseBadge } from "@/components/shared/CourseBadge"
 import { Avatar } from "@/components/shared/Avatar"
 import { RatingStars } from "@/components/shared/RatingStars"
+import { requireRole } from "@/lib/auth/guards"
 import {
   MOCK_INSTRUCTOR_STATS,
   MOCK_COURSE_PERFORMANCE,
@@ -18,7 +19,8 @@ const courses = MOCK_COURSE_PERFORMANCE
 const recentEnrollments = MOCK_RECENT_ENROLLMENTS
 const reviews = MOCK_COURSE_DETAIL.reviews
 
-export default function InstructorDashboardPage() {
+export default async function InstructorDashboardPage() {
+  await requireRole(["TEACHER", "ADMIN"])
   return (
     <div className="space-y-8">
       {/* ============================================================
