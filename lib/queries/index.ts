@@ -1,4 +1,4 @@
-export { getPublishedCourses, getFeaturedCourses, getCourseBySlug } from "./course"
+export { getPublishedCourses, getFeaturedCourses, getCourseBySlug, getPlatformStats, getTopReviews, getCourseWithCurriculum } from "./course"
 export { getCategories } from "./category"
 export { getEnrollmentsByUser, getRecentEnrollmentsByInstructor } from "./enrollment"
 export { getStudentStats, getCertificatesByUser, getNotificationsByUser } from "./student"
