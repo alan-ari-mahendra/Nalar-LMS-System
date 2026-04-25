@@ -1,117 +1,175 @@
+"use client"
+
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useState, useTransition } from "react"
+import { register } from "@/lib/auth/actions"
 
 export default function RegisterPage() {
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+  const [error, setError] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [role, setRole] = useState<"STUDENT" | "TEACHER">("STUDENT")
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setError("")
+
+    const formData = new FormData(e.currentTarget)
+    const name = formData.get("name") as string
+    const email = formData.get("email") as string
+    const password = formData.get("password") as string
+
+    startTransition(async () => {
+      const result = await register({ name, email, password, role })
+      if (result.success) {
+        router.push(result.redirectTo)
+      } else {
+        setError(result.error)
+      }
+    })
+  }
+
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md space-y-8">
-        {/* Brand */}
-        <div className="text-center">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <span className="material-symbols-outlined text-primary !text-3xl">bolt</span>
-            <span className="text-2xl font-bold text-on-surface tracking-tighter">Learnify</span>
-          </Link>
-          <h1 className="text-3xl font-extrabold tracking-tight text-on-surface">Create your account</h1>
-          <p className="text-on-surface-variant mt-2">Start learning from industry experts today</p>
-        </div>
+    <div className="w-full max-w-md space-y-8">
+      {/* Brand */}
+      <div className="text-center">
+        <Link href="/" className="inline-flex items-center gap-2 mb-6">
+          <span className="material-symbols-outlined text-primary !text-3xl">bolt</span>
+          <span className="text-2xl font-bold text-on-surface tracking-tighter">Learnify</span>
+        </Link>
+        <h1 className="text-3xl font-extrabold tracking-tight text-on-surface">Create your account</h1>
+        <p className="text-on-surface-variant mt-2">Start learning from industry experts today</p>
+      </div>
 
-        {/* Form card */}
-        <div className="bg-surface-container border border-outline-variant rounded-xl p-8 space-y-6">
-          <div className="space-y-4">
-            {/* Full Name */}
-            <div className="space-y-2">
-              <label htmlFor="fullName" className="text-sm font-medium text-on-surface">
-                Full name
-              </label>
-              <input
-                id="fullName"
-                type="text"
-                placeholder="Alan Ari Mahendra"
-                className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-              />
-            </div>
+      {/* Form card */}
+      <form
+        onSubmit={handleSubmit}
+        className="bg-surface-container border border-outline-variant rounded-xl p-8 space-y-6"
+      >
+        {/* Error */}
+        {error && (
+          <div className="bg-error-container border border-error/30 rounded-lg px-4 py-3 text-on-error-container text-sm">
+            {error}
+          </div>
+        )}
 
-            {/* Email */}
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-on-surface">
-                Email address
-              </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-              />
-            </div>
+        <div className="space-y-4">
+          {/* Full Name */}
+          <div className="space-y-2">
+            <label htmlFor="name" className="text-sm font-medium text-on-surface">
+              Full name
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              required
+              placeholder="Alan Ari Mahendra"
+              className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+            />
+          </div>
 
-            {/* Password */}
-            <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium text-on-surface">
-                Password
-              </label>
+          {/* Email */}
+          <div className="space-y-2">
+            <label htmlFor="email" className="text-sm font-medium text-on-surface">
+              Email address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              placeholder="you@example.com"
+              className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+            />
+          </div>
+
+          {/* Password */}
+          <div className="space-y-2">
+            <label htmlFor="password" className="text-sm font-medium text-on-surface">
+              Password
+            </label>
+            <div className="relative">
               <input
                 id="password"
-                type="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                required
                 placeholder="Min. 8 characters"
-                className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+                className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 pr-12 text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
               />
-            </div>
-
-            {/* Role selection */}
-            <div className="space-y-3">
-              <label className="text-sm font-medium text-on-surface">I want to</label>
-              <div className="grid grid-cols-2 gap-3">
-                <label className="flex items-center gap-3 p-4 bg-surface-container-low border border-outline-variant rounded-xl cursor-pointer hover:border-primary/50 transition-colors has-[:checked]:border-primary has-[:checked]:bg-primary/5">
-                  <input
-                    type="radio"
-                    name="role"
-                    value="STUDENT"
-                    defaultChecked
-                    className="text-primary focus:ring-primary focus:ring-offset-0 bg-surface-container-highest border-outline-variant"
-                  />
-                  <div>
-                    <span className="material-symbols-outlined text-primary !text-lg block mb-1">school</span>
-                    <span className="text-sm font-bold text-on-surface">Learn</span>
-                    <p className="text-[10px] text-on-surface-variant mt-0.5">Enroll in courses</p>
-                  </div>
-                </label>
-                <label className="flex items-center gap-3 p-4 bg-surface-container-low border border-outline-variant rounded-xl cursor-pointer hover:border-primary/50 transition-colors has-[:checked]:border-primary has-[:checked]:bg-primary/5">
-                  <input
-                    type="radio"
-                    name="role"
-                    value="INSTRUCTOR"
-                    className="text-primary focus:ring-primary focus:ring-offset-0 bg-surface-container-highest border-outline-variant"
-                  />
-                  <div>
-                    <span className="material-symbols-outlined text-primary !text-lg block mb-1">video_library</span>
-                    <span className="text-sm font-bold text-on-surface">Teach</span>
-                    <p className="text-[10px] text-on-surface-variant mt-0.5">Create courses</p>
-                  </div>
-                </label>
-              </div>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors"
+              >
+                <span className="material-symbols-outlined !text-xl">
+                  {showPassword ? "visibility_off" : "visibility"}
+                </span>
+              </button>
             </div>
           </div>
 
-          {/* Submit */}
-          <button className="w-full bg-primary text-on-primary py-3 rounded-lg font-bold hover:brightness-110 transition-all">
-            Create Account
-          </button>
-
-          {/* Terms */}
-          <p className="text-[10px] text-center text-on-surface-variant leading-relaxed">
-            By creating an account, you agree to our{" "}
-            <span className="text-primary cursor-pointer hover:underline">Terms of Service</span> and{" "}
-            <span className="text-primary cursor-pointer hover:underline">Privacy Policy</span>.
-          </p>
+          {/* Role selection */}
+          <div className="space-y-3">
+            <label className="text-sm font-medium text-on-surface">I want to</label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setRole("STUDENT")}
+                className={`flex flex-col items-center gap-2 p-4 border rounded-xl cursor-pointer transition-colors ${
+                  role === "STUDENT"
+                    ? "border-primary bg-surface-container-high"
+                    : "border-outline-variant bg-surface-container-low hover:border-primary/50"
+                }`}
+              >
+                <span className="material-symbols-outlined text-primary !text-2xl">school</span>
+                <span className="text-sm font-bold text-on-surface">Student</span>
+                <p className="text-[10px] text-on-surface-variant">I want to learn</p>
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole("TEACHER")}
+                className={`flex flex-col items-center gap-2 p-4 border rounded-xl cursor-pointer transition-colors ${
+                  role === "TEACHER"
+                    ? "border-primary bg-surface-container-high"
+                    : "border-outline-variant bg-surface-container-low hover:border-primary/50"
+                }`}
+              >
+                <span className="material-symbols-outlined text-primary !text-2xl">cast_for_education</span>
+                <span className="text-sm font-bold text-on-surface">Teacher</span>
+                <p className="text-[10px] text-on-surface-variant">I want to teach</p>
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Login link */}
-        <p className="text-center text-sm text-on-surface-variant">
-          Already have an account?{" "}
-          <Link href="/auth/login" className="text-primary font-bold hover:underline">
-            Sign in
-          </Link>
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={isPending}
+          className="w-full bg-primary text-on-primary py-3 rounded-lg font-bold hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isPending ? "Creating account..." : "Create Account"}
+        </button>
+
+        {/* Terms */}
+        <p className="text-[10px] text-center text-on-surface-variant leading-relaxed">
+          By creating an account, you agree to our{" "}
+          <span className="text-on-surface-variant cursor-not-allowed" title="Coming soon">Terms of Service</span> and{" "}
+          <span className="text-on-surface-variant cursor-not-allowed" title="Coming soon">Privacy Policy</span>.
         </p>
-      </div>
+      </form>
+
+      {/* Login link */}
+      <p className="text-center text-sm text-on-surface-variant">
+        Already have an account?{" "}
+        <Link href="/auth/login" className="text-primary font-bold hover:underline">
+          Sign in
+        </Link>
+      </p>
     </div>
   )
 }

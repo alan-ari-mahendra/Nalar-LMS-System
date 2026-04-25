@@ -4,21 +4,33 @@ import { RevenueChart } from "@/components/dashboard/RevenueChart"
 import { CourseBadge } from "@/components/shared/CourseBadge"
 import { Avatar } from "@/components/shared/Avatar"
 import { RatingStars } from "@/components/shared/RatingStars"
-import {
-  MOCK_INSTRUCTOR_STATS,
-  MOCK_COURSE_PERFORMANCE,
-  MOCK_RECENT_ENROLLMENTS,
-  MOCK_COURSE_DETAIL,
-  formatPrice,
-  formatRelativeTime,
-} from "@/mock/data"
+import { requireRole } from "@/lib/auth/guards"
+import { getCurrentUser } from "@/lib/auth/actions"
+import { getInstructorStats, getRecentEnrollmentsByInstructor, getReviewsByInstructor } from "@/lib/queries"
+import { formatPrice, formatRelativeTime } from "@/lib/utils"
 
-const stats = MOCK_INSTRUCTOR_STATS
-const courses = MOCK_COURSE_PERFORMANCE
-const recentEnrollments = MOCK_RECENT_ENROLLMENTS
-const reviews = MOCK_COURSE_DETAIL.reviews
+export default async function InstructorDashboardPage() {
+  await requireRole(["TEACHER", "ADMIN"])
+  const currentUser = await getCurrentUser()
+  if (!currentUser) return null
 
-export default function InstructorDashboardPage() {
+  const instructorData = await getInstructorStats(currentUser.id)
+  const stats = {
+    ...instructorData,
+    monthlyRevenue: instructorData.monthlyRevenue,
+  }
+  const courses = instructorData.coursePerformance
+  const recentEnrollmentsRaw = await getRecentEnrollmentsByInstructor(currentUser.id, 5)
+  const recentEnrollments = recentEnrollmentsRaw.map((e) => ({
+    id: e.id,
+    studentName: e.user.name ?? "Student",
+    avatarUrl: e.user.avatarUrl ?? "",
+    courseTitle: e.course.title,
+    amount: Number(e.course.price),
+    enrolledAt: e.enrolledAt.toISOString(),
+  }))
+
+  const reviews = await getReviewsByInstructor(currentUser.id, 6)
   return (
     <div className="space-y-8">
       {/* ============================================================

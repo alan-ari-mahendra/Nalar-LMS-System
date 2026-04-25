@@ -3,11 +3,14 @@ import Image from "next/image"
 import { CourseCard } from "@/components/course/CourseCard"
 import { Avatar } from "@/components/shared/Avatar"
 import { RatingStars } from "@/components/shared/RatingStars"
-import { MOCK_COURSES, MOCK_TESTIMONIALS } from "@/mock/data"
+import { getFeaturedCourses, getPlatformStats, getTopReviews } from "@/lib/queries"
 
-const featuredCourses = MOCK_COURSES.filter((c) => c.status === "PUBLISHED").slice(0, 3)
-
-export default function LandingPage() {
+export default async function LandingPage() {
+  const featuredCourses = await getFeaturedCourses(3)
+  const [platformStats, topReviews] = await Promise.all([
+    getPlatformStats(),
+    getTopReviews(3),
+  ])
   return (
     <>
       {/* ============================================================
@@ -93,16 +96,16 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto py-10 px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-0">
             <div className="flex flex-col items-center md:border-r border-outline-variant">
-              <span className="text-3xl font-extrabold text-on-surface">12,000+</span>
+              <span className="text-3xl font-extrabold text-on-surface">{platformStats.totalStudents.toLocaleString()}+</span>
               <span className="text-on-surface-variant text-sm font-medium uppercase tracking-widest mt-1">Students</span>
             </div>
             <div className="flex flex-col items-center md:border-r border-outline-variant">
-              <span className="text-3xl font-extrabold text-on-surface">200+</span>
+              <span className="text-3xl font-extrabold text-on-surface">{platformStats.totalCourses}+</span>
               <span className="text-on-surface-variant text-sm font-medium uppercase tracking-widest mt-1">Expert Courses</span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="text-3xl font-extrabold text-tertiary">98%</span>
-              <span className="text-on-surface-variant text-sm font-medium uppercase tracking-widest mt-1">Completion Rate</span>
+              <span className="text-3xl font-extrabold text-tertiary">{platformStats.avgRating > 0 ? `${platformStats.avgRating}/5` : "—"}</span>
+              <span className="text-on-surface-variant text-sm font-medium uppercase tracking-widest mt-1">Avg. Rating</span>
             </div>
           </div>
         </div>
@@ -191,7 +194,7 @@ export default function LandingPage() {
             Loved by the next generation of engineers
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {MOCK_TESTIMONIALS.map((testimonial, i) => (
+            {topReviews.map((testimonial, i) => (
               <div
                 key={testimonial.id}
                 className={`p-8 rounded-2xl bg-surface-container border border-outline-variant relative ${
@@ -230,7 +233,7 @@ export default function LandingPage() {
               Start learning today — it&apos;s free to join.
             </h2>
             <p className="text-primary-fixed text-lg max-w-2xl mx-auto mb-10 opacity-90">
-              Join 12,000+ students already mastering the future. Unlock our community and free resources instantly.
+              Join {platformStats.totalStudents.toLocaleString()}+ students already mastering the future. Unlock our community and free resources instantly.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

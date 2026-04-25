@@ -3,7 +3,7 @@
 import Link from "next/link"
 
 interface SidebarNavProps {
-  role: "STUDENT" | "INSTRUCTOR" | "ADMIN"
+  role: "STUDENT" | "TEACHER" | "ADMIN"
   activePath: string
 }
 
@@ -17,27 +17,35 @@ const studentLinks: NavItem[] = [
   { label: "Dashboard", icon: "dashboard", href: "/dashboard" },
   { label: "My Courses", icon: "school", href: "/dashboard/courses" },
   { label: "Certificates", icon: "workspace_premium", href: "/dashboard/certificates" },
-  { label: "Quiz Results", icon: "quiz", href: "/dashboard/quiz-results" },
   { label: "Notifications", icon: "notifications", href: "/dashboard/notifications" },
   { label: "Settings", icon: "settings", href: "/dashboard/settings" },
 ]
 
 const instructorLinks: NavItem[] = [
   { label: "Overview", icon: "dashboard", href: "/dashboard/instructor" },
-  { label: "My Courses", icon: "video_library", href: "/dashboard/instructor/courses" },
+  { label: "My Courses", icon: "edit_note", href: "/dashboard/instructor/courses" },
   { label: "Students", icon: "group", href: "/dashboard/instructor/students" },
   { label: "Revenue", icon: "payments", href: "/dashboard/instructor/revenue" },
   { label: "Reviews", icon: "rate_review", href: "/dashboard/instructor/reviews" },
   { label: "Settings", icon: "settings", href: "/dashboard/settings" },
 ]
 
+const adminLinks: NavItem[] = [
+  { label: "Overview", icon: "dashboard", href: "/dashboard/instructor" },
+  { label: "Users", icon: "manage_accounts", href: "/dashboard/admin/users" },
+  { label: "Courses", icon: "menu_book", href: "/dashboard/admin/courses" },
+  { label: "My Courses", icon: "edit_note", href: "/dashboard/instructor/courses" },
+  { label: "Revenue", icon: "payments", href: "/dashboard/instructor/revenue" },
+  { label: "Settings", icon: "settings", href: "/dashboard/settings" },
+]
+
 export function SidebarNav({ role, activePath }: SidebarNavProps) {
-  const links = role === "INSTRUCTOR" || role === "ADMIN" ? instructorLinks : studentLinks
+  const links = role === "ADMIN" ? adminLinks : role === "TEACHER" ? instructorLinks : studentLinks
 
   return (
     <nav className="flex flex-col gap-1 px-3 py-4">
       {links.map((item) => {
-        const isActive = activePath === item.href
+        const isActive = activePath === item.href || activePath.startsWith(item.href + "/")
 
         return (
           <Link

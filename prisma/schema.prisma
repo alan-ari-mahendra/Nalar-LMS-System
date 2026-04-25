@@ -1,0 +1,607 @@
+// prisma/schema.prisma
+// Phase 3a — Auth + RBAC
+// Database: Neon PostgreSQL (pooled)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum AuthProvider {
+  EMAIL
+  GOOGLE
+  GITHUB
+}
+
+enum CourseStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+  ARCHIVED
+}
+
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum LessonType {
+  VIDEO
+  TEXT
+  QUIZ
+  ATTACHMENT
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum NotificationType {
+  ENROLLMENT
+  COURSE_APPROVED
+  COURSE_REJECTED
+  QUIZ_PASSED
+  QUIZ_FAILED
+  CERTIFICATE_ISSUED
+  NEW_REVIEW
+  COURSE_UPDATE
+}
+
+// ============================================================
+// USER
+// Core identity — satu row per user
+// ============================================================
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  name          String?
+  avatarUrl     String?
+  role          Role     @default(STUDENT)
+  isActive      Boolean  @default(true)
+  deletedAt     DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  credentials    Credential[]
+  sessions       Session[]
+  auditLogs      AuditLog[]
+  courses        Course[]         // courses created by TEACHER
+  enrollments    Enrollment[]     // courses enrolled as STUDENT
+  lessonProgress LessonProgress[]
+  quizAttempts   QuizAttempt[]
+  orders         Order[]
+  certificates   Certificate[]
+  reviews        Review[]
+  notifications  Notification[]
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+// ============================================================
+// CREDENTIAL
+// Menyimpan password hash (EMAIL provider)
+// Satu user bisa punya beberapa provider (email + google)
+// ============================================================
+
+model Credential {
+  id           String       @id @default(cuid())
+  provider     AuthProvider @default(EMAIL)
+  providerId   String?                          // external ID untuk OAuth
+  passwordHash String?                          // hanya untuk EMAIL provider
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerId])
+  @@unique([userId, provider])
+  @@map("credentials")
+}
+
+// ============================================================
+// SESSION
+// Server-side session store
+// ============================================================
+
+model Session {
+  id           String   @id @default(cuid())
+  token        String   @unique @default(cuid())
+  ipAddress    String?
+  userAgent    String?
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  lastActiveAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+// ============================================================
+// EMAIL VERIFICATION TOKEN
+// ============================================================
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique @default(cuid())
+  email     String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([email])
+  @@map("verification_tokens")
+}
+
+// ============================================================
+// PASSWORD RESET TOKEN
+// ============================================================
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique @default(cuid())
+  email     String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@map("password_reset_tokens")
+}
+
+// ============================================================
+// AUDIT LOG
+// Tracks auth events — login, logout, role changes, etc.
+// ============================================================
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String                           // LOGIN, LOGOUT, REGISTER, ROLE_CHANGE, etc.
+  metadata  Json?                            // { ip, userAgent, oldRole, newRole, ... }
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ============================================================
+// CATEGORY
+// Course grouping — Web Dev, UI/UX, Data Science, etc.
+// ============================================================
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  iconUrl     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  courses Course[]
+
+  @@index([slug])
+  @@map("categories")
+}
+
+// ============================================================
+// COURSE
+// Central content model — owned by a TEACHER
+// rating, reviewCount, enrollmentCount, totalLessons,
+// totalDuration are cached fields updated by business logic
+// ============================================================
+
+model Course {
+  id              String       @id @default(cuid())
+  title           String
+  slug            String       @unique
+  description     String
+  shortDesc       String
+  thumbnailUrl    String
+  trailerUrl      String?
+  price           Decimal      @default(0) @db.Decimal(10, 2)
+  isFree          Boolean      @default(true)
+  status          CourseStatus  @default(DRAFT)
+  level           CourseLevel   @default(BEGINNER)
+  language        String       @default("id")
+  requirements    String[]     @default([])
+  outcomes        String[]     @default([])
+  totalDuration   Int          @default(0)          // cached — seconds
+  totalLessons    Int          @default(0)          // cached — count
+  rating          Float        @default(0)          // cached — 1-5
+  reviewCount     Int          @default(0)          // cached
+  enrollmentCount Int          @default(0)          // cached
+  publishedAt     DateTime?
+  deletedAt       DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Foreign keys
+  instructorId String
+  instructor   User     @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  categoryId   String
+  category     Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  // Relations
+  chapters     Chapter[]
+  attachments  Attachment[]
+  enrollments  Enrollment[]
+  orders       Order[]
+  certificates Certificate[]
+  reviews      Review[]
+
+  @@index([slug])
+  @@index([status])
+  @@index([instructorId])
+  @@index([categoryId])
+  @@index([publishedAt])
+  @@map("courses")
+}
+
+// ============================================================
+// CHAPTER
+// Section grouping within a course — ordered by position
+// ============================================================
+
+model Chapter {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  position    Int
+  isFree      Boolean   @default(false)
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Foreign key
+  courseId String
+  course  Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  // Relations
+  lessons Lesson[]
+
+  @@index([courseId])
+  @@map("chapters")
+}
+
+// ============================================================
+// LESSON
+// Single learning unit — video, text, quiz, or attachment
+// videoPlaybackId set after video processing (Mux/Bunny)
+// ============================================================
+
+model Lesson {
+  id              String     @id @default(cuid())
+  title           String
+  description     String?
+  type            LessonType @default(VIDEO)
+  position        Int
+  isFree          Boolean    @default(false)
+  duration        Int?                            // seconds
+  videoUrl        String?
+  videoPlaybackId String?                         // set after processing
+  content         String?                         // for TEXT/QUIZ types
+  deletedAt       DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  // Foreign key
+  chapterId String
+  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  // Relations
+  lessonProgress LessonProgress[]
+  quiz           Quiz?
+
+  @@index([chapterId])
+  @@map("lessons")
+}
+
+// ============================================================
+// ATTACHMENT
+// Downloadable file linked to a course
+// ============================================================
+
+model Attachment {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  size      Int?                                  // bytes
+  mimeType  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Foreign key
+  courseId String
+  course  Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+  @@map("attachments")
+}
+
+// ============================================================
+// ENROLLMENT
+// Student ↔ Course join — one enrollment per student per course
+// progressPercent is cached, updated by business logic
+// ============================================================
+
+model Enrollment {
+  id              String    @id @default(cuid())
+  progressPercent Int       @default(0)          // cached — 0-100
+  enrolledAt      DateTime  @default(now())
+  completedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Foreign keys
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId  String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+  @@map("enrollments")
+}
+
+// ============================================================
+// LESSON PROGRESS
+// Tracks per-lesson completion for each student
+// ============================================================
+
+model LessonProgress {
+  id             String    @id @default(cuid())
+  isCompleted    Boolean   @default(false)
+  completedAt    DateTime?
+  watchedSeconds Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Foreign keys
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId String
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([lessonId])
+  @@map("lesson_progress")
+}
+
+// ============================================================
+// QUIZ
+// Assessment linked to a lesson (type=QUIZ)
+// One quiz per lesson
+// ============================================================
+
+model Quiz {
+  id           String  @id @default(cuid())
+  title        String
+  passingScore Int     @default(70)              // percentage
+  allowRetake  Boolean @default(true)
+  maxAttempts  Int?                               // null = unlimited
+  timeLimit    Int?                               // seconds
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Foreign key — one-to-one with Lesson
+  lessonId String @unique
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  // Relations
+  questions    Question[]
+  quizAttempts QuizAttempt[]
+
+  @@map("quizzes")
+}
+
+// ============================================================
+// QUESTION
+// Single question within a quiz — ordered by position
+// ============================================================
+
+model Question {
+  id          String  @id @default(cuid())
+  text        String
+  explanation String?
+  position    Int
+  points      Int     @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Foreign key
+  quizId String
+  quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  // Relations
+  options QuestionOption[]
+
+  @@index([quizId])
+  @@map("questions")
+}
+
+// ============================================================
+// QUESTION OPTION
+// Answer choice for a question — ordered by position
+// ============================================================
+
+model QuestionOption {
+  id        String  @id @default(cuid())
+  text      String
+  isCorrect Boolean @default(false)
+  position  Int
+  createdAt DateTime @default(now())
+
+  // Foreign key
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+  @@map("question_options")
+}
+
+// ============================================================
+// QUIZ ATTEMPT
+// Student's attempt at a quiz — answers stored as JSON snapshot
+// { questionId: selectedOptionId }
+// ============================================================
+
+model QuizAttempt {
+  id          String    @id @default(cuid())
+  score       Int       @default(0)              // percentage
+  isPassed    Boolean   @default(false)
+  answers     Json                                // { questionId: optionId }
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  // Foreign keys
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizId String
+  quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([quizId])
+  @@map("quiz_attempts")
+}
+
+// ============================================================
+// ORDER
+// Payment transaction — never hard-delete, status updates only
+// PENDING → COMPLETED → REFUNDED  or  PENDING → FAILED
+// ============================================================
+
+model Order {
+  id              String      @id @default(cuid())
+  amount          Decimal     @db.Decimal(10, 2)
+  status          OrderStatus @default(PENDING)
+  paymentMethod   String?                          // midtrans, stripe, etc.
+  paymentId       String?     @unique              // external gateway transaction ID
+  paidAt          DateTime?
+  refundedAt      DateTime?
+  metadata        Json?                            // gateway response snapshot
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Foreign keys
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId  String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([courseId])
+  @@index([status])
+  @@index([paymentId])
+  @@map("orders")
+}
+
+// ============================================================
+// CERTIFICATE
+// Issued on course completion — one per student per course
+// verifyCode used for public verification URL
+// ============================================================
+
+model Certificate {
+  id         String   @id @default(cuid())
+  verifyCode String   @unique @default(cuid())
+  issuedAt   DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  // Foreign keys
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId String
+  course  Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+  @@index([verifyCode])
+  @@map("certificates")
+}
+
+// ============================================================
+// REVIEW
+// Student review on a course — one per student per course
+// ============================================================
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int                                   // 1-5
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Foreign keys
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId String
+  course  Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+  @@map("reviews")
+}
+
+// ============================================================
+// NOTIFICATION
+// In-app notification for a user
+// ============================================================
+
+model Notification {
+  id        String           @id @default(cuid())
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  metadata  Json?                                 // { courseId, lessonId, etc. }
+  createdAt DateTime         @default(now())
+
+  // Foreign key
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}

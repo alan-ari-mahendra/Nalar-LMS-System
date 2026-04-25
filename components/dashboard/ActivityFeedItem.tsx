@@ -1,5 +1,5 @@
 import type { ActivityItem } from "@/type"
-import { formatRelativeTime } from "@/mock/data"
+import { formatRelativeTime } from "@/lib/utils"
 
 interface ActivityFeedItemProps {
   item: ActivityItem
