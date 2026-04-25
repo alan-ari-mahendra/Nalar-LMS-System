@@ -2,13 +2,56 @@
 "use server"
 
 import { prisma } from "@/lib/db"
-import { requireAuth } from "@/lib/auth/guards"
+import { requireAuth, requireRole } from "@/lib/auth/guards"
 import { ReviewSchema } from "./schemas"
 import type { ReviewInput } from "./schemas"
 
 type ActionResult =
   | { success: true }
   | { success: false; error: string }
+
+export interface InstructorReview {
+  id: string
+  rating: number
+  comment: string | null
+  createdAt: string
+  student: {
+    id: string
+    name: string
+    avatarUrl: string | null
+  }
+  course: {
+    id: string
+    title: string
+    slug: string
+  }
+}
+
+export async function getInstructorReviews(): Promise<InstructorReview[]> {
+  const user = await requireRole(["TEACHER", "ADMIN"])
+
+  const rows = await prisma.review.findMany({
+    where: { course: { instructorId: user.id, deletedAt: null } },
+    include: {
+      user: { select: { id: true, name: true, avatarUrl: true } },
+      course: { select: { id: true, title: true, slug: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  })
+
+  return rows.map((r) => ({
+    id: r.id,
+    rating: r.rating,
+    comment: r.comment,
+    createdAt: r.createdAt.toISOString(),
+    student: {
+      id: r.user.id,
+      name: r.user.name ?? "Student",
+      avatarUrl: r.user.avatarUrl,
+    },
+    course: r.course,
+  }))
+}
 
 export async function submitReview(data: ReviewInput): Promise<ActionResult> {
   const parsed = ReviewSchema.safeParse(data)
