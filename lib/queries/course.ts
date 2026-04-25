@@ -3,7 +3,14 @@ import { serializeCourse, serializeCourseDetail } from "@/lib/serializers"
 import type { Course, CourseDetail } from "@/type"
 
 const courseInclude = {
-  instructor: { select: { id: true, name: true, avatarUrl: true } },
+  instructor: {
+    select: {
+      id: true,
+      name: true,
+      avatarUrl: true,
+      _count: { select: { courses: true } },
+    },
+  },
   category: { select: { id: true, name: true, slug: true } },
 } as const
 

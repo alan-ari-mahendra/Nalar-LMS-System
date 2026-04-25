@@ -69,7 +69,7 @@ export function serializeCourse(c: PrismaCourse): Course {
       avatarUrl: c.instructor.avatarUrl,
       headline: null,
       courseCount: c.instructor._count?.courses ?? 0,
-      studentCount: 0,
+      studentCount: c.enrollmentCount,
       rating: 0,
       bio: null,
     },
