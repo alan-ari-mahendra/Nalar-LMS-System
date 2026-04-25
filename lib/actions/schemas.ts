@@ -41,3 +41,92 @@ export type WatchProgressInput = z.infer<typeof WatchProgressSchema>
 export type QuizSubmitInput = z.infer<typeof QuizSubmitSchema>
 export type ReviewInput = z.infer<typeof ReviewSchema>
 export type CourseStatusInput = z.infer<typeof CourseStatusSchema>
+
+// --- Course Builder Schemas ---
+
+export const CreateCourseSchema = z.object({
+  title: z.string().min(3, "Title must be at least 3 characters").max(200),
+  description: z.string().min(10).max(5000),
+  shortDesc: z.string().min(10).max(500),
+  price: z.number().min(0),
+  level: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"]),
+  categoryId: z.string().min(1),
+  thumbnailUrl: z.string().url("Must be a valid URL"),
+})
+
+export const UpdateCourseSchema = z.object({
+  courseId: z.string().min(1),
+  title: z.string().min(3).max(200).optional(),
+  description: z.string().min(10).max(5000).optional(),
+  shortDesc: z.string().min(10).max(500).optional(),
+  price: z.number().min(0).optional(),
+  level: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"]).optional(),
+  categoryId: z.string().min(1).optional(),
+  thumbnailUrl: z.string().url().optional(),
+})
+
+export const CreateChapterSchema = z.object({
+  courseId: z.string().min(1),
+  title: z.string().min(1, "Chapter title required").max(200),
+  description: z.string().max(1000).optional(),
+})
+
+export const UpdateChapterSchema = z.object({
+  chapterId: z.string().min(1),
+  title: z.string().min(1).max(200).optional(),
+  description: z.string().max(1000).optional(),
+})
+
+export const DeleteChapterSchema = z.object({
+  chapterId: z.string().min(1),
+})
+
+export const CreateLessonSchema = z.object({
+  chapterId: z.string().min(1),
+  title: z.string().min(1, "Lesson title required").max(200),
+  type: z.enum(["VIDEO", "TEXT", "QUIZ", "ATTACHMENT"]),
+  content: z.string().max(50000).optional(),
+  videoUrl: z.string().url().optional(),
+  duration: z.number().int().min(0).optional(),
+})
+
+export const UpdateLessonSchema = z.object({
+  lessonId: z.string().min(1),
+  title: z.string().min(1).max(200).optional(),
+  type: z.enum(["VIDEO", "TEXT", "QUIZ", "ATTACHMENT"]).optional(),
+  content: z.string().max(50000).optional(),
+  videoUrl: z.string().url().optional(),
+  duration: z.number().int().min(0).optional(),
+})
+
+export const DeleteLessonSchema = z.object({
+  lessonId: z.string().min(1),
+})
+
+// --- Admin Schemas ---
+
+export const ToggleUserSchema = z.object({
+  userId: z.string().min(1),
+})
+
+export const ChangeRoleSchema = z.object({
+  userId: z.string().min(1),
+  role: z.enum(["STUDENT", "TEACHER", "ADMIN"]),
+})
+
+export const RejectCourseSchema = z.object({
+  courseId: z.string().min(1),
+  reason: z.string().min(5, "Reason must be at least 5 characters").max(500),
+})
+
+export type CreateCourseInput = z.infer<typeof CreateCourseSchema>
+export type UpdateCourseInput = z.infer<typeof UpdateCourseSchema>
+export type CreateChapterInput = z.infer<typeof CreateChapterSchema>
+export type UpdateChapterInput = z.infer<typeof UpdateChapterSchema>
+export type DeleteChapterInput = z.infer<typeof DeleteChapterSchema>
+export type CreateLessonInput = z.infer<typeof CreateLessonSchema>
+export type UpdateLessonInput = z.infer<typeof UpdateLessonSchema>
+export type DeleteLessonInput = z.infer<typeof DeleteLessonSchema>
+export type ToggleUserInput = z.infer<typeof ToggleUserSchema>
+export type ChangeRoleInput = z.infer<typeof ChangeRoleSchema>
+export type RejectCourseInput = z.infer<typeof RejectCourseSchema>
