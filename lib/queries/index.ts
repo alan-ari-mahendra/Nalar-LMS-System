@@ -2,6 +2,6 @@ export { getPublishedCourses, getFeaturedCourses, getCourseBySlug, getPlatformSt
 export { getCategories } from "./category"
 export { getEnrollmentsByUser, getRecentEnrollmentsByInstructor } from "./enrollment"
 export { getStudentStats, getCertificatesByUser, getNotificationsByUser } from "./student"
-export { getInstructorStats } from "./instructor"
+export { getInstructorStats, getReviewsByInstructor } from "./instructor"
 export { getCertificateByCode } from "./certificate"
-export { getLessonProgressByUser, getLessonById } from "./lesson"
+export { getLessonProgressByUser, getFirstLessonId, getLessonById } from "./lesson"

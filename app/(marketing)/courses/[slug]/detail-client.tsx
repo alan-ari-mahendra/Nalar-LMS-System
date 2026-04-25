@@ -1,8 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { enrollInCourse } from "@/lib/actions/enrollment"
+import { submitReview } from "@/lib/actions/review"
 import { Avatar } from "@/components/shared/Avatar"
 import { RatingStars } from "@/components/shared/RatingStars"
 import { CourseBadge } from "@/components/shared/CourseBadge"
@@ -14,6 +17,45 @@ type Tab = "overview" | "curriculum" | "instructor" | "reviews"
 export default function CourseDetailPage({ course }: { course: CourseDetail }) {
   const [activeTab, setActiveTab] = useState<Tab>("overview")
   const [expandedChapters, setExpandedChapters] = useState<string[]>([course.chapters[0]?.id])
+  const router = useRouter()
+  const [isEnrolling, startEnroll] = useTransition()
+  const [enrollError, setEnrollError] = useState("")
+  const [reviewRating, setReviewRating] = useState(5)
+  const [reviewComment, setReviewComment] = useState("")
+  const [isSubmittingReview, startReviewSubmit] = useTransition()
+  const [reviewSuccess, setReviewSuccess] = useState("")
+  const [reviewError, setReviewError] = useState("")
+
+  function handleEnroll() {
+    setEnrollError("")
+    startEnroll(async () => {
+      const result = await enrollInCourse({ courseId: course.id })
+      if (result.success) {
+        router.push(`/learn/${course.id}/${course.chapters[0]?.lessons[0]?.id ?? ""}`)
+      } else {
+        setEnrollError(result.error)
+      }
+    })
+  }
+
+  function handleSubmitReview() {
+    setReviewError("")
+    setReviewSuccess("")
+    startReviewSubmit(async () => {
+      const result = await submitReview({
+        courseId: course.id,
+        rating: reviewRating,
+        comment: reviewComment,
+      })
+      if (result.success) {
+        setReviewSuccess("Review submitted successfully!")
+        setReviewComment("")
+        router.refresh()
+      } else {
+        setReviewError(result.error)
+      }
+    })
+  }
 
   function toggleChapter(id: string) {
     setExpandedChapters((prev) =>
@@ -255,6 +297,48 @@ export default function CourseDetailPage({ course }: { course: CourseDetail }) {
                 {/* ---- REVIEWS ---- */}
                 {activeTab === "reviews" && (
                   <div className="space-y-8">
+                    {/* Write a Review */}
+                    <div className="bg-surface-container border border-outline-variant rounded-xl p-6 space-y-4">
+                      <h3 className="text-lg font-bold">Write a Review</h3>
+                      {reviewSuccess && (
+                        <p className="text-tertiary text-sm">{reviewSuccess}</p>
+                      )}
+                      {reviewError && (
+                        <p className="text-error text-sm">{reviewError}</p>
+                      )}
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-on-surface-variant">Rating:</span>
+                        <div className="flex gap-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setReviewRating(star)}
+                              className="transition-colors"
+                            >
+                              <span className={`material-symbols-outlined !text-2xl ${star <= reviewRating ? "text-primary" : "text-outline"}`}>
+                                star
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <textarea
+                        value={reviewComment}
+                        onChange={(e) => setReviewComment(e.target.value)}
+                        placeholder="Share your experience with this course (min 10 characters)..."
+                        rows={3}
+                        className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background resize-none"
+                      />
+                      <button
+                        onClick={handleSubmitReview}
+                        disabled={isSubmittingReview || reviewComment.length < 10}
+                        className="bg-primary text-on-primary px-6 py-2.5 rounded-lg font-bold hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isSubmittingReview ? "Submitting..." : "Submit Review"}
+                      </button>
+                    </div>
+
                     <h3 className="text-xl font-bold">Student Feedback</h3>
 
                     {/* Rating overview */}
@@ -358,9 +442,16 @@ export default function CourseDetailPage({ course }: { course: CourseDetail }) {
 
                   {/* CTA */}
                   <div className="space-y-3">
-                    <button className="w-full py-4 bg-primary text-on-primary font-bold rounded-lg hover:brightness-110 transition-all active:scale-[0.98]">
-                      {course.isFree ? "Enroll for Free" : "Enroll Now"}
+                    <button
+                      onClick={handleEnroll}
+                      disabled={isEnrolling}
+                      className="w-full py-4 bg-primary text-on-primary font-bold rounded-lg hover:brightness-110 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isEnrolling ? "Enrolling..." : course.isFree ? "Enroll for Free" : "Enroll Now"}
                     </button>
+                    {enrollError && (
+                      <p className="text-error text-xs text-center mt-2">{enrollError}</p>
+                    )}
                     <p className="text-center text-xs text-on-surface-variant">30-day money back guarantee</p>
                   </div>
 
@@ -405,8 +496,12 @@ export default function CourseDetailPage({ course }: { course: CourseDetail }) {
           )}
           <p className="text-xl font-bold">{formatPrice(course.price)}</p>
         </div>
-        <button className="bg-primary text-on-primary px-8 py-3 rounded-lg font-bold">
-          {course.isFree ? "Enroll for Free" : "Enroll Now"}
+        <button
+          onClick={handleEnroll}
+          disabled={isEnrolling}
+          className="bg-primary text-on-primary px-8 py-3 rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isEnrolling ? "Enrolling..." : course.isFree ? "Enroll for Free" : "Enroll Now"}
         </button>
       </div>
     </>

@@ -1,8 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { markLessonComplete } from "@/lib/actions/progress"
 import { Avatar } from "@/components/shared/Avatar"
 import { ProgressBar } from "@/components/shared/ProgressBar"
 import { formatDuration } from "@/lib/utils"
@@ -21,6 +23,21 @@ export default function VideoPlayerPage({ course, lesson, lessonProgress }: Vide
   const totalLessons = course.chapters.reduce((sum, ch) => sum + ch.lessons.length, 0)
   const progressPct = Math.round((completedLessonIds.length / totalLessons) * 100)
   const [activeTab, setActiveTab] = useState<Tab>("overview")
+
+  const router = useRouter()
+  const [isCompleting, startComplete] = useTransition()
+  const isLessonCompleted = lessonProgress.some(
+    (lp) => lp.lessonId === lesson.id && lp.isCompleted
+  )
+
+  function handleMarkComplete() {
+    startComplete(async () => {
+      const result = await markLessonComplete({ lessonId: lesson.id })
+      if (result.success) {
+        router.refresh()
+      }
+    })
+  }
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [expandedModules, setExpandedModules] = useState<string[]>([
     course.chapters[0]?.id,
@@ -127,9 +144,17 @@ export default function VideoPlayerPage({ course, lesson, lessonProgress }: Vide
                 </p>
               </div>
               <div className="flex items-center gap-4 shrink-0">
-                <button className="bg-primary text-on-primary px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 hover:brightness-110 transition-all">
+                <button
+                  onClick={handleMarkComplete}
+                  disabled={isCompleting || isLessonCompleted}
+                  className={`px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 transition-all ${
+                    isLessonCompleted
+                      ? "bg-tertiary text-on-primary cursor-default"
+                      : "bg-primary text-on-primary hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
+                  }`}
+                >
                   <span className="material-symbols-outlined !text-sm">check_circle</span>
-                  Mark as Complete
+                  {isCompleting ? "Completing..." : isLessonCompleted ? "Completed" : "Mark as Complete"}
                 </button>
                 <button className="text-primary font-medium hover:underline flex items-center gap-1.5">
                   <span className="material-symbols-outlined !text-sm">download</span>

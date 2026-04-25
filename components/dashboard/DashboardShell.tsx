@@ -7,7 +7,6 @@ import { SidebarNav } from "@/components/dashboard/SidebarNav"
 import { Avatar } from "@/components/shared/Avatar"
 import { NotificationBell } from "@/components/shared/NotificationBell"
 import { LogoutButton } from "@/components/shared/LogoutButton"
-import { MOCK_NOTIFICATIONS } from "@/mock/data"
 
 interface DashboardUser {
   name: string | null
@@ -17,10 +16,9 @@ interface DashboardUser {
 
 interface DashboardShellProps {
   user: DashboardUser
+  unreadCount?: number
   children: React.ReactNode
 }
-
-const unreadCount = MOCK_NOTIFICATIONS.filter((n) => !n.isRead).length
 
 const roleLabelMap: Record<string, string> = {
   ADMIN: "Admin Panel",
@@ -87,7 +85,7 @@ function SidebarContent({
   )
 }
 
-export function DashboardShell({ user, children }: DashboardShellProps) {
+export function DashboardShell({ user, unreadCount = 0, children }: DashboardShellProps) {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
 

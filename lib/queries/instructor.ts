@@ -70,3 +70,27 @@ export async function getInstructorStats(instructorId: string) {
     coursePerformance,
   }
 }
+
+/** Get latest reviews across all instructor's courses */
+export async function getReviewsByInstructor(instructorId: string, limit = 6) {
+  const rows = await prisma.review.findMany({
+    where: { course: { instructorId } },
+    include: {
+      user: { select: { id: true, name: true, avatarUrl: true } },
+    },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+  })
+
+  return rows.map((r) => ({
+    id: r.id,
+    rating: r.rating,
+    comment: r.comment,
+    createdAt: r.createdAt.toISOString(),
+    student: {
+      id: r.user.id,
+      fullName: r.user.name ?? "",
+      avatarUrl: r.user.avatarUrl,
+    },
+  }))
+}

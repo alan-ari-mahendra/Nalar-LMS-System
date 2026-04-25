@@ -21,6 +21,23 @@ export async function getLessonProgressByUser(userId: string, courseId: string):
   return rows.map(serializeLessonProgress)
 }
 
+/** Get first lesson ID for a course (by chapter + lesson position) */
+export async function getFirstLessonId(courseId: string): Promise<string | null> {
+  const chapter = await prisma.chapter.findFirst({
+    where: { courseId, deletedAt: null },
+    orderBy: { position: "asc" },
+    select: {
+      lessons: {
+        where: { deletedAt: null },
+        orderBy: { position: "asc" },
+        take: 1,
+        select: { id: true },
+      },
+    },
+  })
+  return chapter?.lessons[0]?.id ?? null
+}
+
 /** Get a single lesson by ID */
 export async function getLessonById(lessonId: string) {
   return prisma.lesson.findUnique({

@@ -5,7 +5,7 @@ import { ActivityFeedItem } from "@/components/dashboard/ActivityFeedItem"
 import { ProgressBar } from "@/components/shared/ProgressBar"
 import { requireRole } from "@/lib/auth/guards"
 import { getCurrentUser } from "@/lib/auth/actions"
-import { getStudentStats, getCertificatesByUser, getEnrollmentsByUser, getNotificationsByUser } from "@/lib/queries"
+import { getStudentStats, getCertificatesByUser, getEnrollmentsByUser, getNotificationsByUser, getFirstLessonId } from "@/lib/queries"
 
 export default async function StudentDashboardPage() {
   await requireRole(["STUDENT", "TEACHER", "ADMIN"])
@@ -16,6 +16,13 @@ export default async function StudentDashboardPage() {
   const stats = await getStudentStats(currentUser.id)
   const allEnrollments = await getEnrollmentsByUser(currentUser.id)
   const enrollments = allEnrollments.filter((e) => e.progressPercent < 100)
+  const firstLessonMap = new Map<string, string>()
+  await Promise.all(
+    enrollments.map(async (e) => {
+      const lessonId = await getFirstLessonId(e.courseId)
+      if (lessonId) firstLessonMap.set(e.courseId, lessonId)
+    })
+  )
   const certificates = await getCertificatesByUser(currentUser.id)
   const notifications = await getNotificationsByUser(currentUser.id)
   const activityItems = notifications.slice(0, 5).map((n) => ({
@@ -38,7 +45,11 @@ export default async function StudentDashboardPage() {
           Welcome back, {user.fullName.split(" ")[0]} 👋
         </h2>
         <p className="text-on-surface-variant font-medium">
-          You have <span className="text-primary">2 lessons</span> left to complete this week.
+          {enrollments.length > 0 ? (
+            <>You have <span className="text-primary">{enrollments.length} {enrollments.length === 1 ? "course" : "courses"}</span> in progress.</>
+          ) : (
+            <>You&apos;re all caught up! Browse courses to start learning.</>
+          )}
         </p>
       </section>
 
@@ -113,7 +124,7 @@ export default async function StudentDashboardPage() {
                   <ProgressBar value={enrollment.progressPercent} size="sm" />
                 </div>
                 <Link
-                  href={`/learn/${enrollment.courseId}/les-1`}
+                  href={`/learn/${enrollment.courseId}/${firstLessonMap.get(enrollment.courseId) ?? ""}`}
                   className="block w-full py-2 bg-primary hover:brightness-110 text-on-primary font-bold rounded-lg transition-all text-sm text-center"
                 >
                   Continue
