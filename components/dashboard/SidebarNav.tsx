@@ -19,6 +19,7 @@ const studentLinks: NavItem[] = [
   { label: "Dashboard", icon: "dashboard", href: "/dashboard" },
   { label: "My Courses", icon: "school", href: "/dashboard/courses" },
   { label: "Certificates", icon: "workspace_premium", href: "/dashboard/certificates" },
+  { label: "Orders", icon: "receipt_long", href: "/dashboard/orders" },
   { label: "Notifications", icon: "notifications", href: "/dashboard/notifications", badgeKey: "notifications" },
   { label: "Settings", icon: "settings", href: "/dashboard/settings" },
 ]
@@ -36,6 +37,7 @@ const adminLinks: NavItem[] = [
   { label: "Overview", icon: "dashboard", href: "/dashboard/instructor" },
   { label: "Users", icon: "manage_accounts", href: "/dashboard/admin/users" },
   { label: "Courses", icon: "menu_book", href: "/dashboard/admin/courses" },
+  { label: "Orders", icon: "receipt_long", href: "/dashboard/admin/orders" },
   { label: "My Courses", icon: "edit_note", href: "/dashboard/instructor/courses" },
   { label: "Revenue", icon: "payments", href: "/dashboard/instructor/revenue" },
   { label: "Settings", icon: "settings", href: "/dashboard/settings" },

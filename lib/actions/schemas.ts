@@ -119,6 +119,35 @@ export const RejectCourseSchema = z.object({
   reason: z.string().min(5, "Reason must be at least 5 characters").max(500),
 })
 
+// --- Order / Payment Schemas ---
+
+export const PaymentMethodEnum = z.enum([
+  "BANK_TRANSFER",
+  "CREDIT_CARD",
+  "GOPAY",
+  "OVO",
+  "QRIS",
+])
+
+export const CreateOrderSchema = z.object({
+  courseId: z.string().min(1, "Course ID is required"),
+  paymentMethod: PaymentMethodEnum,
+})
+
+export const OrderIdSchema = z.object({
+  orderId: z.string().min(1, "Order ID is required"),
+})
+
+export const RefundOrderSchema = z.object({
+  orderId: z.string().min(1, "Order ID is required"),
+  reason: z.string().min(5, "Reason must be at least 5 characters").max(500),
+})
+
+export type PaymentMethod = z.infer<typeof PaymentMethodEnum>
+export type CreateOrderInput = z.infer<typeof CreateOrderSchema>
+export type OrderIdInput = z.infer<typeof OrderIdSchema>
+export type RefundOrderInput = z.infer<typeof RefundOrderSchema>
+
 export type CreateCourseInput = z.infer<typeof CreateCourseSchema>
 export type UpdateCourseInput = z.infer<typeof UpdateCourseSchema>
 export type CreateChapterInput = z.infer<typeof CreateChapterSchema>
