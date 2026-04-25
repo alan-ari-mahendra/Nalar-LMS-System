@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import { getCourseWithCurriculum, getLessonProgressByUser } from "@/lib/queries"
+import { getCourseWithCurriculum, getLessonProgressByUser, getQuizByLessonId } from "@/lib/queries"
 import { getCurrentUser } from "@/lib/auth/actions"
 import VideoPlayerPage from "./player-client"
 
@@ -24,11 +24,14 @@ export default async function PlayerPage({
     ? await getLessonProgressByUser(currentUser.id, courseId)
     : []
 
+  const quiz = lesson.type === "QUIZ" ? await getQuizByLessonId(lesson.id) : null
+
   return (
     <VideoPlayerPage
       course={course}
       lesson={lesson}
       lessonProgress={lessonProgress}
+      quiz={quiz}
     />
   )
 }

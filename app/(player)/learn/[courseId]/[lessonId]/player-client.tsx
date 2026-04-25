@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { markLessonComplete } from "@/lib/actions/progress"
+import { submitQuizAttempt } from "@/lib/actions/quiz"
 import { Avatar } from "@/components/shared/Avatar"
 import { ProgressBar } from "@/components/shared/ProgressBar"
 import { formatDuration } from "@/lib/utils"
@@ -12,13 +13,27 @@ import type { CourseDetail, Lesson, LessonProgress } from "@/type"
 
 type Tab = "overview" | "notes" | "discussion"
 
+interface QuizData {
+  id: string
+  title: string
+  passingScore: number
+  questions: {
+    id: string
+    text: string
+    explanation: string | null
+    position: number
+    options: { id: string; text: string; position: number }[]
+  }[]
+}
+
 interface VideoPlayerPageProps {
   course: CourseDetail
   lesson: Lesson
   lessonProgress: LessonProgress[]
+  quiz?: QuizData | null
 }
 
-export default function VideoPlayerPage({ course, lesson, lessonProgress }: VideoPlayerPageProps) {
+export default function VideoPlayerPage({ course, lesson, lessonProgress, quiz }: VideoPlayerPageProps) {
   const completedLessonIds = lessonProgress.filter((lp) => lp.isCompleted).map((lp) => lp.lessonId)
   const totalLessons = course.chapters.reduce((sum, ch) => sum + ch.lessons.length, 0)
   const progressPct = Math.round((completedLessonIds.length / totalLessons) * 100)
@@ -29,6 +44,25 @@ export default function VideoPlayerPage({ course, lesson, lessonProgress }: Vide
   const isLessonCompleted = lessonProgress.some(
     (lp) => lp.lessonId === lesson.id && lp.isCompleted
   )
+
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({})
+  const [quizResult, setQuizResult] = useState<{ score: number; passed: boolean } | null>(null)
+  const [isSubmittingQuiz, startQuizSubmit] = useTransition()
+
+  function handleSubmitQuiz() {
+    if (!quiz) return
+    const answers = Object.entries(selectedAnswers).map(([questionId, selectedOptionId]) => ({
+      questionId,
+      selectedOptionId,
+    }))
+    startQuizSubmit(async () => {
+      const result = await submitQuizAttempt({ quizId: quiz.id, answers })
+      if (result.success) {
+        setQuizResult({ score: result.score, passed: result.passed })
+        router.refresh()
+      }
+    })
+  }
 
   function handleMarkComplete() {
     startComplete(async () => {
@@ -114,6 +148,53 @@ export default function VideoPlayerPage({ course, lesson, lessonProgress }: Vide
       <main className="flex flex-1 overflow-hidden relative">
         {/* Video + Content area */}
         <section className="flex-1 flex flex-col overflow-y-auto">
+          {lesson.type === "QUIZ" && quiz ? (
+                <div className="flex-1 overflow-y-auto p-8">
+                  <div className="max-w-2xl mx-auto space-y-6">
+                    <h2 className="text-2xl font-bold">{quiz.title}</h2>
+                    <p className="text-sm text-on-surface-variant">Passing score: {quiz.passingScore}%</p>
+
+                    {quizResult ? (
+                      <div className={`p-6 rounded-xl border ${quizResult.passed ? "bg-tertiary-container/20 border-tertiary/30" : "bg-error-container border-error/30"}`}>
+                        <h3 className="text-xl font-bold mb-2">{quizResult.passed ? "Passed!" : "Not Passed"}</h3>
+                        <p className="text-lg">Score: {quizResult.score}%</p>
+                        {!quizResult.passed && (
+                          <button onClick={() => { setQuizResult(null); setSelectedAnswers({}) }}
+                            className="mt-4 bg-primary text-on-primary px-4 py-2 rounded-lg font-bold text-sm">
+                            Try Again
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      <>
+                        {quiz.questions.map((q, qi) => (
+                          <div key={q.id} className="bg-surface-container border border-outline-variant rounded-xl p-5 space-y-3">
+                            <h4 className="font-bold">{qi + 1}. {q.text}</h4>
+                            <div className="space-y-2">
+                              {q.options.map((opt) => (
+                                <label key={opt.id} className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                                  selectedAnswers[q.id] === opt.id ? "border-primary bg-primary/10" : "border-outline-variant hover:border-primary/50"
+                                }`}>
+                                  <input type="radio" name={q.id} value={opt.id} checked={selectedAnswers[q.id] === opt.id}
+                                    onChange={() => setSelectedAnswers((prev) => ({ ...prev, [q.id]: opt.id }))}
+                                    className="accent-primary" />
+                                  <span className="text-sm">{opt.text}</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                        <button onClick={handleSubmitQuiz}
+                          disabled={isSubmittingQuiz || Object.keys(selectedAnswers).length < quiz.questions.length}
+                          className="w-full bg-primary text-on-primary py-3 rounded-lg font-bold hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                          {isSubmittingQuiz ? "Submitting..." : "Submit Quiz"}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ) : (
+          <>
           {/* Video player area — UI shell only */}
           <div className="relative w-full aspect-video bg-black group cursor-pointer shrink-0">
             <Image
@@ -228,6 +309,8 @@ export default function VideoPlayerPage({ course, lesson, lessonProgress }: Vide
             {/* Bottom spacing for player bar */}
             <div className="h-32" />
           </div>
+          </>
+          )}
         </section>
 
         {/* ============================================================

@@ -49,3 +49,35 @@ export async function getLessonById(lessonId: string) {
     },
   })
 }
+
+/** Get quiz for a lesson (strip isCorrect from options for client) */
+export async function getQuizByLessonId(lessonId: string) {
+  const quiz = await prisma.quiz.findUnique({
+    where: { lessonId },
+    include: {
+      questions: {
+        orderBy: { position: "asc" },
+        include: {
+          options: {
+            orderBy: { position: "asc" },
+            select: { id: true, text: true, position: true },
+          },
+        },
+      },
+    },
+  })
+  if (!quiz) return null
+
+  return {
+    id: quiz.id,
+    title: quiz.title,
+    passingScore: quiz.passingScore,
+    questions: quiz.questions.map((q) => ({
+      id: q.id,
+      text: q.text,
+      explanation: q.explanation,
+      position: q.position,
+      options: q.options,
+    })),
+  }
+}

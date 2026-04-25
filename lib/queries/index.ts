@@ -4,5 +4,5 @@ export { getEnrollmentsByUser, getRecentEnrollmentsByInstructor } from "./enroll
 export { getStudentStats, getCertificatesByUser, getNotificationsByUser } from "./student"
 export { getInstructorStats, getReviewsByInstructor } from "./instructor"
 export { getCertificateByCode } from "./certificate"
-export { getLessonProgressByUser, getFirstLessonId, getLessonById } from "./lesson"
+export { getLessonProgressByUser, getFirstLessonId, getLessonById, getQuizByLessonId } from "./lesson"
 export { getAllUsers, getAllCoursesAdmin } from "./admin"
