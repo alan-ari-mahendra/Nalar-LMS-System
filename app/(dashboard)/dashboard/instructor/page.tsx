@@ -6,7 +6,8 @@ import { Avatar } from "@/components/shared/Avatar"
 import { RatingStars } from "@/components/shared/RatingStars"
 import { requireRole } from "@/lib/auth/guards"
 import { getCurrentUser } from "@/lib/auth/actions"
-import { getInstructorStats, getRecentEnrollmentsByInstructor, getCourseBySlug } from "@/lib/queries"
+import { prisma } from "@/lib/db"
+import { getInstructorStats, getRecentEnrollmentsByInstructor } from "@/lib/queries"
 import { formatPrice, formatRelativeTime } from "@/lib/utils"
 
 export default async function InstructorDashboardPage() {
@@ -30,10 +31,26 @@ export default async function InstructorDashboardPage() {
     enrolledAt: e.enrolledAt.toISOString(),
   }))
 
-  // Get reviews from first published course
-  const firstCourse = courses.find((c) => c.status === "PUBLISHED")
-  const courseDetail = firstCourse ? await getCourseBySlug("nextjs-14-fullstack-saas") : null
-  const reviews = courseDetail?.reviews ?? []
+  // Get reviews from all instructor's courses
+  const allReviews = await prisma.review.findMany({
+    where: { course: { instructorId: currentUser.id } },
+    include: {
+      user: { select: { id: true, name: true, avatarUrl: true } },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 6,
+  })
+  const reviews = allReviews.map((r) => ({
+    id: r.id,
+    rating: r.rating,
+    comment: r.comment,
+    createdAt: r.createdAt.toISOString(),
+    student: {
+      id: r.user.id,
+      fullName: r.user.name ?? "",
+      avatarUrl: r.user.avatarUrl,
+    },
+  }))
   return (
     <div className="space-y-8">
       {/* ============================================================
