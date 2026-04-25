@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getCertificateByCode } from "@/lib/queries"
+import { PrintButton } from "./print-button"
 
 export default async function CertificatePage({
   params,
@@ -91,10 +92,7 @@ export default async function CertificatePage({
               </div>
 
               {/* Download */}
-              <button className="bg-primary text-on-primary px-6 py-3 rounded-lg font-bold flex items-center gap-2 hover:brightness-110 transition-all">
-                <span className="material-symbols-outlined !text-lg">download</span>
-                Download PDF
-              </button>
+              <PrintButton />
             </div>
           </div>
 

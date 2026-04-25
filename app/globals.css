@@ -86,3 +86,17 @@ body {
 .material-symbols-outlined {
   font-size: 20px;
 }
+
+/* Print styles for certificate page */
+@media print {
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+  .print\:hidden {
+    display: none !important;
+  }
+  nav, footer, header {
+    display: none !important;
+  }
+}
