@@ -1,10 +1,22 @@
 "use server"
 
+import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/db"
 import { hashPassword, verifyPassword } from "./password"
 import { createSession, deleteSession, getSession, getSessionToken } from "./session"
-import { RegisterSchema, LoginSchema } from "./schemas"
-import type { RegisterInput, LoginInput } from "./schemas"
+import { requireAuth } from "./guards"
+import {
+  RegisterSchema,
+  LoginSchema,
+  UpdateProfileSchema,
+  ChangePasswordSchema,
+} from "./schemas"
+import type {
+  RegisterInput,
+  LoginInput,
+  UpdateProfileInput,
+  ChangePasswordInput,
+} from "./schemas"
 import type { User } from "@prisma/client"
 import type { Role } from "@prisma/client"
 
@@ -157,4 +169,69 @@ export async function getCurrentUser(): Promise<User | null> {
 
   const session = await getSession(token)
   return session?.user ?? null
+}
+
+type ProfileResult = { success: true } | { success: false; error: string }
+
+export async function updateProfile(data: UpdateProfileInput): Promise<ProfileResult> {
+  const parsed = UpdateProfileSchema.safeParse(data)
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0].message }
+  }
+
+  const user = await requireAuth()
+  const { name, headline, bio, website } = parsed.data
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      name,
+      headline: headline ?? null,
+      bio: bio ?? null,
+      website: website ? website : null,
+    },
+  })
+
+  revalidatePath("/dashboard/settings")
+  revalidatePath("/dashboard")
+
+  return { success: true }
+}
+
+export async function changePassword(data: ChangePasswordInput): Promise<ProfileResult> {
+  const parsed = ChangePasswordSchema.safeParse(data)
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0].message }
+  }
+
+  const user = await requireAuth()
+  const { currentPassword, newPassword } = parsed.data
+
+  const credential = await prisma.credential.findUnique({
+    where: { userId_provider: { userId: user.id, provider: "EMAIL" } },
+  })
+
+  if (!credential || !credential.passwordHash) {
+    return { success: false, error: "Password authentication is not enabled for this account" }
+  }
+
+  const valid = await verifyPassword(currentPassword, credential.passwordHash)
+  if (!valid) {
+    return { success: false, error: "Current password is incorrect" }
+  }
+
+  const newHash = await hashPassword(newPassword)
+  await prisma.credential.update({
+    where: { id: credential.id },
+    data: { passwordHash: newHash },
+  })
+
+  await prisma.auditLog.create({
+    data: {
+      userId: user.id,
+      action: "PASSWORD_CHANGE",
+    },
+  })
+
+  return { success: true }
 }

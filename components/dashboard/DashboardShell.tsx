@@ -36,10 +36,12 @@ function SidebarContent({
   user,
   sidebarRole,
   pathname,
+  unreadCount,
 }: {
   user: DashboardUser
   sidebarRole: "STUDENT" | "TEACHER" | "ADMIN"
   pathname: string
+  unreadCount: number
 }) {
   const displayName = user.name ?? "User"
 
@@ -72,7 +74,7 @@ function SidebarContent({
       </div>
 
       {/* Nav */}
-      <SidebarNav role={sidebarRole} activePath={pathname} />
+      <SidebarNav role={sidebarRole} activePath={pathname} unreadCount={unreadCount} />
 
       {/* Logout */}
       <div className="p-4 mt-auto border-t border-outline-variant">
@@ -99,7 +101,7 @@ export function DashboardShell({ user, unreadCount = 0, children }: DashboardShe
     <div className="min-h-screen bg-background flex">
       {/* Sidebar — desktop */}
       <aside className="hidden lg:flex w-[240px] flex-col border-r border-outline-variant bg-surface shrink-0 fixed top-0 left-0 h-full z-50">
-        <SidebarContent user={user} sidebarRole={sidebarRole} pathname={pathname} />
+        <SidebarContent user={user} sidebarRole={sidebarRole} pathname={pathname} unreadCount={unreadCount} />
       </aside>
 
       {/* Sidebar — mobile overlay */}
@@ -113,7 +115,7 @@ export function DashboardShell({ user, unreadCount = 0, children }: DashboardShe
             >
               <span className="material-symbols-outlined">close</span>
             </button>
-            <SidebarContent user={user} sidebarRole={sidebarRole} pathname={pathname} />
+            <SidebarContent user={user} sidebarRole={sidebarRole} pathname={pathname} unreadCount={unreadCount} />
           </div>
         </div>
       )}

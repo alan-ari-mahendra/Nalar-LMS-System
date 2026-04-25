@@ -4,8 +4,13 @@
 import crypto from "crypto"
 import { prisma } from "@/lib/db"
 import { requireAuth } from "@/lib/auth/guards"
+import { getEnrollmentsByUser } from "@/lib/queries/enrollment"
+import { getCertificatesByUser } from "@/lib/queries/student"
 import { EnrollmentSchema } from "./schemas"
 import type { EnrollmentInput } from "./schemas"
+import type { Enrollment, Certificate } from "@/type"
+
+export type EnrollmentWithNext = Enrollment & { nextLessonId: string | null }
 
 type ActionResult =
   | { success: true }
@@ -91,4 +96,47 @@ export async function enrollInCourse(data: EnrollmentInput): Promise<ActionResul
   })
 
   return { success: true }
+}
+
+async function getNextIncompleteLessonId(
+  userId: string,
+  courseId: string
+): Promise<string | null> {
+  const chapters = await prisma.chapter.findMany({
+    where: { courseId, deletedAt: null },
+    orderBy: { position: "asc" },
+    select: {
+      lessons: {
+        where: { deletedAt: null },
+        orderBy: { position: "asc" },
+        select: { id: true },
+      },
+    },
+  })
+  const lessonIds = chapters.flatMap((c) => c.lessons.map((l) => l.id))
+  if (lessonIds.length === 0) return null
+
+  const completed = await prisma.lessonProgress.findMany({
+    where: { userId, lessonId: { in: lessonIds }, isCompleted: true },
+    select: { lessonId: true },
+  })
+  const completedSet = new Set(completed.map((c) => c.lessonId))
+  const next = lessonIds.find((id) => !completedSet.has(id))
+  return next ?? lessonIds[0]
+}
+
+export async function getMyEnrollments(): Promise<EnrollmentWithNext[]> {
+  const user = await requireAuth()
+  const enrollments = await getEnrollmentsByUser(user.id)
+  return Promise.all(
+    enrollments.map(async (e) => ({
+      ...e,
+      nextLessonId: await getNextIncompleteLessonId(user.id, e.courseId),
+    }))
+  )
+}
+
+export async function getMyCertificates(): Promise<Certificate[]> {
+  const user = await requireAuth()
+  return getCertificatesByUser(user.id)
 }

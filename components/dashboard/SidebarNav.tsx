@@ -5,19 +5,21 @@ import Link from "next/link"
 interface SidebarNavProps {
   role: "STUDENT" | "TEACHER" | "ADMIN"
   activePath: string
+  unreadCount?: number
 }
 
 interface NavItem {
   label: string
   icon: string
   href: string
+  badgeKey?: "notifications"
 }
 
 const studentLinks: NavItem[] = [
   { label: "Dashboard", icon: "dashboard", href: "/dashboard" },
   { label: "My Courses", icon: "school", href: "/dashboard/courses" },
   { label: "Certificates", icon: "workspace_premium", href: "/dashboard/certificates" },
-  { label: "Notifications", icon: "notifications", href: "/dashboard/notifications" },
+  { label: "Notifications", icon: "notifications", href: "/dashboard/notifications", badgeKey: "notifications" },
   { label: "Settings", icon: "settings", href: "/dashboard/settings" },
 ]
 
@@ -39,13 +41,14 @@ const adminLinks: NavItem[] = [
   { label: "Settings", icon: "settings", href: "/dashboard/settings" },
 ]
 
-export function SidebarNav({ role, activePath }: SidebarNavProps) {
+export function SidebarNav({ role, activePath, unreadCount = 0 }: SidebarNavProps) {
   const links = role === "ADMIN" ? adminLinks : role === "TEACHER" ? instructorLinks : studentLinks
 
   return (
     <nav className="flex flex-col gap-1 px-3 py-4">
       {links.map((item) => {
         const isActive = activePath === item.href || activePath.startsWith(item.href + "/")
+        const showBadge = item.badgeKey === "notifications" && unreadCount > 0
 
         return (
           <Link
@@ -58,7 +61,12 @@ export function SidebarNav({ role, activePath }: SidebarNavProps) {
             }`}
           >
             <span className="material-symbols-outlined !text-xl">{item.icon}</span>
-            {item.label}
+            <span className="flex-1">{item.label}</span>
+            {showBadge && (
+              <span className="min-w-[20px] h-[20px] px-1.5 inline-flex items-center justify-center rounded-full bg-primary text-on-primary text-[10px] font-bold">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
           </Link>
         )
       })}
