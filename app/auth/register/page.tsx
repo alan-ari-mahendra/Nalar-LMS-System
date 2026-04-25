@@ -158,8 +158,8 @@ export default function RegisterPage() {
         {/* Terms */}
         <p className="text-[10px] text-center text-on-surface-variant leading-relaxed">
           By creating an account, you agree to our{" "}
-          <span className="text-primary cursor-pointer hover:underline">Terms of Service</span> and{" "}
-          <span className="text-primary cursor-pointer hover:underline">Privacy Policy</span>.
+          <span className="text-on-surface-variant cursor-not-allowed" title="Coming soon">Terms of Service</span> and{" "}
+          <span className="text-on-surface-variant cursor-not-allowed" title="Coming soon">Privacy Policy</span>.
         </p>
       </form>
 
