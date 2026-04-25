@@ -1,7 +1,35 @@
 import { prisma } from "@/lib/db"
+import type { CourseStatus, CourseLevel, Role } from "@prisma/client"
+
+export interface AdminUserRow {
+  id: string
+  name: string | null
+  email: string
+  avatarUrl: string | null
+  role: Role
+  isActive: boolean
+  createdAt: Date
+}
+
+export interface AdminCourseRow {
+  id: string
+  title: string
+  slug: string
+  thumbnailUrl: string
+  status: CourseStatus
+  level: CourseLevel
+  price: { toNumber(): number } | number
+  enrollmentCount: number
+  createdAt: Date
+  instructor: {
+    id: string
+    name: string | null
+    avatarUrl: string | null
+  }
+}
 
 /** Get all users for admin management */
-export async function getAllUsers() {
+export async function getAllUsers(): Promise<AdminUserRow[]> {
   return prisma.user.findMany({
     where: { deletedAt: null },
     select: {
@@ -18,7 +46,7 @@ export async function getAllUsers() {
 }
 
 /** Get all courses for admin review */
-export async function getAllCoursesAdmin() {
+export async function getAllCoursesAdmin(): Promise<AdminCourseRow[]> {
   return prisma.course.findMany({
     where: { deletedAt: null },
     select: {
