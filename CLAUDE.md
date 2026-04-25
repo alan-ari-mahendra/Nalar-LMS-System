@@ -1,7 +1,7 @@
-# CLAUDE.md — Learnify UI Phase
+# CLAUDE.md — Learnify Backend Phase
 
-> This is the CLAUDE.md governing Claude Code behavior for the **UI Phase** of Learnify.
-> All data is sourced from mock files. No real API calls, database queries, or auth checks.
+> This is the CLAUDE.md governing Claude Code behavior for the **Backend Phase** of Learnify.
+> Phase 3 active: Server actions and real database queries. Mock data being phased out.
 
 ---
 
