@@ -4,7 +4,7 @@ import { useState, useTransition } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { enrollInCourse } from "@/lib/actions/enrollment"
+import { enrollInFreeCourse } from "@/lib/actions/enrollment"
 import { submitReview } from "@/lib/actions/review"
 import { Avatar } from "@/components/shared/Avatar"
 import { RatingStars } from "@/components/shared/RatingStars"
@@ -14,7 +14,13 @@ import type { CourseDetail } from "@/type"
 
 type Tab = "overview" | "curriculum" | "instructor" | "reviews"
 
-export default function CourseDetailPage({ course }: { course: CourseDetail }) {
+interface CourseDetailPageProps {
+  course: CourseDetail
+  enrolled: boolean
+  pendingOrderId: string | null
+}
+
+export default function CourseDetailPage({ course, enrolled, pendingOrderId }: CourseDetailPageProps) {
   const [activeTab, setActiveTab] = useState<Tab>("overview")
   const [expandedChapters, setExpandedChapters] = useState<string[]>([course.chapters[0]?.id])
   const router = useRouter()
@@ -26,16 +32,23 @@ export default function CourseDetailPage({ course }: { course: CourseDetail }) {
   const [reviewSuccess, setReviewSuccess] = useState("")
   const [reviewError, setReviewError] = useState("")
 
-  function handleEnroll() {
+  const firstLessonId = course.chapters[0]?.lessons[0]?.id ?? ""
+
+  function handleFreeEnroll() {
     setEnrollError("")
     startEnroll(async () => {
-      const result = await enrollInCourse({ courseId: course.id })
+      const result = await enrollInFreeCourse({ courseId: course.id })
       if (result.success) {
-        router.push(`/learn/${course.id}/${course.chapters[0]?.lessons[0]?.id ?? ""}`)
+        router.push(`/learn/${course.id}/${firstLessonId}`)
       } else {
         setEnrollError(result.error)
       }
     })
+  }
+
+  function handlePaidCheckout() {
+    setEnrollError("")
+    router.push(`/checkout/course/${course.id}`)
   }
 
   function handleSubmitReview() {
@@ -442,13 +455,36 @@ export default function CourseDetailPage({ course }: { course: CourseDetail }) {
 
                   {/* CTA */}
                   <div className="space-y-3">
-                    <button
-                      onClick={handleEnroll}
-                      disabled={isEnrolling}
-                      className="w-full py-4 bg-primary text-on-primary font-bold rounded-lg hover:brightness-110 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isEnrolling ? "Enrolling..." : course.isFree ? "Enroll for Free" : "Enroll Now"}
-                    </button>
+                    {enrolled ? (
+                      <Link
+                        href={`/learn/${course.id}/${firstLessonId}`}
+                        className="block w-full py-4 bg-primary text-on-primary font-bold rounded-lg hover:brightness-110 transition-all active:scale-[0.98] text-center"
+                      >
+                        Continue Learning
+                      </Link>
+                    ) : pendingOrderId ? (
+                      <Link
+                        href={`/checkout/order/${pendingOrderId}/pay`}
+                        className="block w-full py-4 bg-amber-500 text-background font-bold rounded-lg hover:brightness-110 transition-all active:scale-[0.98] text-center"
+                      >
+                        Resume Checkout
+                      </Link>
+                    ) : course.isFree ? (
+                      <button
+                        onClick={handleFreeEnroll}
+                        disabled={isEnrolling}
+                        className="w-full py-4 bg-primary text-on-primary font-bold rounded-lg hover:brightness-110 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isEnrolling ? "Enrolling..." : "Enroll for Free"}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handlePaidCheckout}
+                        className="w-full py-4 bg-primary text-on-primary font-bold rounded-lg hover:brightness-110 transition-all active:scale-[0.98]"
+                      >
+                        Enroll Now
+                      </button>
+                    )}
                     {enrollError && (
                       <p className="text-error text-xs text-center mt-2">{enrollError}</p>
                     )}
@@ -496,13 +532,36 @@ export default function CourseDetailPage({ course }: { course: CourseDetail }) {
           )}
           <p className="text-xl font-bold">{formatPrice(course.price)}</p>
         </div>
-        <button
-          onClick={handleEnroll}
-          disabled={isEnrolling}
-          className="bg-primary text-on-primary px-8 py-3 rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isEnrolling ? "Enrolling..." : course.isFree ? "Enroll for Free" : "Enroll Now"}
-        </button>
+        {enrolled ? (
+          <Link
+            href={`/learn/${course.id}/${firstLessonId}`}
+            className="bg-primary text-on-primary px-8 py-3 rounded-lg font-bold"
+          >
+            Continue
+          </Link>
+        ) : pendingOrderId ? (
+          <Link
+            href={`/checkout/order/${pendingOrderId}/pay`}
+            className="bg-amber-500 text-background px-8 py-3 rounded-lg font-bold"
+          >
+            Resume
+          </Link>
+        ) : course.isFree ? (
+          <button
+            onClick={handleFreeEnroll}
+            disabled={isEnrolling}
+            className="bg-primary text-on-primary px-8 py-3 rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isEnrolling ? "Enrolling..." : "Enroll Free"}
+          </button>
+        ) : (
+          <button
+            onClick={handlePaidCheckout}
+            className="bg-primary text-on-primary px-8 py-3 rounded-lg font-bold"
+          >
+            Enroll Now
+          </button>
+        )}
       </div>
     </>
   )

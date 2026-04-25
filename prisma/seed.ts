@@ -651,6 +651,10 @@ async function main() {
   // NOTIFICATIONS (alan)
   // ============================================================
 
+  await prisma.notification.deleteMany({
+    where: { id: { in: ["notif-1", "notif-2", "notif-3", "notif-4"] } },
+  })
+
   await prisma.notification.createMany({
     data: [
       { id: "notif-1", userId: alan.id, type: "CERTIFICATE_ISSUED", title: "Sertifikat Diterbitkan", message: "Selamat! Kamu mendapatkan sertifikat untuk kursus REST API with Laravel 11.", isRead: false, metadata: { courseId: "course-3" }, createdAt: new Date("2025-03-10T09:00:00Z") },
@@ -661,6 +665,91 @@ async function main() {
   })
 
   console.log("  Notifications created")
+
+  // ============================================================
+  // ORDERS — sample lifecycle states
+  // ============================================================
+
+  await prisma.order.deleteMany({
+    where: { id: { in: ["ord-1", "ord-2", "ord-3", "ord-4", "ord-5"] } },
+  })
+
+  await prisma.order.createMany({
+    data: [
+      // alan's COMPLETED order for course-1 (paid, matches enr-1)
+      {
+        id: "ord-1",
+        userId: alan.id,
+        courseId: course1.id,
+        amount: 349000,
+        status: "COMPLETED",
+        paymentMethod: "BANK_TRANSFER",
+        paymentId: "seed_bca_38172841",
+        paidAt: new Date("2025-02-01T10:15:00Z"),
+        createdAt: new Date("2025-02-01T10:10:00Z"),
+        metadata: { mock: true, seedSample: true },
+      },
+      // alan's COMPLETED order for course-6 (paid, matches enr-3)
+      {
+        id: "ord-2",
+        userId: alan.id,
+        courseId: course6.id,
+        amount: 279000,
+        status: "COMPLETED",
+        paymentMethod: "GOPAY",
+        paymentId: "seed_gopay_a4c91e72",
+        paidAt: new Date("2025-03-01T09:32:00Z"),
+        createdAt: new Date("2025-03-01T09:30:00Z"),
+        metadata: { mock: true, seedSample: true },
+      },
+      // aditya's COMPLETED order for course-1 (different student, gives Revenue page more data)
+      {
+        id: "ord-3",
+        userId: aditya.id,
+        courseId: course1.id,
+        amount: 349000,
+        status: "COMPLETED",
+        paymentMethod: "QRIS",
+        paymentId: "seed_qris_b8f230a1",
+        paidAt: new Date("2025-03-05T14:22:00Z"),
+        createdAt: new Date("2025-03-05T14:20:00Z"),
+        metadata: { mock: true, seedSample: true },
+      },
+      // maya's FAILED order for course-4
+      {
+        id: "ord-4",
+        userId: maya.id,
+        courseId: course4.id,
+        amount: 449000,
+        status: "FAILED",
+        paymentMethod: "CREDIT_CARD",
+        paymentId: null,
+        paidAt: null,
+        createdAt: new Date("2025-04-10T11:00:00Z"),
+        metadata: {
+          mock: true,
+          seedSample: true,
+          reason: "Insufficient funds",
+          failedAt: "2025-04-10T11:02:00Z",
+        },
+      },
+      // fajar's PENDING order for course-2
+      {
+        id: "ord-5",
+        userId: fajar.id,
+        courseId: course2.id,
+        amount: 299000,
+        status: "PENDING",
+        paymentMethod: "OVO",
+        paymentId: null,
+        paidAt: null,
+        createdAt: new Date("2025-04-22T16:45:00Z"),
+        metadata: { mock: true, seedSample: true },
+      },
+    ],
+  })
+
+  console.log("  Orders created")
 
   console.log("\nSeed complete!")
 }
