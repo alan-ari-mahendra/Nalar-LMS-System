@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation"
-import { getCourseBySlug, getLessonById, getLessonProgressByUser } from "@/lib/queries"
+import { getCourseWithCurriculum, getLessonProgressByUser } from "@/lib/queries"
 import { getCurrentUser } from "@/lib/auth/actions"
-import { prisma } from "@/lib/db"
 import VideoPlayerPage from "./player-client"
 
 export default async function PlayerPage({
@@ -11,14 +10,7 @@ export default async function PlayerPage({
 }) {
   const { courseId, lessonId } = await params
 
-  // Get course by ID, find its slug first
-  const courseRow = await prisma.course.findUnique({
-    where: { id: courseId },
-    select: { slug: true },
-  })
-  if (!courseRow) notFound()
-
-  const course = await getCourseBySlug(courseRow.slug)
+  const course = await getCourseWithCurriculum(courseId)
   if (!course) notFound()
 
   // Find the requested lesson
