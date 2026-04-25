@@ -5,8 +5,7 @@ import { ActivityFeedItem } from "@/components/dashboard/ActivityFeedItem"
 import { ProgressBar } from "@/components/shared/ProgressBar"
 import { requireRole } from "@/lib/auth/guards"
 import { getCurrentUser } from "@/lib/auth/actions"
-import { getStudentStats, getCertificatesByUser, getEnrollmentsByUser } from "@/lib/queries"
-import { MOCK_ACTIVITY } from "@/mock/data"
+import { getStudentStats, getCertificatesByUser, getEnrollmentsByUser, getNotificationsByUser } from "@/lib/queries"
 
 export default async function StudentDashboardPage() {
   await requireRole(["STUDENT", "TEACHER", "ADMIN"])
@@ -18,6 +17,17 @@ export default async function StudentDashboardPage() {
   const allEnrollments = await getEnrollmentsByUser(currentUser.id)
   const enrollments = allEnrollments.filter((e) => e.progressPercent < 100)
   const certificates = await getCertificatesByUser(currentUser.id)
+  const notifications = await getNotificationsByUser(currentUser.id)
+  const activityItems = notifications.slice(0, 5).map((n) => ({
+    id: n.id,
+    type: n.type === "ENROLLMENT" ? "ENROLLED" as const
+      : n.type === "CERTIFICATE_ISSUED" ? "CERTIFICATE_EARNED" as const
+      : n.type === "QUIZ_PASSED" ? "QUIZ_PASSED" as const
+      : "LESSON_COMPLETED" as const,
+    message: n.message,
+    createdAt: n.createdAt.toISOString(),
+    metadata: (n.metadata as Record<string, string>) ?? {},
+  }))
   return (
     <div className="space-y-10">
       {/* ============================================================
@@ -178,7 +188,7 @@ export default async function StudentDashboardPage() {
           </div>
           <div className="bg-surface-container border border-outline-variant rounded-xl p-6">
             <div className="divide-y divide-outline-variant">
-              {MOCK_ACTIVITY.map((item) => (
+              {activityItems.map((item) => (
                 <ActivityFeedItem key={item.id} item={item} />
               ))}
             </div>
