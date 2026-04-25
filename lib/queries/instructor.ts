@@ -43,6 +43,22 @@ export async function getInstructorStats(instructorId: string) {
     status: c.status,
   }))
 
+  // Monthly revenue aggregation (last 12 months)
+  const monthlyRevenue = await prisma.$queryRaw<
+    { month: string; revenue: number }[]
+  >`
+    SELECT
+      TO_CHAR(DATE_TRUNC('month', o."createdAt"), 'YYYY-MM') AS month,
+      SUM(o."amount")::float AS revenue
+    FROM "orders" o
+    JOIN "courses" c ON o."courseId" = c."id"
+    WHERE c."instructorId" = ${instructorId}
+      AND o."status" = 'COMPLETED'
+      AND o."createdAt" >= NOW() - INTERVAL '12 months'
+    GROUP BY DATE_TRUNC('month', o."createdAt")
+    ORDER BY month ASC
+  `
+
   return {
     totalRevenue,
     totalRevenueChange: 0,
@@ -50,7 +66,7 @@ export async function getInstructorStats(instructorId: string) {
     totalStudentsChange: 0,
     activeCourses: publishedCourses.length,
     avgRating: Math.round(avgRating * 100) / 100,
-    monthlyRevenue: [] as { month: string; revenue: number }[],
+    monthlyRevenue,
     coursePerformance,
   }
 }
