@@ -26,9 +26,9 @@ const roleLabelMap: Record<string, string> = {
   STUDENT: "Student Portal",
 }
 
-const sidebarRoleMap: Record<string, "STUDENT" | "INSTRUCTOR" | "ADMIN"> = {
+const sidebarRoleMap: Record<string, "STUDENT" | "TEACHER" | "ADMIN"> = {
   ADMIN: "ADMIN",
-  TEACHER: "INSTRUCTOR",
+  TEACHER: "TEACHER",
   STUDENT: "STUDENT",
 }
 
@@ -38,7 +38,7 @@ function SidebarContent({
   pathname,
 }: {
   user: DashboardUser
-  sidebarRole: "STUDENT" | "INSTRUCTOR" | "ADMIN"
+  sidebarRole: "STUDENT" | "TEACHER" | "ADMIN"
   pathname: string
 }) {
   const displayName = user.name ?? "User"
@@ -90,7 +90,7 @@ export function DashboardShell({ user, unreadCount = 0, children }: DashboardShe
   const [mobileOpen, setMobileOpen] = useState(false)
 
   const sidebarRole = pathname.startsWith("/dashboard/instructor")
-    ? "INSTRUCTOR" as const
+    ? "TEACHER" as const
     : sidebarRoleMap[user.role]
 
   const displayName = user.name ?? "User"
