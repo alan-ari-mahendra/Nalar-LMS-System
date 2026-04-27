@@ -1,6 +1,7 @@
 "use server"
 
 import crypto from "crypto"
+import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/db"
 import { requireRole } from "@/lib/auth/guards"
 import {
@@ -60,6 +61,11 @@ async function recalculateCourseCounts(
   })
 }
 
+function revalidateBuilder(courseId: string) {
+  revalidatePath(`/dashboard/instructor/courses/${courseId}/builder`)
+  revalidatePath(`/dashboard/instructor/courses/${courseId}`)
+}
+
 async function verifyCourseOwnership(userId: string, courseId: string) {
   const course = await prisma.course.findUnique({
     where: { id: courseId, deletedAt: null },
@@ -109,6 +115,7 @@ export async function updateCourse(data: UpdateCourseInput): Promise<ActionResul
   if (fields.price !== undefined) updateData.isFree = fields.price === 0
 
   await prisma.course.update({ where: { id: courseId }, data: updateData })
+  revalidateBuilder(courseId)
   return { success: true }
 }
 
@@ -135,6 +142,7 @@ export async function createChapter(data: CreateChapterInput): Promise<ActionRes
     data: { courseId, title, description: description ?? null, position: (maxPos._max.position ?? 0) + 1 },
   })
 
+  revalidateBuilder(courseId)
   return { success: true, id: chapter.id }
 }
 
@@ -147,13 +155,14 @@ export async function updateChapter(data: UpdateChapterInput): Promise<ActionRes
 
   const chapter = await prisma.chapter.findUnique({
     where: { id: chapterId, deletedAt: null },
-    select: { course: { select: { instructorId: true } } },
+    select: { courseId: true, course: { select: { instructorId: true } } },
   })
   if (!chapter || (chapter.course.instructorId !== user.id && user.role !== "ADMIN")) {
     return { success: false, error: "Chapter not found or you don't own it" }
   }
 
   await prisma.chapter.update({ where: { id: chapterId }, data: fields })
+  revalidateBuilder(chapter.courseId)
   return { success: true }
 }
 
@@ -179,6 +188,7 @@ export async function deleteChapter(data: DeleteChapterInput): Promise<ActionRes
     await recalculateCourseCounts(tx, chapter.courseId)
   })
 
+  revalidateBuilder(chapter.courseId)
   return { success: true }
 }
 
@@ -215,6 +225,7 @@ export async function createLesson(data: CreateLessonInput): Promise<ActionResul
     await recalculateCourseCounts(tx, chapter.courseId)
   })
 
+  revalidateBuilder(chapter.courseId)
   return { success: true }
 }
 
@@ -238,6 +249,7 @@ export async function updateLesson(data: UpdateLessonInput): Promise<ActionResul
     await recalculateCourseCounts(tx, lesson.chapter.courseId)
   })
 
+  revalidateBuilder(lesson.chapter.courseId)
   return { success: true }
 }
 
@@ -261,6 +273,7 @@ export async function deleteLesson(data: DeleteLessonInput): Promise<ActionResul
     await recalculateCourseCounts(tx, lesson.chapter.courseId)
   })
 
+  revalidateBuilder(lesson.chapter.courseId)
   return { success: true }
 }
 
@@ -357,6 +370,7 @@ export async function reorderChapters(data: ReorderChaptersInput): Promise<Actio
     )
   )
 
+  revalidateBuilder(courseId)
   return { success: true }
 }
 
@@ -392,5 +406,10 @@ export async function reorderLessons(data: ReorderLessonsInput): Promise<ActionR
     )
   )
 
+  const ch = await prisma.chapter.findUnique({
+    where: { id: chapterId },
+    select: { courseId: true },
+  })
+  if (ch) revalidateBuilder(ch.courseId)
   return { success: true }
 }

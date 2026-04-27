@@ -50,10 +50,16 @@ const adminLinks: NavItem[] = [
 export function SidebarNav({ role, activePath, unreadCount = 0 }: SidebarNavProps) {
   const links = role === "ADMIN" ? adminLinks : role === "TEACHER" ? instructorLinks : studentLinks
 
+  // Pick the single best (longest) prefix match so /dashboard does not stay
+  // active when the user is on /dashboard/courses, etc.
+  const activeHref = links
+    .filter((item) => activePath === item.href || activePath.startsWith(item.href + "/"))
+    .sort((a, b) => b.href.length - a.href.length)[0]?.href
+
   return (
     <nav className="flex flex-col gap-1 px-3 py-4">
       {links.map((item) => {
-        const isActive = activePath === item.href || activePath.startsWith(item.href + "/")
+        const isActive = item.href === activeHref
         const showBadge = item.badgeKey === "notifications" && unreadCount > 0
 
         return (

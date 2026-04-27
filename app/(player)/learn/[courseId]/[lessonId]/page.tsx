@@ -1,11 +1,12 @@
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import {
   getCourseWithCurriculum,
   getLessonProgressByUser,
   getQuizByLessonId,
   getDiscussionsByLesson,
 } from "@/lib/queries"
-import { getCurrentUser } from "@/lib/auth/actions"
+import { prisma } from "@/lib/db"
+import { requireAuth } from "@/lib/auth/guards"
 import VideoPlayerPage from "./player-client"
 
 export default async function PlayerPage({
@@ -15,26 +16,31 @@ export default async function PlayerPage({
 }) {
   const { courseId, lessonId } = await params
 
+  const currentUser = await requireAuth()
+
   const course = await getCourseWithCurriculum(courseId)
   if (!course) notFound()
 
-  // Find the requested lesson
   const allLessons = course.chapters.flatMap((ch) => ch.lessons)
   const lesson = allLessons.find((l) => l.id === lessonId)
   if (!lesson) notFound()
 
-  // Get progress for current user
-  const currentUser = await getCurrentUser()
-  const lessonProgress = currentUser
-    ? await getLessonProgressByUser(currentUser.id, courseId)
-    : []
+  const isInstructorOrAdmin =
+    currentUser.id === course.instructor.id || currentUser.role === "ADMIN"
 
+  if (!isInstructorOrAdmin) {
+    const enrollment = await prisma.enrollment.findUnique({
+      where: { userId_courseId: { userId: currentUser.id, courseId } },
+      select: { id: true },
+    })
+    if (!enrollment) {
+      redirect(`/courses/${course.slug}`)
+    }
+  }
+
+  const lessonProgress = await getLessonProgressByUser(currentUser.id, courseId)
   const quiz = lesson.type === "QUIZ" ? await getQuizByLessonId(lesson.id) : null
   const discussions = await getDiscussionsByLesson(lesson.id)
-
-  const isInstructorOrAdmin = currentUser
-    ? currentUser.id === course.instructor.id || currentUser.role === "ADMIN"
-    : false
 
   return (
     <VideoPlayerPage
@@ -43,7 +49,7 @@ export default async function PlayerPage({
       lessonProgress={lessonProgress}
       quiz={quiz}
       discussions={discussions}
-      currentUserId={currentUser?.id ?? null}
+      currentUserId={currentUser.id}
       isInstructorOrAdmin={isInstructorOrAdmin}
     />
   )

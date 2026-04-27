@@ -58,7 +58,7 @@ type ActionResult =
 
 const roleRedirect: Record<Role, string> = {
   ADMIN: "/dashboard/admin",
-  TEACHER: "/dashboard/teacher",
+  TEACHER: "/dashboard/instructor",
   STUDENT: "/dashboard",
 }
 

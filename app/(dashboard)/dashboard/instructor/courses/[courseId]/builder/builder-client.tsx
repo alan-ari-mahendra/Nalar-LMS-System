@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useTransition } from "react"
+import { useMemo, useState, useTransition } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import {
@@ -36,7 +36,23 @@ export function BuilderClient({ course }: BuilderClientProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState("")
+  // Re-sync local state with server props after router.refresh() so newly
+  // created/deleted chapters and lessons appear without a manual reload. Use
+  // the storing-info-from-previous-renders pattern so we never call setState
+  // inside an effect.
+  const chapterSignature = useMemo(
+    () =>
+      course.chapters
+        .map((c) => `${c.id}#${c.lessons.map((l) => l.id).join("|")}`)
+        .join(","),
+    [course.chapters]
+  )
   const [chapters, setChapters] = useState(course.chapters)
+  const [syncedSignature, setSyncedSignature] = useState(chapterSignature)
+  if (syncedSignature !== chapterSignature) {
+    setSyncedSignature(chapterSignature)
+    setChapters(course.chapters)
+  }
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(
     course.chapters[0]?.lessons[0]?.id ?? null
   )
