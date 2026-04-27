@@ -103,6 +103,55 @@ export const DeleteLessonSchema = z.object({
   lessonId: z.string().min(1),
 })
 
+export const ReorderChaptersSchema = z.object({
+  courseId: z.string().min(1),
+  orderedIds: z.array(z.string().min(1)).min(1),
+})
+
+export const ReorderLessonsSchema = z.object({
+  chapterId: z.string().min(1),
+  orderedIds: z.array(z.string().min(1)).min(1),
+})
+
+const QuestionOptionInputSchema = z.object({
+  text: z.string().min(1, "Option text required").max(500),
+  isCorrect: z.boolean(),
+})
+
+export const CreateQuestionSchema = z.object({
+  quizId: z.string().min(1),
+  text: z.string().min(1, "Question text required").max(1000),
+  explanation: z.string().max(2000).optional(),
+  points: z.number().int().min(1).max(100).default(1),
+  options: z.array(QuestionOptionInputSchema).min(2, "At least 2 options required").max(6),
+})
+
+export const UpdateQuestionSchema = z.object({
+  questionId: z.string().min(1),
+  text: z.string().min(1).max(1000).optional(),
+  explanation: z.string().max(2000).optional(),
+  points: z.number().int().min(1).max(100).optional(),
+  options: z.array(QuestionOptionInputSchema).min(2).max(6).optional(),
+})
+
+export const DeleteQuestionSchema = z.object({
+  questionId: z.string().min(1),
+})
+
+export const ReorderQuestionsSchema = z.object({
+  quizId: z.string().min(1),
+  orderedIds: z.array(z.string().min(1)).min(1),
+})
+
+export const UpsertQuizSchema = z.object({
+  lessonId: z.string().min(1),
+  title: z.string().min(1).max(200),
+  passingScore: z.number().int().min(0).max(100).default(70),
+  allowRetake: z.boolean().default(true),
+  maxAttempts: z.number().int().min(1).max(100).optional(),
+  timeLimit: z.number().int().min(0).optional(),
+})
+
 // --- Admin Schemas ---
 
 export const ToggleUserSchema = z.object({
@@ -159,3 +208,10 @@ export type DeleteLessonInput = z.infer<typeof DeleteLessonSchema>
 export type ToggleUserInput = z.infer<typeof ToggleUserSchema>
 export type ChangeRoleInput = z.infer<typeof ChangeRoleSchema>
 export type RejectCourseInput = z.infer<typeof RejectCourseSchema>
+export type ReorderChaptersInput = z.infer<typeof ReorderChaptersSchema>
+export type ReorderLessonsInput = z.infer<typeof ReorderLessonsSchema>
+export type CreateQuestionInput = z.infer<typeof CreateQuestionSchema>
+export type UpdateQuestionInput = z.infer<typeof UpdateQuestionSchema>
+export type DeleteQuestionInput = z.infer<typeof DeleteQuestionSchema>
+export type ReorderQuestionsInput = z.infer<typeof ReorderQuestionsSchema>
+export type UpsertQuizInput = z.infer<typeof UpsertQuizSchema>
