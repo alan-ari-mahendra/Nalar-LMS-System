@@ -13,6 +13,8 @@ import {
   CreateLessonSchema,
   UpdateLessonSchema,
   DeleteLessonSchema,
+  ReorderChaptersSchema,
+  ReorderLessonsSchema,
 } from "./schemas"
 import type {
   CourseStatusInput,
@@ -24,6 +26,8 @@ import type {
   CreateLessonInput,
   UpdateLessonInput,
   DeleteLessonInput,
+  ReorderChaptersInput,
+  ReorderLessonsInput,
 } from "./schemas"
 
 type ActionResult =
@@ -318,6 +322,75 @@ export async function deleteCourse(data: CourseStatusInput): Promise<ActionResul
     where: { id: courseId },
     data: { deletedAt: new Date() },
   })
+
+  return { success: true }
+}
+
+// --- Reorder ---
+
+export async function reorderChapters(data: ReorderChaptersInput): Promise<ActionResult> {
+  const parsed = ReorderChaptersSchema.safeParse(data)
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0].message }
+
+  const user = await requireRole(["TEACHER", "ADMIN"])
+  const { courseId, orderedIds } = parsed.data
+
+  const course = await verifyCourseOwnership(user.id, courseId)
+  if (!course && user.role !== "ADMIN") {
+    return { success: false, error: "Course not found or you don't own it" }
+  }
+
+  const existing = await prisma.chapter.findMany({
+    where: { courseId, deletedAt: null },
+    select: { id: true },
+  })
+  const existingIds = new Set(existing.map((c) => c.id))
+  for (const id of orderedIds) {
+    if (!existingIds.has(id)) {
+      return { success: false, error: "Chapter not found in course" }
+    }
+  }
+
+  await prisma.$transaction(
+    orderedIds.map((id, index) =>
+      prisma.chapter.update({ where: { id }, data: { position: index + 1 } })
+    )
+  )
+
+  return { success: true }
+}
+
+export async function reorderLessons(data: ReorderLessonsInput): Promise<ActionResult> {
+  const parsed = ReorderLessonsSchema.safeParse(data)
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0].message }
+
+  const user = await requireRole(["TEACHER", "ADMIN"])
+  const { chapterId, orderedIds } = parsed.data
+
+  const chapter = await prisma.chapter.findUnique({
+    where: { id: chapterId, deletedAt: null },
+    select: { course: { select: { instructorId: true } } },
+  })
+  if (!chapter || (chapter.course.instructorId !== user.id && user.role !== "ADMIN")) {
+    return { success: false, error: "Chapter not found or you don't own it" }
+  }
+
+  const existing = await prisma.lesson.findMany({
+    where: { chapterId, deletedAt: null },
+    select: { id: true },
+  })
+  const existingIds = new Set(existing.map((l) => l.id))
+  for (const id of orderedIds) {
+    if (!existingIds.has(id)) {
+      return { success: false, error: "Lesson not found in chapter" }
+    }
+  }
+
+  await prisma.$transaction(
+    orderedIds.map((id, index) =>
+      prisma.lesson.update({ where: { id }, data: { position: index + 1 } })
+    )
+  )
 
   return { success: true }
 }

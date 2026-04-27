@@ -40,7 +40,39 @@ export const ChangePasswordSchema = z
     path: ["confirmPassword"],
   })
 
+export const ForgotPasswordSchema = z.object({
+  email: z.string().email(),
+})
+
+export const ResetPasswordSchema = z
+  .object({
+    token: z.string().min(1, "Token is required"),
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .max(100)
+      .regex(/[A-Z]/, "Must contain uppercase")
+      .regex(/[0-9]/, "Must contain number"),
+    confirmPassword: z.string().min(1),
+  })
+  .refine((d) => d.newPassword === d.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  })
+
+export const VerifyEmailSchema = z.object({
+  token: z.string().min(1, "Token is required"),
+})
+
+export const ResendVerificationSchema = z.object({
+  email: z.string().email(),
+})
+
 export type RegisterInput = z.infer<typeof RegisterSchema>
 export type LoginInput = z.infer<typeof LoginSchema>
 export type UpdateProfileInput = z.infer<typeof UpdateProfileSchema>
 export type ChangePasswordInput = z.infer<typeof ChangePasswordSchema>
+export type ForgotPasswordInput = z.infer<typeof ForgotPasswordSchema>
+export type ResetPasswordInput = z.infer<typeof ResetPasswordSchema>
+export type VerifyEmailInput = z.infer<typeof VerifyEmailSchema>
+export type ResendVerificationInput = z.infer<typeof ResendVerificationSchema>

@@ -1,6 +1,7 @@
 import { getCurrentUser } from "@/lib/auth/actions"
 import { redirect } from "next/navigation"
 import { DashboardShell } from "@/components/dashboard/DashboardShell"
+import { EmailVerifyBanner } from "@/components/dashboard/EmailVerifyBanner"
 import { getNotificationsByUser } from "@/lib/queries"
 
 export default async function DashboardLayout({
@@ -26,6 +27,7 @@ export default async function DashboardLayout({
       }}
       unreadCount={unreadCount}
     >
+      {!user.emailVerified && <EmailVerifyBanner email={user.email} />}
       {children}
     </DashboardShell>
   )

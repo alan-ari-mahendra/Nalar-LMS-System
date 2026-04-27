@@ -4,6 +4,7 @@ import type { Course } from "@/type"
 import { RatingStars } from "@/components/shared/RatingStars"
 import { CourseBadge } from "@/components/shared/CourseBadge"
 import { ProgressBar } from "@/components/shared/ProgressBar"
+import { WishlistButton } from "@/components/course/WishlistButton"
 import { formatPrice, formatDuration } from "@/lib/utils"
 
 interface CourseCardProps {
@@ -11,9 +12,18 @@ interface CourseCardProps {
   compact?: boolean
   showProgress?: boolean
   progress?: number
+  wishlistable?: boolean
+  wishlisted?: boolean
 }
 
-export function CourseCard({ course, compact = false, showProgress = false, progress = 0 }: CourseCardProps) {
+export function CourseCard({
+  course,
+  compact = false,
+  showProgress = false,
+  progress = 0,
+  wishlistable = false,
+  wishlisted = false,
+}: CourseCardProps) {
   if (compact) {
     return (
       <Link
@@ -61,6 +71,9 @@ export function CourseCard({ course, compact = false, showProgress = false, prog
         <div className="absolute top-3 left-3">
           <CourseBadge label={course.category.name} variant="category" />
         </div>
+        {wishlistable && (
+          <WishlistButton courseId={course.id} initialActive={wishlisted} />
+        )}
         {showProgress && (
           <div className="absolute bottom-0 left-0 right-0 px-3 pb-2">
             <ProgressBar value={progress} size="sm" />

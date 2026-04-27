@@ -43,7 +43,7 @@ export async function createOrder(data: CreateOrderInput): Promise<CreateOrderRe
   }
 
   const user = await requireAuth()
-  const { courseId, paymentMethod } = parsed.data
+  const { courseId, paymentMethod, couponCode } = parsed.data
 
   const course = await prisma.course.findUnique({
     where: { id: courseId, status: "PUBLISHED", deletedAt: null },
@@ -69,6 +69,27 @@ export async function createOrder(data: CreateOrderInput): Promise<CreateOrderRe
     return { success: false, error: "You are already enrolled in this course" }
   }
 
+  // Resolve coupon (optional)
+  let couponId: string | null = null
+  let amount = new Prisma.Decimal(course.price)
+  if (couponCode && couponCode.trim()) {
+    const coupon = await prisma.coupon.findUnique({
+      where: { code: couponCode.trim().toUpperCase() },
+    })
+    if (!coupon || !coupon.isActive) {
+      return { success: false, error: "Invalid or inactive coupon" }
+    }
+    if (coupon.expiresAt && coupon.expiresAt < new Date()) {
+      return { success: false, error: "Coupon has expired" }
+    }
+    if (coupon.maxUses !== null && coupon.usedCount >= coupon.maxUses) {
+      return { success: false, error: "Coupon usage limit reached" }
+    }
+    couponId = coupon.id
+    const discounted = Number(course.price) * (1 - coupon.discountPercent / 100)
+    amount = new Prisma.Decimal(Math.max(0, Math.round(discounted)))
+  }
+
   // Resume: reuse existing PENDING order — paymentMethod preserved
   const pending = await prisma.order.findFirst({
     where: { userId: user.id, courseId, status: "PENDING" },
@@ -82,9 +103,10 @@ export async function createOrder(data: CreateOrderInput): Promise<CreateOrderRe
     data: {
       userId: user.id,
       courseId,
-      amount: course.price,
+      amount,
       status: "PENDING",
       paymentMethod,
+      couponId,
       metadata: { mock: true, createdAt: new Date().toISOString() },
     },
     select: { id: true },
@@ -128,7 +150,7 @@ export async function mockConfirmPayment(data: OrderIdInput): Promise<ActionResu
 
   try {
     await prisma.$transaction(async (tx) => {
-      await tx.order.update({
+      const updated = await tx.order.update({
         where: { id: orderId, status: "PENDING" },
         data: {
           status: "COMPLETED",
@@ -139,7 +161,15 @@ export async function mockConfirmPayment(data: OrderIdInput): Promise<ActionResu
             confirmedAt: new Date().toISOString(),
           },
         },
+        select: { couponId: true },
       })
+
+      if (updated.couponId) {
+        await tx.coupon.update({
+          where: { id: updated.couponId },
+          data: { usedCount: { increment: 1 } },
+        })
+      }
 
       // Defensive: if Enrollment somehow already exists, skip helper
       const existingEnrollment = await tx.enrollment.findUnique({

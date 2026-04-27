@@ -13,6 +13,7 @@ import {
   archiveCourse,
 } from "@/lib/actions/course"
 import { CourseBadge } from "@/components/shared/CourseBadge"
+import { ThumbnailUploader } from "@/components/upload/ThumbnailUploader"
 import type { CourseStatus } from "@/type"
 
 interface CourseData {
@@ -53,6 +54,7 @@ export function CourseEditor({ course, categories }: CourseEditorProps) {
   const [message, setMessage] = useState("")
   const [error, setError] = useState("")
 
+  const [thumbnailUrl, setThumbnailUrl] = useState(course.thumbnailUrl)
   const [showChapterForm, setShowChapterForm] = useState(false)
   const [chapterTitle, setChapterTitle] = useState("")
 
@@ -74,7 +76,7 @@ export function CourseEditor({ course, categories }: CourseEditorProps) {
         price: Number(fd.get("price") || 0),
         level: fd.get("level") as "BEGINNER" | "INTERMEDIATE" | "ADVANCED",
         categoryId: fd.get("categoryId") as string,
-        thumbnailUrl: fd.get("thumbnailUrl") as string,
+        thumbnailUrl,
       })
       if (result.success) {
         setMessage("Course updated!")
@@ -158,6 +160,13 @@ export function CourseEditor({ course, categories }: CourseEditorProps) {
           <CourseBadge label={course.status} variant="status" status={course.status as CourseStatus} />
         </div>
         <div className="flex gap-2">
+          <Link
+            href={`/dashboard/instructor/courses/${course.id}/builder`}
+            className="bg-primary text-on-primary px-4 py-2 rounded-lg font-bold text-sm hover:brightness-110 transition-all flex items-center gap-2"
+          >
+            <span className="material-symbols-outlined !text-base">build</span>
+            Open Builder
+          </Link>
           {course.status !== "PUBLISHED" && (
             <button onClick={handlePublish} disabled={isPending}
               className="bg-tertiary text-on-primary px-4 py-2 rounded-lg font-bold text-sm hover:brightness-110 transition-all disabled:opacity-50">
@@ -224,9 +233,8 @@ export function CourseEditor({ course, categories }: CourseEditorProps) {
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="thumbnailUrl" className="text-sm font-medium text-on-surface">Thumbnail URL</label>
-          <input id="thumbnailUrl" name="thumbnailUrl" defaultValue={course.thumbnailUrl}
-            className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background" />
+          <label className="text-sm font-medium text-on-surface">Thumbnail</label>
+          <ThumbnailUploader value={thumbnailUrl} onChange={setThumbnailUrl} />
         </div>
 
         <button type="submit" disabled={isPending}

@@ -62,6 +62,7 @@ enum NotificationType {
   CERTIFICATE_ISSUED
   NEW_REVIEW
   COURSE_UPDATE
+  DISCUSSION_REPLY
 }
 
 // ============================================================
@@ -85,17 +86,21 @@ model User {
   updatedAt     DateTime @updatedAt
 
   // Relations
-  credentials    Credential[]
-  sessions       Session[]
-  auditLogs      AuditLog[]
-  courses        Course[]         // courses created by TEACHER
-  enrollments    Enrollment[]     // courses enrolled as STUDENT
-  lessonProgress LessonProgress[]
-  quizAttempts   QuizAttempt[]
-  orders         Order[]
-  certificates   Certificate[]
-  reviews        Review[]
-  notifications  Notification[]
+  credentials       Credential[]
+  sessions          Session[]
+  auditLogs         AuditLog[]
+  courses           Course[]         // courses created by TEACHER
+  enrollments       Enrollment[]     // courses enrolled as STUDENT
+  lessonProgress    LessonProgress[]
+  quizAttempts      QuizAttempt[]
+  orders            Order[]
+  certificates      Certificate[]
+  reviews           Review[]
+  notifications     Notification[]
+  wishlistItems     WishlistItem[]
+  discussions       Discussion[]
+  discussionReplies DiscussionReply[]
+  payouts           Payout[]
 
   @@index([email])
   @@index([role])
@@ -260,12 +265,13 @@ model Course {
   category     Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   // Relations
-  chapters     Chapter[]
-  attachments  Attachment[]
-  enrollments  Enrollment[]
-  orders       Order[]
-  certificates Certificate[]
-  reviews      Review[]
+  chapters      Chapter[]
+  attachments   Attachment[]
+  enrollments   Enrollment[]
+  orders        Order[]
+  certificates  Certificate[]
+  reviews       Review[]
+  wishlistItems WishlistItem[]
 
   @@index([slug])
   @@index([status])
@@ -329,6 +335,7 @@ model Lesson {
   // Relations
   lessonProgress LessonProgress[]
   quiz           Quiz?
+  discussions    Discussion[]
 
   @@index([chapterId])
   @@map("lessons")
@@ -528,6 +535,8 @@ model Order {
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   courseId  String
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  couponId String?
+  coupon   Coupon? @relation(fields: [couponId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([courseId])
@@ -607,4 +616,125 @@ model Notification {
   @@index([userId, isRead])
   @@index([createdAt])
   @@map("notifications")
+}
+
+// ============================================================
+// WISHLIST
+// User saves courses for later
+// ============================================================
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // Foreign keys
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+  @@map("wishlist_items")
+}
+
+// ============================================================
+// DISCUSSION
+// Q&A thread on a lesson, single-level replies
+// ============================================================
+
+model Discussion {
+  id        String    @id @default(cuid())
+  body      String
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Foreign keys
+  lessonId String
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Relations
+  replies DiscussionReply[]
+
+  @@index([lessonId])
+  @@index([userId])
+  @@map("discussions")
+}
+
+model DiscussionReply {
+  id        String    @id @default(cuid())
+  body      String
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Foreign keys
+  discussionId String
+  discussion   Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([discussionId])
+  @@index([userId])
+  @@map("discussion_replies")
+}
+
+// ============================================================
+// PAYOUT
+// Mock instructor withdrawal request. No real bank API.
+// ============================================================
+
+enum PayoutStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Payout {
+  id            String       @id @default(cuid())
+  amount        Decimal      @db.Decimal(10, 2)
+  platformFee   Decimal      @default(0) @db.Decimal(10, 2)
+  status        PayoutStatus @default(PENDING)
+  bankName      String
+  accountNumber String
+  accountHolder String
+  note          String?
+  rejectReason  String?
+  requestedAt   DateTime     @default(now())
+  processedAt   DateTime?
+  processedBy   String?
+
+  instructorId String
+  instructor   User   @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+
+  @@index([instructorId])
+  @@index([status])
+  @@map("payouts")
+}
+
+// ============================================================
+// COUPON
+// Global percentage discount applied at checkout
+// ============================================================
+
+model Coupon {
+  id              String    @id @default(cuid())
+  code            String    @unique
+  discountPercent Int                                       // 1-100
+  maxUses         Int?                                      // null = unlimited
+  usedCount       Int       @default(0)
+  expiresAt       DateTime?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  orders Order[]
+
+  @@index([code])
+  @@index([isActive])
+  @@map("coupons")
 }

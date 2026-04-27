@@ -12,9 +12,17 @@ type SortOption = "newest" | "popular" | "rating" | "price-asc"
 interface CourseCatalogPageProps {
   courses: Course[]
   categories: Category[]
+  wishlistedIds?: string[]
+  isAuthenticated?: boolean
 }
 
-export default function CourseCatalogPage({ courses: allCourses, categories }: CourseCatalogPageProps) {
+export default function CourseCatalogPage({
+  courses: allCourses,
+  categories,
+  wishlistedIds = [],
+  isAuthenticated = false,
+}: CourseCatalogPageProps) {
+  const wishlistedSet = useMemo(() => new Set(wishlistedIds), [wishlistedIds])
   // Filter state
   const [search, setSearch] = useState("")
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
@@ -253,7 +261,12 @@ export default function CourseCatalogPage({ courses: allCourses, categories }: C
           {paginated.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {paginated.map((course) => (
-                <CourseCard key={course.id} course={course} />
+                <CourseCard
+                  key={course.id}
+                  course={course}
+                  wishlistable={isAuthenticated}
+                  wishlisted={wishlistedSet.has(course.id)}
+                />
               ))}
             </div>
           ) : (

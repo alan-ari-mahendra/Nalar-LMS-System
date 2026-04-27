@@ -83,7 +83,7 @@ export default async function CheckoutSummaryPage({
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
           {/* Left: payment picker */}
-          <CheckoutClient courseId={course.id} courseSlug={course.slug} />
+          <CheckoutClient courseId={course.id} courseSlug={course.slug} coursePrice={price} />
 
           {/* Right: order summary */}
           <aside className="bg-surface-container border border-outline-variant rounded-xl overflow-hidden h-fit lg:sticky lg:top-6">

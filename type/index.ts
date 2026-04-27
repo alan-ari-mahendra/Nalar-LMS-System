@@ -16,6 +16,7 @@ export type NotificationType =
   | "CERTIFICATE_ISSUED"
   | "NEW_REVIEW"
   | "COURSE_UPDATE"
+  | "DISCUSSION_REPLY"
 
 // ---- Profile ------------------------------------------------
 

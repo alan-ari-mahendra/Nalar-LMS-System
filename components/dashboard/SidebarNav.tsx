@@ -18,6 +18,7 @@ interface NavItem {
 const studentLinks: NavItem[] = [
   { label: "Dashboard", icon: "dashboard", href: "/dashboard" },
   { label: "My Courses", icon: "school", href: "/dashboard/courses" },
+  { label: "Wishlist", icon: "favorite", href: "/dashboard/wishlist" },
   { label: "Certificates", icon: "workspace_premium", href: "/dashboard/certificates" },
   { label: "Orders", icon: "receipt_long", href: "/dashboard/orders" },
   { label: "Notifications", icon: "notifications", href: "/dashboard/notifications", badgeKey: "notifications" },
@@ -29,17 +30,20 @@ const instructorLinks: NavItem[] = [
   { label: "My Courses", icon: "edit_note", href: "/dashboard/instructor/courses" },
   { label: "Students", icon: "group", href: "/dashboard/instructor/students" },
   { label: "Revenue", icon: "payments", href: "/dashboard/instructor/revenue" },
+  { label: "Payouts", icon: "account_balance", href: "/dashboard/instructor/payouts" },
   { label: "Reviews", icon: "rate_review", href: "/dashboard/instructor/reviews" },
   { label: "Settings", icon: "settings", href: "/dashboard/settings" },
 ]
 
 const adminLinks: NavItem[] = [
-  { label: "Overview", icon: "dashboard", href: "/dashboard/instructor" },
+  { label: "Overview", icon: "dashboard", href: "/dashboard/admin" },
+  { label: "Analytics", icon: "monitoring", href: "/dashboard/admin/analytics" },
   { label: "Users", icon: "manage_accounts", href: "/dashboard/admin/users" },
   { label: "Courses", icon: "menu_book", href: "/dashboard/admin/courses" },
+  { label: "Categories", icon: "category", href: "/dashboard/admin/categories" },
+  { label: "Coupons", icon: "local_offer", href: "/dashboard/admin/coupons" },
   { label: "Orders", icon: "receipt_long", href: "/dashboard/admin/orders" },
-  { label: "My Courses", icon: "edit_note", href: "/dashboard/instructor/courses" },
-  { label: "Revenue", icon: "payments", href: "/dashboard/instructor/revenue" },
+  { label: "Payouts", icon: "account_balance", href: "/dashboard/admin/payouts" },
   { label: "Settings", icon: "settings", href: "/dashboard/settings" },
 ]
 

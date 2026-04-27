@@ -1,9 +1,37 @@
+import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { getCourseBySlug } from "@/lib/queries"
 import { getPendingOrderForCourse } from "@/lib/queries/order"
 import { getCurrentUser } from "@/lib/auth/actions"
 import { prisma } from "@/lib/db"
 import CourseDetailPage from "./detail-client"
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const course = await getCourseBySlug(slug)
+  if (!course) return { title: "Course not found" }
+
+  return {
+    title: course.title,
+    description: course.shortDesc,
+    openGraph: {
+      title: course.title,
+      description: course.shortDesc,
+      images: [course.thumbnailUrl],
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: course.title,
+      description: course.shortDesc,
+      images: [course.thumbnailUrl],
+    },
+  }
+}
 
 export default async function CourseSlugPage({
   params,
