@@ -26,7 +26,7 @@ export const UPLOAD_ACCEPT = {
 } as const
 
 export const FALLBACK_SAMPLE_VIDEO =
-  "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+  "https://media.w3.org/2010/05/sintel/trailer.mp4"
 
 export type UploadKind = "thumbnail" | "video" | "attachment"
 

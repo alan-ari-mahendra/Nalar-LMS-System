@@ -59,6 +59,16 @@ export default function VideoPlayerPage({
     (lp) => lp.lessonId === lesson.id && lp.isCompleted
   )
 
+  const orderedLessons = course.chapters.flatMap((ch) => ch.lessons)
+  const currentIndex = orderedLessons.findIndex((l) => l.id === lesson.id)
+  const prevLesson = currentIndex > 0 ? orderedLessons[currentIndex - 1] : null
+  const nextLesson =
+    currentIndex >= 0 && currentIndex < orderedLessons.length - 1
+      ? orderedLessons[currentIndex + 1]
+      : null
+  const nextHref = nextLesson ? `/learn/${course.id}/${nextLesson.id}` : null
+  const prevHref = prevLesson ? `/learn/${course.id}/${prevLesson.id}` : null
+
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({})
   const [quizResult, setQuizResult] = useState<{ score: number; passed: boolean } | null>(null)
   const [isSubmittingQuiz, startQuizSubmit] = useTransition()
@@ -82,7 +92,11 @@ export default function VideoPlayerPage({
     startComplete(async () => {
       const result = await markLessonComplete({ lessonId: lesson.id })
       if (result.success) {
-        router.refresh()
+        if (nextHref) {
+          router.push(nextHref)
+        } else {
+          router.refresh()
+        }
       }
     })
   }
@@ -234,7 +248,16 @@ export default function VideoPlayerPage({
                   {lesson.description}
                 </p>
               </div>
-              <div className="flex items-center gap-4 shrink-0">
+              <div className="flex items-center gap-3 shrink-0 flex-wrap">
+                {prevHref && (
+                  <Link
+                    href={prevHref}
+                    className="px-4 py-2.5 rounded-lg font-bold flex items-center gap-2 border border-outline-variant text-on-surface hover:bg-surface-container-high transition-all"
+                  >
+                    <span className="material-symbols-outlined !text-sm">arrow_back</span>
+                    Previous
+                  </Link>
+                )}
                 <button
                   onClick={handleMarkComplete}
                   disabled={isCompleting || isLessonCompleted}
@@ -247,10 +270,19 @@ export default function VideoPlayerPage({
                   <span className="material-symbols-outlined !text-sm">check_circle</span>
                   {isCompleting ? "Completing..." : isLessonCompleted ? "Completed" : "Mark as Complete"}
                 </button>
-                <button className="text-primary font-medium hover:underline flex items-center gap-1.5">
-                  <span className="material-symbols-outlined !text-sm">download</span>
-                  Resources
-                </button>
+                {nextHref ? (
+                  <Link
+                    href={nextHref}
+                    className="px-4 py-2.5 rounded-lg font-bold flex items-center gap-2 border border-outline-variant text-on-surface hover:bg-surface-container-high transition-all"
+                  >
+                    Next
+                    <span className="material-symbols-outlined !text-sm">arrow_forward</span>
+                  </Link>
+                ) : (
+                  <span className="px-4 py-2.5 rounded-lg font-bold flex items-center gap-2 border border-outline-variant text-on-surface-variant opacity-60">
+                    Last lesson
+                  </span>
+                )}
               </div>
             </div>
 
@@ -375,8 +407,9 @@ export default function VideoPlayerPage({
                         const isCompleted = completedLessonIds.includes(l.id)
 
                         return (
-                          <div
+                          <Link
                             key={l.id}
+                            href={`/learn/${course.id}/${l.id}`}
                             className={`flex items-center gap-4 px-6 py-3 cursor-pointer transition-all ${
                               isActive
                                 ? "text-on-surface font-bold border-l-2 border-primary pl-4 bg-surface-container-high"
@@ -394,13 +427,13 @@ export default function VideoPlayerPage({
                                 ? "play_circle"
                                 : isCompleted
                                   ? "check_circle"
-                                  : "lock"}
+                                  : "radio_button_unchecked"}
                             </span>
                             <span className="flex-1 text-sm">{l.title}</span>
                             {l.duration && (
                               <span className="text-xs text-on-surface-variant">{formatDuration(l.duration)}</span>
                             )}
-                          </div>
+                          </Link>
                         )
                       })}
                     </div>
@@ -454,8 +487,10 @@ export default function VideoPlayerPage({
                             const isCompleted = completedLessonIds.includes(l.id)
 
                             return (
-                              <div
+                              <Link
                                 key={l.id}
+                                href={`/learn/${course.id}/${l.id}`}
+                                onClick={() => setSidebarOpen(false)}
                                 className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-all text-sm ${
                                   isActive
                                     ? "text-on-surface font-bold border-l-2 border-primary pl-3 bg-surface-container-high"
@@ -465,10 +500,10 @@ export default function VideoPlayerPage({
                                 <span className={`material-symbols-outlined !text-lg ${
                                   isActive ? "text-primary" : isCompleted ? "text-tertiary" : "text-outline"
                                 }`}>
-                                  {isActive ? "play_circle" : isCompleted ? "check_circle" : "lock"}
+                                  {isActive ? "play_circle" : isCompleted ? "check_circle" : "radio_button_unchecked"}
                                 </span>
                                 <span className="flex-1">{l.title}</span>
-                              </div>
+                              </Link>
                             )
                           })}
                         </div>
