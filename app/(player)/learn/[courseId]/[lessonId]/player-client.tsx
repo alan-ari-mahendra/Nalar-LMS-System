@@ -1,13 +1,14 @@
 "use client"
 
 import { useState, useTransition } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { markLessonComplete } from "@/lib/actions/progress"
 import { submitQuizAttempt } from "@/lib/actions/quiz"
 import { Avatar } from "@/components/shared/Avatar"
 import { ProgressBar } from "@/components/shared/ProgressBar"
+import { VideoPlayer } from "@/components/player/VideoPlayer"
+import { FALLBACK_SAMPLE_VIDEO } from "@/lib/upload/constants"
 import { formatDuration } from "@/lib/utils"
 import type { CourseDetail, Lesson, LessonProgress } from "@/type"
 
@@ -195,22 +196,18 @@ export default function VideoPlayerPage({ course, lesson, lessonProgress, quiz }
                 </div>
               ) : (
           <>
-          {/* Video player area — UI shell only */}
-          <div className="relative w-full aspect-video bg-black group cursor-pointer shrink-0">
-            <Image
-              src={course.thumbnailUrl}
-              alt={lesson.title}
-              fill
-              className="object-cover opacity-40"
-              priority
+          {/* Video player */}
+          <div className="shrink-0">
+            <VideoPlayer
+              src={lesson.videoUrl ?? FALLBACK_SAMPLE_VIDEO}
+              poster={course.thumbnailUrl}
+              lessonId={lesson.id}
+              initialWatchedSeconds={
+                lessonProgress.find((lp) => lp.lessonId === lesson.id)?.watchedSeconds ?? 0
+              }
+              alreadyComplete={isLessonCompleted}
+              onComplete={() => router.refresh()}
             />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-20 h-20 bg-primary/20 backdrop-blur-sm border-2 border-primary rounded-full flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300">
-                <span className="material-symbols-outlined !text-5xl">play_arrow</span>
-              </div>
-            </div>
-            {/* Bottom gradient */}
-            <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
 
           {/* Content details */}
@@ -463,55 +460,6 @@ export default function VideoPlayerPage({ course, lesson, lessonProgress, quiz }
         )}
       </main>
 
-      {/* ============================================================
-          BOTTOM PLAYER CONTROLS
-          ============================================================ */}
-      <footer className="bg-background/95 backdrop-blur-md border-t border-outline-variant flex justify-between items-center px-4 lg:px-8 py-3 shrink-0 z-50">
-        {/* Left: nav controls */}
-        <div className="flex items-center gap-2 lg:gap-4">
-          <button className="text-on-surface p-2 hover:text-primary transition-colors flex flex-col items-center gap-0.5">
-            <span className="material-symbols-outlined">skip_previous</span>
-            <span className="text-[10px] hidden sm:block">Previous</span>
-          </button>
-          <button className="bg-primary text-on-primary rounded-full p-3 lg:p-4 hover:brightness-110 transition-all flex items-center justify-center">
-            <span className="material-symbols-outlined !text-2xl lg:!text-3xl">pause</span>
-          </button>
-          <button className="text-on-surface p-2 hover:text-primary transition-colors flex flex-col items-center gap-0.5">
-            <span className="material-symbols-outlined">skip_next</span>
-            <span className="text-[10px] hidden sm:block">Next</span>
-          </button>
-        </div>
-
-        {/* Center: seekbar */}
-        <div className="flex-1 max-w-3xl mx-4 lg:mx-12 flex flex-col gap-1.5">
-          <div className="flex justify-between text-[10px] text-on-surface-variant font-mono">
-            <span>04:32</span>
-            <span>{lesson.duration ? formatDuration(lesson.duration) : "00:00"}</span>
-          </div>
-          <div className="relative group h-1.5 w-full bg-outline-variant rounded-full cursor-pointer">
-            <div className="absolute h-full w-[35%] bg-primary rounded-full">
-              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-on-surface rounded-full scale-0 group-hover:scale-100 transition-transform" />
-            </div>
-          </div>
-        </div>
-
-        {/* Right: utility */}
-        <div className="hidden sm:flex items-center gap-4 lg:gap-6">
-          <div className="flex items-center gap-2 text-on-surface group cursor-pointer">
-            <span className="material-symbols-outlined group-hover:text-primary transition-colors">volume_up</span>
-            <div className="w-16 h-1 bg-outline-variant rounded-full overflow-hidden">
-              <div className="bg-primary h-full w-[70%]" />
-            </div>
-          </div>
-          <button className="px-3 py-1 rounded border border-outline-variant text-on-surface text-[10px] font-bold hover:border-primary transition-colors">
-            1.0x
-          </button>
-          <button className="text-on-surface p-2 hover:text-primary transition-colors flex flex-col items-center gap-0.5">
-            <span className="material-symbols-outlined">fullscreen</span>
-            <span className="text-[10px]">Fullscreen</span>
-          </button>
-        </div>
-      </footer>
     </div>
   )
 }
