@@ -16,8 +16,7 @@ const prisma = new PrismaClient({ adapter })
 
 const PASSWORD_HASH = hashSync("Password1", 12)
 
-const SAMPLE_VIDEO =
-  "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+const SAMPLE_VIDEO = "https://media.w3.org/2010/05/sintel/trailer.mp4"
 
 const NOW = new Date("2026-04-27T00:00:00Z")
 
