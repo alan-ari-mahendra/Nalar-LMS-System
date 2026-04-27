@@ -1,13 +1,15 @@
 import { Resend } from "resend"
 
-const apiKey = process.env.RESEND_API_KEY
-const from = process.env.EMAIL_FROM ?? "Learnify <onboarding@resend.dev>"
+const DEFAULT_FROM = "Learnify <onboarding@resend.dev>"
 
-if (!apiKey) {
-  console.warn("[email] RESEND_API_KEY missing — email sends will fail")
+let cachedClient: Resend | null = null
+
+function getClient(): Resend | null {
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) return null
+  if (!cachedClient) cachedClient = new Resend(apiKey)
+  return cachedClient
 }
-
-const resend = new Resend(apiKey ?? "")
 
 type SendArgs = {
   to: string
@@ -21,12 +23,16 @@ type SendResult =
   | { success: false; error: string }
 
 export async function sendEmail({ to, subject, html, text }: SendArgs): Promise<SendResult> {
-  if (!apiKey) {
+  const client = getClient()
+  if (!client) {
+    console.warn("[email] RESEND_API_KEY missing — skipping send")
     return { success: false, error: "Email service not configured" }
   }
 
+  const from = process.env.EMAIL_FROM ?? DEFAULT_FROM
+
   try {
-    const result = await resend.emails.send({ from, to, subject, html, text })
+    const result = await client.emails.send({ from, to, subject, html, text })
     if (result.error) {
       console.error("[email] send failed", result.error)
       return { success: false, error: result.error.message }
