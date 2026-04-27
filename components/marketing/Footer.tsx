@@ -1,31 +1,35 @@
 import Link from "next/link"
 
-const columns = [
+type FooterLink =
+  | { label: string; href: string; disabled?: false }
+  | { label: string; disabled: true }
+
+const columns: { title: string; links: FooterLink[] }[] = [
   {
     title: "Platform",
     links: [
       { label: "Browse Courses", href: "/courses" },
-      { label: "Learning Paths", href: "#" },
-      { label: "For Enterprise", href: "#" },
-      { label: "Become Instructor", href: "#" },
+      { label: "Learning Paths", disabled: true },
+      { label: "For Enterprise", disabled: true },
+      { label: "Become Instructor", disabled: true },
     ],
   },
   {
     title: "Community",
     links: [
-      { label: "Blog", href: "#" },
-      { label: "Forum", href: "#" },
-      { label: "Events", href: "#" },
-      { label: "Discord", href: "#" },
+      { label: "Blog", disabled: true },
+      { label: "Forum", disabled: true },
+      { label: "Events", disabled: true },
+      { label: "Discord", disabled: true },
     ],
   },
   {
     title: "Resources",
     links: [
-      { label: "Help Center", href: "#" },
-      { label: "Documentation", href: "#" },
-      { label: "API", href: "#" },
-      { label: "Status", href: "#" },
+      { label: "Help Center", disabled: true },
+      { label: "Documentation", disabled: true },
+      { label: "API", disabled: true },
+      { label: "Status", disabled: true },
     ],
   },
   {
@@ -54,12 +58,21 @@ export function Footer() {
               <ul className="space-y-2.5">
                 {col.links.map((link) => (
                   <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-on-surface-variant hover:text-on-surface transition-colors"
-                    >
-                      {link.label}
-                    </Link>
+                    {link.disabled ? (
+                      <a
+                        aria-disabled="true"
+                        className="text-sm text-on-surface-variant opacity-50 cursor-not-allowed"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        href={link.href}
+                        className="text-sm text-on-surface-variant hover:text-on-surface transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

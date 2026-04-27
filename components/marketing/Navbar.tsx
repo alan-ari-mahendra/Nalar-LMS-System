@@ -3,11 +3,15 @@
 import Link from "next/link"
 import { useState } from "react"
 
-const navLinks = [
+type NavLink =
+  | { label: string; href: string; disabled?: false }
+  | { label: string; disabled: true }
+
+const navLinks: NavLink[] = [
   { label: "Courses", href: "/courses" },
-  { label: "Paths", href: "#" },
-  { label: "Mentors", href: "#" },
-  { label: "Enterprise", href: "#" },
+  { label: "Paths", disabled: true },
+  { label: "Mentors", disabled: true },
+  { label: "Enterprise", disabled: true },
 ]
 
 export function Navbar() {
@@ -25,15 +29,25 @@ export function Navbar() {
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className="text-sm text-on-surface-variant hover:text-on-surface transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) =>
+              link.disabled ? (
+                <a
+                  key={link.label}
+                  aria-disabled="true"
+                  className="text-sm text-on-surface-variant opacity-50 cursor-not-allowed"
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="text-sm text-on-surface-variant hover:text-on-surface transition-colors"
+                >
+                  {link.label}
+                </Link>
+              )
+            )}
           </nav>
 
           {/* Desktop actions */}
@@ -69,16 +83,26 @@ export function Navbar() {
       {mobileOpen && (
         <div className="md:hidden border-t border-outline-variant bg-surface-container">
           <div className="px-4 py-4 space-y-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className="block text-sm text-on-surface-variant hover:text-on-surface py-2"
-                onClick={() => setMobileOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) =>
+              link.disabled ? (
+                <a
+                  key={link.label}
+                  aria-disabled="true"
+                  className="block text-sm text-on-surface-variant opacity-50 cursor-not-allowed py-2"
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="block text-sm text-on-surface-variant hover:text-on-surface py-2"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              )
+            )}
             <div className="pt-3 border-t border-outline-variant flex flex-col gap-2">
               <Link
                 href="/auth/login"
