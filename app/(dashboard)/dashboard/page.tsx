@@ -1,16 +1,16 @@
 import Image from "next/image"
 import Link from "next/link"
+import { redirect } from "next/navigation"
 import { StatsCard } from "@/components/dashboard/StatsCard"
 import { ActivityFeedItem } from "@/components/dashboard/ActivityFeedItem"
 import { ProgressBar } from "@/components/shared/ProgressBar"
-import { requireRole } from "@/lib/auth/guards"
-import { getCurrentUser } from "@/lib/auth/actions"
+import { requireAuth } from "@/lib/auth/guards"
 import { getStudentStats, getCertificatesByUser, getEnrollmentsByUser, getNotificationsByUser, getFirstLessonId } from "@/lib/queries"
 
 export default async function StudentDashboardPage() {
-  await requireRole(["STUDENT", "TEACHER", "ADMIN"])
-  const currentUser = await getCurrentUser()
-  if (!currentUser) return null
+  const currentUser = await requireAuth()
+  if (currentUser.role === "TEACHER") redirect("/dashboard/instructor")
+  if (currentUser.role === "ADMIN") redirect("/dashboard/admin")
 
   const user = { fullName: currentUser.name ?? "Student" }
   const stats = await getStudentStats(currentUser.id)
@@ -124,7 +124,11 @@ export default async function StudentDashboardPage() {
                   <ProgressBar value={enrollment.progressPercent} size="sm" />
                 </div>
                 <Link
-                  href={`/learn/${enrollment.courseId}/${firstLessonMap.get(enrollment.courseId) ?? ""}`}
+                  href={
+                    firstLessonMap.has(enrollment.courseId)
+                      ? `/learn/${enrollment.courseId}/${firstLessonMap.get(enrollment.courseId)}`
+                      : `/courses/${enrollment.course.slug}`
+                  }
                   className="block w-full py-2 bg-primary hover:brightness-110 text-on-primary font-bold rounded-lg transition-all text-sm text-center"
                 >
                   Continue

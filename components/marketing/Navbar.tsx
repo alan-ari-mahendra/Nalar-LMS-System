@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
+import { Avatar } from "@/components/shared/Avatar"
 
 type NavLink =
   | { label: string; href: string; disabled?: false }
@@ -14,8 +15,19 @@ const navLinks: NavLink[] = [
   { label: "Enterprise", disabled: true },
 ]
 
-export function Navbar() {
+interface NavbarUser {
+  name: string | null
+  avatarUrl: string | null
+  dashboardHref: string
+}
+
+interface NavbarProps {
+  user: NavbarUser | null
+}
+
+export function Navbar({ user }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const displayName = user?.name ?? "Account"
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-outline-variant bg-zinc-950/80 backdrop-blur-md">
@@ -52,18 +64,31 @@ export function Navbar() {
 
           {/* Desktop actions */}
           <div className="hidden md:flex items-center gap-3">
-            <Link
-              href="/auth/login"
-              className="text-sm font-medium text-on-surface-variant hover:text-on-surface transition-colors px-3 py-2"
-            >
-              Log In
-            </Link>
-            <Link
-              href="/auth/register"
-              className="bg-primary text-on-primary px-4 py-2 rounded-lg text-sm font-medium hover:brightness-110 transition-all"
-            >
-              Get Started
-            </Link>
+            {user ? (
+              <Link
+                href={user.dashboardHref}
+                aria-label="Open dashboard"
+                title={displayName}
+                className="flex items-center gap-2 rounded-full ring-1 ring-outline-variant hover:ring-primary transition-all"
+              >
+                <Avatar src={user.avatarUrl} name={displayName} size="sm" />
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/auth/login"
+                  className="text-sm font-medium text-on-surface-variant hover:text-on-surface transition-colors px-3 py-2"
+                >
+                  Log In
+                </Link>
+                <Link
+                  href="/auth/register"
+                  className="bg-primary text-on-primary px-4 py-2 rounded-lg text-sm font-medium hover:brightness-110 transition-all"
+                >
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -104,18 +129,33 @@ export function Navbar() {
               )
             )}
             <div className="pt-3 border-t border-outline-variant flex flex-col gap-2">
-              <Link
-                href="/auth/login"
-                className="text-sm font-medium text-on-surface-variant text-center py-2"
-              >
-                Log In
-              </Link>
-              <Link
-                href="/auth/register"
-                className="bg-primary text-on-primary px-4 py-2 rounded-lg text-sm font-medium text-center hover:brightness-110 transition-all"
-              >
-                Get Started
-              </Link>
+              {user ? (
+                <Link
+                  href={user.dashboardHref}
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-3 py-2"
+                >
+                  <Avatar src={user.avatarUrl} name={displayName} size="sm" />
+                  <span className="text-sm font-medium text-on-surface">
+                    {displayName}
+                  </span>
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/auth/login"
+                    className="text-sm font-medium text-on-surface-variant text-center py-2"
+                  >
+                    Log In
+                  </Link>
+                  <Link
+                    href="/auth/register"
+                    className="bg-primary text-on-primary px-4 py-2 rounded-lg text-sm font-medium text-center hover:brightness-110 transition-all"
+                  >
+                    Get Started
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
