@@ -41,7 +41,7 @@ export default async function InstructorDashboardPage() {
           Instructor Dashboard
         </h2>
         <Link
-          href="#"
+          href="/dashboard/instructor/courses/new"
           className="bg-primary hover:brightness-110 text-on-primary font-bold px-6 py-2.5 rounded-lg text-sm transition-all flex items-center gap-2 w-fit"
         >
           <span className="material-symbols-outlined !text-sm">add</span>
