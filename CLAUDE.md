@@ -9,13 +9,24 @@
 
 | Layer | Technology |
 |---|---|
-| Framework | Next.js 14+ (App Router) |
+| Framework | Next.js 16.2.4 (App Router) |
 | Language | TypeScript — strict mode |
-| Styling | Tailwind CSS + shadcn/ui |
-| Icons | Material Symbols Outlined (Google Fonts / npm: `material-symbols`) |
+| Styling | Tailwind CSS 4 (tokens via @theme in globals.css) |
+| Icons | Material Symbols Outlined (npm: material-symbols) |
 | Charts | recharts |
-| Fonts | next/font/google |
+| Fonts | geist npm package (GeistSans, GeistMono) |
 | Images | next/image |
+| Auth | Custom JWT (lib/auth/) — NOT NextAuth, NOT Supabase |
+| Database | Prisma 7.8 + Neon PostgreSQL |
+| Validation | Zod |
+| Password | bcryptjs (rounds=12) |
+
+---
+
+## Current State
+- Phase 1-3a: Complete (UI + Auth + RBAC)
+- Phase 3b onwards: In progress per PRD v2 (docs/learnify-prd-v2.md)
+- Next: Phase A (auth completion — password reset + email verify)
 
 ---
 
@@ -23,65 +34,12 @@
 
 Source of truth: `docs/stitch-design/obsidian/DESIGN.md` + HTML exports.
 
-### Tailwind Config — Add to `tailwind.config.ts`
+### Tailwind CSS 4 — Token Source
 
-```ts
-// tailwind.config.ts
-theme: {
-  extend: {
-    colors: {
-      // Core tokens (from Stitch Obsidian theme)
-      "primary":                    "#a78bfa", // violet-400 — interactive, links, focus
-      "primary-container":          "#7c3aed", // deeper violet — hover states
-      "primary-fixed":              "#ede9fe",
-      "primary-fixed-dim":          "#c4b5fd",
-      "on-primary":                 "#0a0012",
-      "on-primary-container":       "#ede9fe",
-
-      "background":                 "#09090b", // near-black
-      "on-background":              "#fafafa",
-
-      "surface":                    "#0c0c0f",
-      "surface-dim":                "#0c0c0f",
-      "surface-bright":             "#18181b",
-      "surface-variant":            "#18181b",
-      "surface-container-lowest":   "#09090b",
-      "surface-container-low":      "#0f0f12",
-      "surface-container":          "#121215",
-      "surface-container-high":     "#18181b",
-      "surface-container-highest":  "#1e1e22",
-      "on-surface":                 "#fafafa",
-      "on-surface-variant":         "#a1a1aa",
-
-      "outline":                    "#52525b", // subtle borders
-      "outline-variant":            "#27272a", // card borders, dividers
-
-      "tertiary":                   "#34d399", // emerald — success, positive
-      "tertiary-container":         "#065f46",
-      "on-tertiary-container":      "#bbf7d0",
-
-      "secondary":                  "#71717a",
-      "secondary-container":        "#27272a",
-      "on-secondary-container":     "#a1a1aa",
-
-      "error":                      "#ef4444",
-      "error-container":            "#3b1111",
-      "on-error-container":         "#fca5a5",
-    },
-    fontFamily: {
-      headline: ["Geist", "sans-serif"],
-      body:     ["Geist", "sans-serif"],
-      label:    ["Geist", "sans-serif"],
-    },
-    borderRadius: {
-      DEFAULT: "0.25rem",
-      lg:      "0.5rem",
-      xl:      "0.75rem",
-      full:    "9999px",
-    },
-  },
-}
-```
+Tailwind CSS 4 — tokens live in app/globals.css via @theme block.
+Do NOT use tailwind.config.ts for custom tokens — it is not used in v4.
+Token format: --color-[name]: value → generates bg-[name], text-[name], border-[name].
+Full @theme block is in app/globals.css.
 
 ### Add to `app/layout.tsx`
 
@@ -169,54 +127,28 @@ import { Bolt } from "lucide-react" // ❌
 
 ---
 
-## Mock Data Rules
+## Data Rules
 
-### CRITICAL: No real data fetching in UI phase
+src/mock/data.ts is DELETED. Do not reference or recreate it.
+All data comes from the database via server actions in lib/actions/.
 
-```tsx
-// CORRECT — import from mock
-import { MOCK_COURSES, MOCK_ENROLLMENTS } from "@/mock/data"
+Server action pattern:
+  - All actions in lib/actions/[domain].ts
+  - All actions use Zod validation on inputs
+  - All mutations use requireRole() or requireAuth() from lib/auth/guards.ts
+  - Never import prisma directly in app/ pages or components
+  - Prisma client: import from lib/db.ts only
 
-// WRONG — never do this in UI phase
-const courses = await prisma.course.findMany()
-const { data } = await supabase.from("courses").select()
-```
+Payment is mock only:
+  - No real payment SDK (no Midtrans, no Stripe)
+  - Simulate flow: checkout page → confirmMockPayment() → Order COMPLETED → Enrollment created
+  - Order model in DB records all transactions
 
-### Import Paths
-
-```tsx
-import type { Course, Enrollment, Profile } from "@/type"
-import {
-  MOCK_COURSES,
-  MOCK_CATEGORIES,
-  MOCK_COURSE_DETAIL,
-  MOCK_CURRENT_USER,
-  MOCK_ENROLLMENTS,
-  MOCK_STUDENT_STATS,
-  MOCK_CERTIFICATES,
-  MOCK_NOTIFICATIONS,
-  MOCK_ACTIVITY,
-  MOCK_INSTRUCTOR_STATS,
-  MOCK_COURSE_PERFORMANCE,
-  MOCK_INSTRUCTORS,
-  formatDuration,
-  formatPrice,
-  formatCount,
-  formatRelativeTime,
-} from "@/mock/data"
-```
-
-### Data Usage per Page
-
-| Page | Mock Data to Use |
-|---|---|
-| `/` Landing | `MOCK_COURSES` (first 3 published), `MOCK_CATEGORIES` |
-| `/courses` Catalog | `MOCK_COURSES`, `MOCK_CATEGORIES` |
-| `/courses/[slug]` Detail | `MOCK_COURSE_DETAIL` (static, ignore slug) |
-| `/learn/[courseId]/[lessonId]` | `MOCK_COURSE_DETAIL`, `MOCK_LESSON_PROGRESS` |
-| `/dashboard` Student | `MOCK_CURRENT_USER`, `MOCK_STUDENT_STATS`, `MOCK_ENROLLMENTS`, `MOCK_CERTIFICATES`, `MOCK_ACTIVITY` |
-| `/dashboard/instructor` | `MOCK_CURRENT_USER`, `MOCK_INSTRUCTOR_STATS`, `MOCK_COURSE_PERFORMANCE` |
-| `/certificate/[code]` | `MOCK_CERTIFICATES[0]` (static) |
+File uploads are mock only (Phase B):
+  - app/api/upload/route.ts returns placeholder URL — no real storage
+  - Upload UI shows local preview via URL.createObjectURL()
+  - DB stores placeholder URL strings
+  - TODO comments mark where real integration goes (UploadThing, S3)
 
 ---
 
@@ -421,16 +353,18 @@ body {
 
 ## What NOT to Do
 
-- No database queries (Prisma / Supabase)
-- No server actions that touch DB
-- No real auth checks — treat all routes as accessible
-- No API route calls (`/api/...`)
-- No `useEffect` to fetch data — read directly from mock imports
-- No hardcoded inline styles — use Tailwind classes only
+- No direct prisma import in app/ — use lib/actions/ only
+- No mock data imports — src/mock/data.ts is deleted
+- No `any` TypeScript type — use proper types or `unknown`
 - No `<img>` tags — always `next/image`
 - No `<a>` tags for internal nav — always `next/link`
-- No `console.log` left in final components
-- No emojis in UI text unless explicitly in Stitch design
+- No `console.log` left in components
+- No hardcoded inline styles — Tailwind classes only
+- No slate-* color classes — use Obsidian tokens only
+- No lucide-react — Material Symbols only
+- No OAuth implementation — not in scope
+- No real file storage — mock upload only (see Phase B)
+- No tailwind.config.ts theme customization — use globals.css @theme
 
 ---
 
@@ -440,13 +374,14 @@ body {
 - One commit per completed page or component group
 - Commit format: `feat(ui): implement course catalog page`
 - **Never** add `Co-Authored-By` or any AI attribution lines in commit messages
+- Never add 'Co-Authored-By' or any AI attribution in commit messages
 
 ---
 
-## Phase Transition Note
+## Adding New Features (PRD v2)
 
-When transitioning to Phase 3 (API integration):
-- Replace `MOCK_*` imports with server action calls
-- All component props and types stay the same — no refactoring needed
-- Add `loading.tsx` and `error.tsx` alongside each page
-- Swap mock functions (`formatPrice`, etc.) with the same utilities from `@/lib/utils`
+When implementing any PRD v2 phase:
+1. DB models first — run database-design agent, migrate, generate
+2. Server actions second — lib/actions/[domain].ts with Zod + guards
+3. UI last — wire pages to actions, add loading.tsx + error.tsx
+Never build UI before the schema and actions are ready.
