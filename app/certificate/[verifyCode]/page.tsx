@@ -1,7 +1,24 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getCertificateByCode } from "@/lib/queries"
 import { PrintButton } from "./print-button"
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ verifyCode: string }>
+}): Promise<Metadata> {
+  const { verifyCode } = await params
+  const cert = await getCertificateByCode(verifyCode)
+  if (!cert) return { title: "Certificate not found" }
+
+  return {
+    title: `Certificate — ${cert.student.fullName ?? "Student"}`,
+    description: `Verified certificate for ${cert.course.title}`,
+    robots: { index: true, follow: true },
+  }
+}
 
 export default async function CertificatePage({
   params,

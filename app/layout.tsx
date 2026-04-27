@@ -12,10 +12,42 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const APP_URL = process.env.APP_URL ?? "http://localhost:3000"
+
 export const metadata: Metadata = {
-  title: "Learnify — Precision in Learning",
+  metadataBase: new URL(APP_URL),
+  title: {
+    default: "Learnify — Precision in Learning",
+    template: "%s | Learnify",
+  },
   description:
     "Access high-quality courses from industry experts. Master the tools and technologies used by world-class engineering teams.",
+  keywords: [
+    "online courses",
+    "learning platform",
+    "LMS",
+    "Indonesian education",
+    "tech courses",
+  ],
+  authors: [{ name: "Learnify" }],
+  openGraph: {
+    type: "website",
+    title: "Learnify — Precision in Learning",
+    description:
+      "High-quality online courses from industry experts. Build the skills used by world-class engineering teams.",
+    siteName: "Learnify",
+    locale: "id_ID",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Learnify — Precision in Learning",
+    description:
+      "High-quality online courses from industry experts.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

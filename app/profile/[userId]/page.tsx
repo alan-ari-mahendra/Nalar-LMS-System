@@ -1,8 +1,25 @@
+import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { getPublicProfile } from "@/lib/queries"
 import { Avatar } from "@/components/shared/Avatar"
 import { CourseCard } from "@/components/course/CourseCard"
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ userId: string }>
+}): Promise<Metadata> {
+  const { userId } = await params
+  const profile = await getPublicProfile(userId)
+  if (!profile) return { title: "Profile not found" }
+
+  const name = profile.user.name ?? "User"
+  return {
+    title: name,
+    description: profile.user.headline ?? `${name}'s Learnify profile`,
+  }
+}
 
 export default async function PublicProfilePage({
   params,
