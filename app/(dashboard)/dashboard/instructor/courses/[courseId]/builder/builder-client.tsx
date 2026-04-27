@@ -249,7 +249,7 @@ export function BuilderClient({ course }: BuilderClientProps) {
         {/* Editor pane */}
         <div>
           {selectedLesson ? (
-            <LessonEditor lesson={selectedLesson} />
+            <LessonEditor key={selectedLesson.id} lesson={selectedLesson} />
           ) : (
             <div className="bg-surface-container border border-outline-variant rounded-xl p-12 text-center text-on-surface-variant">
               <span className="material-symbols-outlined !text-5xl opacity-40">edit_note</span>

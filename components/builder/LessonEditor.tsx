@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useTransition } from "react"
+import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { updateLesson } from "@/lib/actions/course"
 import { VideoUploader } from "@/components/upload/VideoUploader"
@@ -22,15 +22,6 @@ export function LessonEditor({ lesson }: LessonEditorProps) {
   const [duration, setDuration] = useState<number>(lesson.duration ?? 0)
   const [content, setContent] = useState(lesson.content ?? "")
   const [videoUrl, setVideoUrl] = useState<string | null>(lesson.videoUrl)
-
-  useEffect(() => {
-    setTitle(lesson.title)
-    setDuration(lesson.duration ?? 0)
-    setContent(lesson.content ?? "")
-    setVideoUrl(lesson.videoUrl)
-    setSaved(false)
-    setError("")
-  }, [lesson.id, lesson.title, lesson.duration, lesson.content, lesson.videoUrl])
 
   function handleSave() {
     setError("")

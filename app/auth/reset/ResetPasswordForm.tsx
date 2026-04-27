@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useState, useTransition } from "react"
+import { useState, useTransition } from "react"
 import { resetPassword } from "@/lib/auth/actions"
 
 export function ResetPasswordForm() {
@@ -11,19 +11,15 @@ export function ResetPasswordForm() {
   const token = searchParams.get("token") ?? ""
 
   const [isPending, startTransition] = useTransition()
-  const [error, setError] = useState("")
+  const [submitError, setSubmitError] = useState("")
   const [done, setDone] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
-  useEffect(() => {
-    if (!token) {
-      setError("Reset link is invalid or missing")
-    }
-  }, [token])
+  const error = submitError || (!token ? "Reset link is invalid or missing" : "")
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setError("")
+    setSubmitError("")
 
     const formData = new FormData(e.currentTarget)
     const newPassword = formData.get("newPassword") as string
@@ -35,7 +31,7 @@ export function ResetPasswordForm() {
         setDone(true)
         setTimeout(() => router.push("/auth/login"), 2500)
       } else {
-        setError(result.error)
+        setSubmitError(result.error)
       }
     })
   }
