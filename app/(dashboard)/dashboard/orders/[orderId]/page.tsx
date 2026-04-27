@@ -158,6 +158,14 @@ export default async function OrderDetailPage({
         >
           View Course
         </Link>
+        {order.status === "COMPLETED" && (
+          <Link
+            href={`/dashboard/orders/${order.id}/invoice`}
+            className="flex-1 border border-outline-variant bg-surface-container-low py-3 rounded-lg font-bold text-sm text-on-surface text-center hover:bg-surface-container transition-all"
+          >
+            View Invoice
+          </Link>
+        )}
       </div>
     </div>
   )

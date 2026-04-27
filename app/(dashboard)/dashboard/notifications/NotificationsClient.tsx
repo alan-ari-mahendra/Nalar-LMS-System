@@ -21,6 +21,7 @@ const iconMap: Record<NotificationType, { icon: string; color: string; bg: strin
   CERTIFICATE_ISSUED: { icon: "workspace_premium", color: "text-primary", bg: "bg-primary/15" },
   NEW_REVIEW: { icon: "star", color: "text-amber-400", bg: "bg-amber-400/15" },
   COURSE_UPDATE: { icon: "update", color: "text-on-surface-variant", bg: "bg-surface-container-high" },
+  DISCUSSION_REPLY: { icon: "forum", color: "text-primary", bg: "bg-primary/15" },
 }
 
 function formatRelative(iso: string): string {

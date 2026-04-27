@@ -152,6 +152,32 @@ export const UpsertQuizSchema = z.object({
   timeLimit: z.number().int().min(0).optional(),
 })
 
+// --- Wishlist ---
+
+export const WishlistCourseSchema = z.object({
+  courseId: z.string().min(1),
+})
+
+// --- Discussion ---
+
+export const CreateDiscussionSchema = z.object({
+  lessonId: z.string().min(1),
+  body: z.string().min(1, "Discussion body required").max(2000),
+})
+
+export const ReplyDiscussionSchema = z.object({
+  discussionId: z.string().min(1),
+  body: z.string().min(1, "Reply body required").max(2000),
+})
+
+export const DeleteDiscussionSchema = z.object({
+  discussionId: z.string().min(1),
+})
+
+export const DeleteDiscussionReplySchema = z.object({
+  replyId: z.string().min(1),
+})
+
 // --- Admin Schemas ---
 
 export const ToggleUserSchema = z.object({
@@ -215,3 +241,8 @@ export type UpdateQuestionInput = z.infer<typeof UpdateQuestionSchema>
 export type DeleteQuestionInput = z.infer<typeof DeleteQuestionSchema>
 export type ReorderQuestionsInput = z.infer<typeof ReorderQuestionsSchema>
 export type UpsertQuizInput = z.infer<typeof UpsertQuizSchema>
+export type WishlistCourseInput = z.infer<typeof WishlistCourseSchema>
+export type CreateDiscussionInput = z.infer<typeof CreateDiscussionSchema>
+export type ReplyDiscussionInput = z.infer<typeof ReplyDiscussionSchema>
+export type DeleteDiscussionInput = z.infer<typeof DeleteDiscussionSchema>
+export type DeleteDiscussionReplyInput = z.infer<typeof DeleteDiscussionReplySchema>

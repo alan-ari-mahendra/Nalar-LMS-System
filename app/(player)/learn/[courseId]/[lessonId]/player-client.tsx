@@ -8,9 +8,11 @@ import { submitQuizAttempt } from "@/lib/actions/quiz"
 import { Avatar } from "@/components/shared/Avatar"
 import { ProgressBar } from "@/components/shared/ProgressBar"
 import { VideoPlayer } from "@/components/player/VideoPlayer"
+import { DiscussionPanel } from "@/components/player/DiscussionPanel"
 import { FALLBACK_SAMPLE_VIDEO } from "@/lib/upload/constants"
 import { formatDuration } from "@/lib/utils"
 import type { CourseDetail, Lesson, LessonProgress } from "@/type"
+import type { DiscussionWithReplies } from "@/lib/queries"
 
 type Tab = "overview" | "notes" | "discussion"
 
@@ -32,9 +34,20 @@ interface VideoPlayerPageProps {
   lesson: Lesson
   lessonProgress: LessonProgress[]
   quiz?: QuizData | null
+  discussions: DiscussionWithReplies[]
+  currentUserId: string | null
+  isInstructorOrAdmin: boolean
 }
 
-export default function VideoPlayerPage({ course, lesson, lessonProgress, quiz }: VideoPlayerPageProps) {
+export default function VideoPlayerPage({
+  course,
+  lesson,
+  lessonProgress,
+  quiz,
+  discussions,
+  currentUserId,
+  isInstructorOrAdmin,
+}: VideoPlayerPageProps) {
   const completedLessonIds = lessonProgress.filter((lp) => lp.isCompleted).map((lp) => lp.lessonId)
   const totalLessons = course.chapters.reduce((sum, ch) => sum + ch.lessons.length, 0)
   const progressPct = Math.round((completedLessonIds.length / totalLessons) * 100)
@@ -297,10 +310,19 @@ export default function VideoPlayerPage({ course, lesson, lessonProgress, quiz }
             )}
 
             {activeTab === "discussion" && (
-              <div className="flex flex-col items-center justify-center py-16 text-on-surface-variant">
-                <span className="material-symbols-outlined !text-5xl mb-4 opacity-40">forum</span>
-                <p className="text-sm">Discussion will be available in Phase 3.</p>
-              </div>
+              currentUserId ? (
+                <DiscussionPanel
+                  lessonId={lesson.id}
+                  currentUserId={currentUserId}
+                  isInstructorOrAdmin={isInstructorOrAdmin}
+                  discussions={discussions}
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center py-16 text-on-surface-variant">
+                  <span className="material-symbols-outlined !text-5xl mb-4 opacity-40">forum</span>
+                  <p className="text-sm">Sign in to participate in discussions.</p>
+                </div>
+              )
             )}
 
             {/* Bottom spacing for player bar */}

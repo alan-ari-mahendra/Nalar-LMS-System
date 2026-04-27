@@ -18,6 +18,7 @@ interface NavItem {
 const studentLinks: NavItem[] = [
   { label: "Dashboard", icon: "dashboard", href: "/dashboard" },
   { label: "My Courses", icon: "school", href: "/dashboard/courses" },
+  { label: "Wishlist", icon: "favorite", href: "/dashboard/wishlist" },
   { label: "Certificates", icon: "workspace_premium", href: "/dashboard/certificates" },
   { label: "Orders", icon: "receipt_long", href: "/dashboard/orders" },
   { label: "Notifications", icon: "notifications", href: "/dashboard/notifications", badgeKey: "notifications" },
