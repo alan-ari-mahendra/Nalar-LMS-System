@@ -178,6 +178,75 @@ export const DeleteDiscussionReplySchema = z.object({
   replyId: z.string().min(1),
 })
 
+// --- Payout ---
+
+export const RequestPayoutSchema = z.object({
+  amount: z.number().min(100000, "Minimum payout Rp 100,000"),
+  bankName: z.string().min(2).max(80),
+  accountNumber: z.string().min(4).max(40),
+  accountHolder: z.string().min(2).max(120),
+  note: z.string().max(500).optional(),
+})
+
+export const ApprovePayoutSchema = z.object({
+  payoutId: z.string().min(1),
+})
+
+export const RejectPayoutSchema = z.object({
+  payoutId: z.string().min(1),
+  reason: z.string().min(5).max(500),
+})
+
+// --- Coupon ---
+
+export const CreateCouponSchema = z.object({
+  code: z
+    .string()
+    .min(3)
+    .max(40)
+    .regex(/^[A-Z0-9_-]+$/, "Code must be uppercase letters, numbers, _ or -"),
+  discountPercent: z.number().int().min(1).max(100),
+  maxUses: z.number().int().min(1).max(100000).optional(),
+  expiresAt: z.string().datetime().optional(),
+  isActive: z.boolean().default(true),
+})
+
+export const UpdateCouponSchema = z.object({
+  couponId: z.string().min(1),
+  discountPercent: z.number().int().min(1).max(100).optional(),
+  maxUses: z.number().int().min(1).max(100000).nullable().optional(),
+  expiresAt: z.string().datetime().nullable().optional(),
+  isActive: z.boolean().optional(),
+})
+
+export const DeleteCouponSchema = z.object({
+  couponId: z.string().min(1),
+})
+
+export const ValidateCouponSchema = z.object({
+  code: z.string().min(1).max(40),
+  courseId: z.string().min(1),
+})
+
+// --- Category ---
+
+export const CreateCategorySchema = z.object({
+  name: z.string().min(2).max(80),
+  description: z.string().max(500).optional(),
+  iconUrl: z.string().url().optional(),
+})
+
+export const UpdateCategorySchema = z.object({
+  categoryId: z.string().min(1),
+  name: z.string().min(2).max(80).optional(),
+  description: z.string().max(500).optional(),
+  iconUrl: z.string().url().nullable().optional(),
+})
+
+export const DeleteCategorySchema = z.object({
+  categoryId: z.string().min(1),
+})
+
 // --- Admin Schemas ---
 
 export const ToggleUserSchema = z.object({
@@ -207,6 +276,7 @@ export const PaymentMethodEnum = z.enum([
 export const CreateOrderSchema = z.object({
   courseId: z.string().min(1, "Course ID is required"),
   paymentMethod: PaymentMethodEnum,
+  couponCode: z.string().max(40).optional(),
 })
 
 export const OrderIdSchema = z.object({
@@ -246,3 +316,13 @@ export type CreateDiscussionInput = z.infer<typeof CreateDiscussionSchema>
 export type ReplyDiscussionInput = z.infer<typeof ReplyDiscussionSchema>
 export type DeleteDiscussionInput = z.infer<typeof DeleteDiscussionSchema>
 export type DeleteDiscussionReplyInput = z.infer<typeof DeleteDiscussionReplySchema>
+export type RequestPayoutInput = z.infer<typeof RequestPayoutSchema>
+export type ApprovePayoutInput = z.infer<typeof ApprovePayoutSchema>
+export type RejectPayoutInput = z.infer<typeof RejectPayoutSchema>
+export type CreateCouponInput = z.infer<typeof CreateCouponSchema>
+export type UpdateCouponInput = z.infer<typeof UpdateCouponSchema>
+export type DeleteCouponInput = z.infer<typeof DeleteCouponSchema>
+export type ValidateCouponInput = z.infer<typeof ValidateCouponSchema>
+export type CreateCategoryInput = z.infer<typeof CreateCategorySchema>
+export type UpdateCategoryInput = z.infer<typeof UpdateCategorySchema>
+export type DeleteCategoryInput = z.infer<typeof DeleteCategorySchema>
