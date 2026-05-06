@@ -3,6 +3,7 @@ import { requireAuth } from "@/lib/auth/guards"
 import { getOrderById } from "@/lib/queries/order"
 import { getPaymentMethodMeta } from "@/lib/payment/methods"
 import { MockGateway } from "./MockGateway"
+import { StripeCheckout } from "./StripeCheckout"
 
 export default async function PayPage({
   params,
@@ -24,6 +25,19 @@ export default async function PayPage({
     redirect(`/checkout/order/${orderId}/failed`)
   }
 
+  if (order.paymentMethod === "STRIPE") {
+    return (
+      <StripeCheckout
+        order={{
+          id: order.id,
+          amount: order.amount,
+          course: order.course,
+        }}
+      />
+    )
+  }
+
+  // Mock gateway flow: for BANK_TRANSFER, CREDIT_CARD, GOPAY, OVO, QRIS
   const methodMeta = getPaymentMethodMeta(order.paymentMethod)
 
   return (

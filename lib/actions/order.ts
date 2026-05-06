@@ -7,6 +7,7 @@ import { Prisma } from "@prisma/client"
 import { prisma } from "@/lib/db"
 import { requireAuth, requireRole } from "@/lib/auth/guards"
 import { createEnrollmentTx } from "@/lib/server/enrollment-helpers"
+import { createCheckoutSession } from "@/lib/stripe/checkout"
 import {
   CreateOrderSchema,
   OrderIdSchema,
@@ -24,6 +25,10 @@ type ActionResult =
 
 type CreateOrderResult =
   | { success: true; orderId: string; resumed?: boolean }
+  | { success: false; error: string }
+
+type StripeSessionResult =
+  | { success: true; sessionUrl: string }
   | { success: false; error: string }
 
 function isStatusGuardError(err: unknown): boolean {
@@ -113,6 +118,76 @@ export async function createOrder(data: CreateOrderInput): Promise<CreateOrderRe
   })
 
   return { success: true, orderId: order.id }
+}
+
+/**
+ * Create a Stripe Checkout Session for a PENDING order.
+ * Converts IDR amount to USD, redirects user to Stripe-hosted payment page.
+ */
+export async function createStripeCheckoutSession(data: OrderIdInput): Promise<StripeSessionResult> {
+  const parsed = OrderIdSchema.safeParse(data)
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0].message }
+  }
+
+  const user = await requireAuth()
+  const { orderId } = parsed.data
+
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    select: {
+      id: true,
+      userId: true,
+      status: true,
+      amount: true,
+      courseId: true,
+      course: { select: { id: true, title: true } },
+    },
+  })
+
+  if (!order || order.userId !== user.id) {
+    return { success: false, error: "Order not found" }
+  }
+
+  if (order.status !== "PENDING") {
+    return { success: false, error: `Order is not pending (current: ${order.status})` }
+  }
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL
+  if (!appUrl) {
+    return { success: false, error: "App URL not configured" }
+  }
+
+  try {
+    const session = await createCheckoutSession({
+      orderId: order.id,
+      courseTitle: order.course.title,
+      amountInIDR: Number(order.amount),
+      successUrl: `${appUrl}/checkout/order/${order.id}/success`,
+      cancelUrl: `${appUrl}/checkout/order/${order.id}/pay`,
+    })
+
+    // Persist session ID on the order
+    await prisma.order.update({
+      where: { id: order.id },
+      data: {
+        paymentId: session.id,
+        metadata: {
+          stripe: true,
+          sessionId: session.id,
+        },
+      },
+    })
+
+    if (!session.url) {
+      return { success: false, error: "Failed to get checkout URL from Stripe" }
+    }
+
+    return { success: true, sessionUrl: session.url }
+  } catch (err) {
+    console.error("[createStripeCheckoutSession] Stripe API error:", err)
+    return { success: false, error: "Failed to create payment session. Please try again." }
+  }
 }
 
 /**

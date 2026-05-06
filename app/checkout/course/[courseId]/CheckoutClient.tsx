@@ -21,9 +21,11 @@ type AppliedCoupon = {
   finalAmount: number
 }
 
+const ENABLED_METHOD: PaymentMethod = "STRIPE"
+
 export function CheckoutClient({ courseId, courseSlug, coursePrice }: CheckoutClientProps) {
   const router = useRouter()
-  const [method, setMethod] = useState<PaymentMethod>("BANK_TRANSFER")
+  const [method, setMethod] = useState<PaymentMethod>(ENABLED_METHOD)
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState("")
 
@@ -88,14 +90,18 @@ export function CheckoutClient({ courseId, courseSlug, coursePrice }: CheckoutCl
 
       <div className="space-y-3">
         {PAYMENT_METHODS.map((m) => {
-          const active = method === m.value
+          const isEnabled = m.value === ENABLED_METHOD
+          const active = isEnabled && method === m.value
+
           return (
             <label
               key={m.value}
-              className={`flex items-start gap-4 p-4 rounded-lg border cursor-pointer transition-all ${
+              className={`flex items-start gap-4 p-4 rounded-lg border transition-all ${
                 active
                   ? "border-primary bg-primary/5"
-                  : "border-outline-variant bg-surface-container-low hover:border-outline"
+                  : isEnabled
+                    ? "border-outline-variant bg-surface-container-low hover:border-outline"
+                    : "border-outline-variant/50 bg-surface-container-low/50 opacity-50 cursor-not-allowed"
               }`}
             >
               <input
@@ -103,7 +109,8 @@ export function CheckoutClient({ courseId, courseSlug, coursePrice }: CheckoutCl
                 name="paymentMethod"
                 value={m.value}
                 checked={active}
-                onChange={() => setMethod(m.value)}
+                onChange={() => isEnabled && setMethod(m.value)}
+                disabled={!isEnabled}
                 className="sr-only"
               />
               <div
@@ -114,18 +121,27 @@ export function CheckoutClient({ courseId, courseSlug, coursePrice }: CheckoutCl
                 <span className="material-symbols-outlined !text-xl">{m.icon}</span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-on-surface">{m.label}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-bold text-on-surface">{m.label}</p>
+                  {!isEnabled && (
+                    <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded bg-outline-variant/50 text-on-surface-variant">
+                      Soon
+                    </span>
+                  )}
+                </div>
                 <p className="text-xs text-on-surface-variant mt-0.5">{m.description}</p>
               </div>
-              <span
-                className={`mt-1 w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                  active ? "border-primary bg-primary" : "border-outline-variant"
-                }`}
-              >
-                {active && (
-                  <span className="material-symbols-outlined !text-sm text-on-primary">check</span>
-                )}
-              </span>
+              {isEnabled && (
+                <span
+                  className={`mt-1 w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                    active ? "border-primary bg-primary" : "border-outline-variant"
+                  }`}
+                >
+                  {active && (
+                    <span className="material-symbols-outlined !text-sm text-on-primary">check</span>
+                  )}
+                </span>
+              )}
             </label>
           )
         })}

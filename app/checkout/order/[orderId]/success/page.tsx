@@ -6,6 +6,7 @@ import { getOrderById } from "@/lib/queries/order"
 import { getPaymentMethodMeta } from "@/lib/payment/methods"
 import { prisma } from "@/lib/db"
 import { formatPrice } from "@/lib/utils"
+import { PaymentConfirming } from "./PaymentConfirming"
 
 export default async function SuccessPage({
   params,
@@ -18,11 +19,12 @@ export default async function SuccessPage({
   const order = await getOrderById(orderId)
   if (!order || order.user.id !== user.id) notFound()
 
-  if (order.status === "PENDING") {
-    redirect(`/checkout/order/${orderId}/pay`)
-  }
-  if (order.status === "FAILED") {
+  if (order.status === "FAILED" || order.status === "REFUNDED") {
     redirect(`/checkout/order/${orderId}/failed`)
+  }
+
+  if (order.status === "PENDING") {
+    return <PaymentConfirming orderId={orderId} />
   }
 
   const methodMeta = getPaymentMethodMeta(order.paymentMethod)

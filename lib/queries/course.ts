@@ -21,6 +21,7 @@ export async function getPublishedCourses(): Promise<Course[]> {
     include: courseInclude,
     orderBy: { publishedAt: "desc" },
   })
+  console.log("Fetched published courses:", rows)
   return rows.map(serializeCourse)
 }
 

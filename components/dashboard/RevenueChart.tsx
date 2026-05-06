@@ -15,10 +15,13 @@ interface RevenueChartProps {
   data: MonthlyRevenue[]
 }
 
+const USD_TO_IDR_RATE = 15000
+
 function formatChartValue(value: number): string {
-  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`
-  if (value >= 1_000) return `${(value / 1_000).toFixed(0)}K`
-  return String(value)
+  const valueInUSD = value / USD_TO_IDR_RATE
+  if (valueInUSD >= 1_000_000) return `$${(valueInUSD / 1_000_000).toFixed(1)}M`
+  if (valueInUSD >= 1_000) return `$${(valueInUSD / 1_000).toFixed(0)}K`
+  return `$${valueInUSD.toFixed(0)}`
 }
 
 export function RevenueChart({ data }: RevenueChartProps) {
@@ -48,10 +51,13 @@ export function RevenueChart({ data }: RevenueChartProps) {
             color: "#fafafa",
             fontSize: "12px",
           }}
-          formatter={(value) => [
-            `Rp ${Number(value).toLocaleString("id-ID")}`,
-            "Revenue",
-          ]}
+          formatter={(value) => {
+            const valueInUSD = Number(value) / USD_TO_IDR_RATE
+            return [
+              `$${valueInUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+              "Revenue",
+            ]
+          }}
         />
         <Line
           type="monotone"
