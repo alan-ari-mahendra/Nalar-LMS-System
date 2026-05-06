@@ -13,10 +13,16 @@ export function formatDuration(seconds: number): string {
   return `${m}m`
 }
 
-/** Format IDR price */
+const USD_TO_IDR_RATE = 15000
+
 export function formatPrice(price: number): string {
-  if (price === 0) return "Gratis"
-  return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(price)
+  if (price === 0) return "Free"
+  const priceInUSD = price / USD_TO_IDR_RATE
+  return new Intl.NumberFormat("en-US", { 
+    style: "currency", 
+    currency: "USD", 
+    maximumFractionDigits: 2 
+  }).format(priceInUSD)
 }
 
 /** Format number with K/M abbreviation */
