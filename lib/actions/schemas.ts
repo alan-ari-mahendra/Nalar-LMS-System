@@ -271,6 +271,7 @@ export const PaymentMethodEnum = z.enum([
   "GOPAY",
   "OVO",
   "QRIS",
+  "STRIPE",
 ])
 
 export const CreateOrderSchema = z.object({
