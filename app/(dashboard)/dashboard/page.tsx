@@ -93,50 +93,69 @@ export default async function StudentDashboardPage() {
             View All Courses
           </Link>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {enrollments.map((enrollment) => (
-            <div
-              key={enrollment.id}
-              className="bg-surface-container border border-outline-variant rounded-xl overflow-hidden flex flex-col sm:flex-row group"
-            >
-              <div className="w-full sm:w-48 h-32 sm:h-auto overflow-hidden relative shrink-0">
-                <Image
-                  src={enrollment.course.thumbnailUrl}
-                  alt={enrollment.course.title}
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-              </div>
-              <div className="flex-1 p-5 space-y-4">
-                <div>
-                  <h4 className="font-bold text-on-surface leading-tight line-clamp-2">
-                    {enrollment.course.title}
-                  </h4>
-                  <p className="text-sm text-on-surface-variant mt-1">
-                    {enrollment.course.instructor.fullName}
-                  </p>
+        {enrollments.length > 0 ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {enrollments.map((enrollment) => (
+              <div
+                key={enrollment.id}
+                className="bg-surface-container border border-outline-variant rounded-xl overflow-hidden flex flex-col sm:flex-row group"
+              >
+                <div className="w-full sm:w-48 h-32 sm:h-auto overflow-hidden relative shrink-0">
+                  <Image
+                    src={enrollment.course.thumbnailUrl}
+                    alt={enrollment.course.title}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
                 </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-xs font-bold">
-                    <span className="text-on-surface-variant">Progress</span>
-                    <span className="text-primary">{enrollment.progressPercent}%</span>
+                <div className="flex-1 p-5 space-y-4">
+                  <div>
+                    <h4 className="font-bold text-on-surface leading-tight line-clamp-2">
+                      {enrollment.course.title}
+                    </h4>
+                    <p className="text-sm text-on-surface-variant mt-1">
+                      {enrollment.course.instructor.fullName}
+                    </p>
                   </div>
-                  <ProgressBar value={enrollment.progressPercent} size="sm" />
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs font-bold">
+                      <span className="text-on-surface-variant">Progress</span>
+                      <span className="text-primary">{enrollment.progressPercent}%</span>
+                    </div>
+                    <ProgressBar value={enrollment.progressPercent} size="sm" />
+                  </div>
+                  <Link
+                    href={
+                      firstLessonMap.has(enrollment.courseId)
+                        ? `/learn/${enrollment.courseId}/${firstLessonMap.get(enrollment.courseId)}`
+                        : `/courses/${enrollment.course.slug}`
+                    }
+                    className="block w-full py-2 bg-primary hover:brightness-110 text-on-primary font-bold rounded-lg transition-all text-sm text-center"
+                  >
+                    Continue
+                  </Link>
                 </div>
-                <Link
-                  href={
-                    firstLessonMap.has(enrollment.courseId)
-                      ? `/learn/${enrollment.courseId}/${firstLessonMap.get(enrollment.courseId)}`
-                      : `/courses/${enrollment.course.slug}`
-                  }
-                  className="block w-full py-2 bg-primary hover:brightness-110 text-on-primary font-bold rounded-lg transition-all text-sm text-center"
-                >
-                  Continue
-                </Link>
               </div>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-surface-container border border-dashed border-outline-variant rounded-2xl p-10 text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
+              <span className="material-symbols-outlined !text-3xl text-primary">school</span>
             </div>
-          ))}
-        </div>
+            <h4 className="text-lg font-bold text-on-surface mb-1">No courses in progress</h4>
+            <p className="text-sm text-on-surface-variant max-w-md mx-auto mb-5">
+              Start your learning journey by enrolling in a course that interests you.
+            </p>
+            <Link
+              href="/courses"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary hover:brightness-110 text-on-primary font-bold rounded-lg transition-all text-sm"
+            >
+              <span className="material-symbols-outlined !text-lg">explore</span>
+              Browse Courses
+            </Link>
+          </div>
+        )}
       </section>
 
       {/* ============================================================
@@ -151,46 +170,58 @@ export default async function StudentDashboardPage() {
               My Certificates
             </h3>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {certificates.map((cert, i) => (
-              <div
-                key={cert.id}
-                className={`relative overflow-hidden p-6 rounded-2xl border flex flex-col justify-between h-48 group ${
-                  i === 0
-                    ? "bg-gradient-to-br from-primary-container/20 to-amber-500/10 border-primary/30"
-                    : "bg-gradient-to-br from-surface-container-high/50 to-surface-container border-outline-variant"
-                }`}
-              >
-                <div className="absolute -right-8 -top-8 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all" />
-                <div className="space-y-1 z-10">
-                  <span className={`material-symbols-outlined ${i === 0 ? "text-amber-400" : "text-outline"}`}>
-                    {i === 0 ? "workspace_premium" : "verified"}
-                  </span>
-                  <h4 className="text-lg font-bold text-on-surface">{cert.course.title}</h4>
-                  <p className="text-xs text-on-surface-variant">
-                    Issued: {new Date(cert.issuedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                  </p>
+          {certificates.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {certificates.map((cert, i) => (
+                <div
+                  key={cert.id}
+                  className={`relative overflow-hidden p-6 rounded-2xl border flex flex-col justify-between h-48 group ${
+                    i === 0
+                      ? "bg-gradient-to-br from-primary-container/20 to-amber-500/10 border-primary/30"
+                      : "bg-gradient-to-br from-surface-container-high/50 to-surface-container border-outline-variant"
+                  }`}
+                >
+                  <div className="absolute -right-8 -top-8 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all" />
+                  <div className="space-y-1 z-10">
+                    <span className={`material-symbols-outlined ${i === 0 ? "text-amber-400" : "text-outline"}`}>
+                      {i === 0 ? "workspace_premium" : "verified"}
+                    </span>
+                    <h4 className="text-lg font-bold text-on-surface">{cert.course.title}</h4>
+                    <p className="text-xs text-on-surface-variant">
+                      Issued: {new Date(cert.issuedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                    </p>
+                  </div>
+                  <div className="flex gap-2 z-10">
+                    <Link
+                      href={`/certificate/${cert.verifyCode}`}
+                      className="flex-1 py-2 bg-surface-container/80 hover:bg-surface-container text-xs font-bold rounded-lg border border-outline-variant transition-all flex items-center justify-center gap-2"
+                    >
+                      <span className="material-symbols-outlined !text-base">visibility</span> View
+                    </Link>
+                    <button
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2 ${
+                        i === 0
+                          ? "bg-primary hover:brightness-110 text-on-primary"
+                          : "bg-secondary-container hover:bg-outline text-on-surface"
+                      }`}
+                    >
+                      <span className="material-symbols-outlined !text-base">download</span> Download
+                    </button>
+                  </div>
                 </div>
-                <div className="flex gap-2 z-10">
-                  <Link
-                    href={`/certificate/${cert.verifyCode}`}
-                    className="flex-1 py-2 bg-surface-container/80 hover:bg-surface-container text-xs font-bold rounded-lg border border-outline-variant transition-all flex items-center justify-center gap-2"
-                  >
-                    <span className="material-symbols-outlined !text-base">visibility</span> View
-                  </Link>
-                  <button
-                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2 ${
-                      i === 0
-                        ? "bg-primary hover:brightness-110 text-on-primary"
-                        : "bg-secondary-container hover:bg-outline text-on-surface"
-                    }`}
-                  >
-                    <span className="material-symbols-outlined !text-base">download</span> Download
-                  </button>
-                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-surface-container border border-dashed border-outline-variant rounded-2xl p-10 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-500/10 mb-4">
+                <span className="material-symbols-outlined !text-3xl text-amber-400">workspace_premium</span>
               </div>
-            ))}
-          </div>
+              <h4 className="text-lg font-bold text-on-surface mb-1">No certificates yet</h4>
+              <p className="text-sm text-on-surface-variant max-w-md mx-auto">
+                Complete a course to earn your first certificate and showcase your skills.
+              </p>
+            </div>
+          )}
         </section>
 
         {/* 5. RECENT ACTIVITY */}
@@ -201,13 +232,25 @@ export default async function StudentDashboardPage() {
               Recent Activity
             </h3>
           </div>
-          <div className="bg-surface-container border border-outline-variant rounded-xl p-6">
-            <div className="divide-y divide-outline-variant">
-              {activityItems.map((item) => (
-                <ActivityFeedItem key={item.id} item={item} />
-              ))}
+          {activityItems.length > 0 ? (
+            <div className="bg-surface-container border border-outline-variant rounded-xl p-6">
+              <div className="divide-y divide-outline-variant">
+                {activityItems.map((item) => (
+                  <ActivityFeedItem key={item.id} item={item} />
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="bg-surface-container border border-dashed border-outline-variant rounded-xl p-10 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-surface-container-high mb-4">
+                <span className="material-symbols-outlined !text-3xl text-outline">history</span>
+              </div>
+              <h4 className="text-lg font-bold text-on-surface mb-1">No activity yet</h4>
+              <p className="text-sm text-on-surface-variant">
+                Start learning to see your activity here.
+              </p>
+            </div>
+          )}
         </section>
       </div>
     </div>
