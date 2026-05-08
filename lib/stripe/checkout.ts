@@ -1,4 +1,5 @@
-import { stripe, USD_TO_IDR_RATE } from "./client"
+import { USD_TO_IDR_RATE } from "../utils"
+import { stripe } from "./client"
 
 interface CreateSessionParams {
   orderId: string
