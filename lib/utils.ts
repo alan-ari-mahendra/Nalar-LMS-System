@@ -13,7 +13,7 @@ export function formatDuration(seconds: number): string {
   return `${m}m`
 }
 
-const USD_TO_IDR_RATE = 15000
+export const USD_TO_IDR_RATE = 15000
 
 export function formatPrice(price: number): string {
   if (price === 0) return "Free"
@@ -36,10 +36,10 @@ export function formatCount(n: number): string {
 export function formatRelativeTime(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime()
   const minutes = Math.floor(diff / 60000)
-  if (minutes < 60) return `${minutes} menit yang lalu`
+  if (minutes < 60) return `${minutes} minutes ago`
   const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours} jam yang lalu`
+  if (hours < 24) return `${hours} hours ago`
   const days = Math.floor(hours / 24)
-  if (days < 30) return `${days} hari yang lalu`
+  if (days < 30) return `${days} days ago`
   return new Date(dateStr).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })
 }

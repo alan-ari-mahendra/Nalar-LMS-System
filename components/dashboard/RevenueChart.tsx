@@ -10,12 +10,11 @@ import {
   ResponsiveContainer,
 } from "recharts"
 import type { MonthlyRevenue } from "@/type"
+import { USD_TO_IDR_RATE } from "@/lib/utils"
 
 interface RevenueChartProps {
   data: MonthlyRevenue[]
 }
-
-const USD_TO_IDR_RATE = 15000
 
 function formatChartValue(value: number): string {
   const valueInUSD = value / USD_TO_IDR_RATE

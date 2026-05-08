@@ -96,7 +96,7 @@ export function PayoutClient({ balance, defaultName, payouts }: PayoutClientProp
 
       {balance < 100000 && !showForm && (
         <p className="text-xs text-on-surface-variant">
-          Minimum payout is Rp 100,000. Earn more to enable withdrawals.
+          Minimum payout is $5. Earn more to enable withdrawals.
         </p>
       )}
 
