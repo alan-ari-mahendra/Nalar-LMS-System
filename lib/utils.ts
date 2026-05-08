@@ -13,7 +13,7 @@ export function formatDuration(seconds: number): string {
   return `${m}m`
 }
 
-const USD_TO_IDR_RATE = 15000
+export const USD_TO_IDR_RATE = 15000
 
 export function formatPrice(price: number): string {
   if (price === 0) return "Free"

@@ -15,7 +15,7 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts"
-import { formatPrice } from "@/lib/utils"
+import { formatPrice, USD_TO_IDR_RATE } from "@/lib/utils"
 
 interface AnalyticsData {
   summary: {
@@ -75,7 +75,16 @@ export function AnalyticsClient({ data }: { data: AnalyticsData }) {
               <LineChart data={trendData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
                 <XAxis dataKey="label" stroke="#71717a" fontSize={11} />
-                <YAxis stroke="#71717a" fontSize={11} tickFormatter={(v) => `${v / 1000}k`} />
+                <YAxis 
+                  stroke="#71717a" 
+                  fontSize={11}
+                  tickFormatter={(v) => {
+                    if (v === 0) return "$0"
+                    const usd = v / USD_TO_IDR_RATE
+                    if (usd >= 1000) return `$${(usd/1000).toFixed(1)}k`
+                    return `$${usd.toFixed(0)}`
+                  }}
+                />
                 <Tooltip
                   contentStyle={{
                     background: "#121215",
