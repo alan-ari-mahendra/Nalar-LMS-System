@@ -62,7 +62,7 @@ export async function POST(req: Request) {
             metadata: {
               stripe: true,
               sessionId: session.id,
-              paymentIntent: session.payment_intent,
+              paymentIntent: typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id ?? null,
               confirmedAt: new Date().toISOString(),
             },
           },
